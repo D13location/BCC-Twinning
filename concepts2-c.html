@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BCC 孪晶 · 基础概念图解 第四册</title>
+<style>:root{ --bg:#12142a; --panel:#1b1e3d; --line:#2c3060; --ink:#e6e8f2; --muted:#9aa0c0; --accent:#00b4ff; --amber:#fbbf24; }
+*{box-sizing:border-box; margin:0; padding:0;}
+body{background:var(--bg); color:var(--ink); font-family:"Microsoft YaHei","PingFang SC",sans-serif; line-height:1.95; font-size:16px;}
+.wrap{max-width:880px; margin:0 auto; padding:28px 18px 60px;}
+h1{font-size:22px; margin-bottom:8px;}
+h1 span{color:var(--accent);}
+.lead{color:var(--muted); font-size:14px; margin-bottom:18px;}
+.toc{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px 16px; font-size:13.5px; line-height:2.05; margin-bottom:24px;}
+.toc a{color:var(--accent); text-decoration:none;}
+.toc a:hover{text-decoration:underline;}
+.main{max-width:880px;}
+@media (min-width:1024px){
+  .toc{position:fixed; left:14px; top:12px; width:250px; max-height:92vh; overflow-y:auto;}
+  .wrap{margin-left:280px;}
+}
+@media (max-width:1023px){
+  .toc{position:-webkit-sticky; position:sticky; top:8px; max-height:34vh; overflow-y:auto;}
+}
+.grp{margin-top:36px; padding:8px 14px; border-left:3px solid var(--accent); font-size:18px; font-weight:bold; background:var(--panel); border-radius:0 8px 8px 0;}
+h3{margin-top:34px; font-size:19px; color:var(--amber);}
+p{margin-top:12px; text-align:justify;}
+.fig{margin:18px 0 6px; text-align:center;}
+.fig svg{max-width:100%; height:auto; background:var(--panel); border:1px solid var(--line); border-radius:10px;}
+.fig img{max-width:100%; height:auto; border:1px solid var(--line); border-radius:10px;}
+.fig .cap{margin-top:8px; font-size:13px; color:var(--muted); text-align:center;}
+.nav{margin:14px 0 22px; font-size:15px;}
+.nav a{color:var(--accent); text-decoration:none; margin-right:18px;}
+.nav a:hover{text-decoration:underline;}
+.foot{margin-top:44px; color:var(--muted); font-size:13px;}</style>
+</head>
+<body>
+<div class="wrap">
+<h1>BCC 孪晶 · <span>基础概念图解 第四册</span></h1>
+<div class="lead">全套共四册，本册为第五、六组。版本 v2.2。</div>
+<div class="nav"><a href="concepts2-a1.html">第一册</a><a href="concepts2-a2.html">第二册</a><a href="concepts2-b.html">第三册</a><b>第四册 · 第五、六组</b></div>
+<aside class="toc"><b>本册目录</b><br>
+<a href="#g5">第五组 材料与条件</a> · <a href="#re">铼效应</a> · <a href="#size">尺寸效应</a> · <a href="#rate">应变率效应</a> · <a href="#temp">温度效应</a><br>
+<a href="#g6">第六组 方法</a> · <a href="#ddmap">微分位移法</a> · <a href="#msmd">静力学与动力学</a> · <a href="#potential">势函数</a></aside>
+<div class="main">
+<div id="g5" class="grp">第五组：材料与条件</div>
+
+<h3 id="re">铼效应</h3>
+<p>铼加入钨或钼后降低层错能，偏位错分得更开，孪晶形核更容易，同时降低韧脆转变温度。Mo-18/35Re 合金的实验确认了铼促进孪晶的作用，铼效应是研究合金化调控孪晶的标准案例。铼还产生低温固溶软化，促进螺位错的 kink-pair 形核，与促进孪晶的作用叠加，共同改善钼的低温塑性。</p>
+
+<h3 id="size">尺寸效应</h3>
+<p>样品尺寸减小到纳米量级时，位错源减少，滑移缺少载体，孪生顶上，变形机制由滑移转向孪晶。铁纳米线沿 ⟨100⟩ 取向拉伸时以孪晶承载塑性，沿 ⟨110⟩ 取向以全位错滑移为主，沿 ⟨111⟩ 取向两者共存。表面也在纳米尺度发挥作用，表面应力调制位错行为，表面台阶可以成为孪晶形核的位置。尺寸效应在 BCC 金属中的典型表现就是纳米线的变形机制随取向和直径系统变化。</p>
+
+<h3 id="rate">应变率效应</h3>
+<p>应变率决定热激活是否有时间提供帮助。加载极快时热激活来不及，滑移受阻，而孪生是原子的协同动作，不需要等待热涨落，所以高应变率下孪晶增多。应变率超过每秒 10⁸ 时，孪生成为主导机制。冲击加载属于极高应变率条件，分子动力学天然工作在这个应变率窗口，因此冲击孪晶研究以分子动力学为主要工具。</p>
+
+<h3 id="temp">温度效应</h3>
+<p>低温下热涨落弱，kink-pair 形核率低，滑移变难，孪生相对占优，所以低温下孪晶增多。温度通过热激活通道同时影响滑移与孪生的相对难易。孪晶应力本身的温度敏感性仍有争论，一派认为孪晶应力随温度降低而升高，另一派汇总的数据显示临界孪晶应力在宽温度范围内基本与温度无关，降温主要抬高滑移应力，使孪生相对容易。</p>
+
+<div id="g6" class="grp">第六组：方法</div>
+
+<h3 id="ddmap">微分位移法</h3>
+<p>微分位移法是 Vitek、Perrin 与 Bowen 提出的位错芯可视化方法。它在位错芯的原子图上用箭头表示相邻原子的相对位移，箭头的大小和方向直接显示芯的铺展方式。简并芯的位移图呈对称的三重铺展，非简并芯的位移分布不对称。微分位移图是判定芯类别、比较不同势函数结果的标准手段，图 18 就是它的示意。</p>
+
+<h3 id="msmd">分子静力学与分子动力学</h3>
+<p>分子静力学在绝对零度下不做时间积分，只做能量最小化，用于计算位错芯的稳定构型、γ 面和 Peierls 应力。分子动力学对牛顿运动方程做数值积分，追踪原子随时间的轨迹，用于回答位错如何演化、何时孪生这类动力学问题。两者的结论口径不同。零度静力学给出的屈服数值通常高于有限温度结果，钼的零度屈服极限约为 750 MPa，而原子级 Peierls 应力高达 2 到 3 GPa，原子计算高估屈服两到四倍。分子动力学的应变率在每秒 10⁸ 量级，远高于实验，外推时必须声明应变率窗口。</p>
+
+<h3 id="potential">势函数</h3>
+<p>分子模拟需要原子间作用力的表达式，称为势函数。嵌入原子势是 BCC 模拟的标准选择，能量由嵌入能和对势项组成，嵌入能是原子嵌入局域电子密度的能量。Finnis–Sinclair 势是 N 体势，由对势项减去电子密度项平方根组成，属于中心力口径。键级势显式包含键角依赖的方向性键合，可以描述金属键的方向性。机器学习势以第一性原理数据训练，目标是提升精度与可迁移性。</p>
+<p>势函数的选择决定模拟结论。同一种金属用不同势函数可以得出相反的芯类别，所以任何模拟结论都要注明所用势函数。Zhang 在 2011 年的冲击模拟显示，五种常用势中只有两种能复现 50 GPa 高压下的实验孪晶，其余三种因为 γ 面的人为亚稳态产生虚假的相变。因此使用经验势之前，必须先用第一性原理结果校验势函数对 γ 面和层错能的描述精度。</p>
+
+
+</div>
+<div class="nav"><a href="concepts2-a1.html">第一册</a><a href="concepts2-a2.html">第二册</a><a href="concepts2-b.html">第三册</a><b>第四册 · 第五、六组</b></div>
+<div class="foot">图为原创示意与 Wikimedia Commons 自由授权图组合，内容与《基础概念理解.md》一致。版本 v2.2。</div>
+</div>
+</body>
+</html>
