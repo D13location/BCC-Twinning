@@ -1,0 +1,1876 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>大科学装置 · 知识谱系云图（光子源 · 中子源 · 离子源）</title>
+<style>
+  :root{
+    --bg:#0f1226; --panel:#171a35; --panel2:#1e2145; --line:#2a2d58;
+    --ink:#e6e8f2; --muted:#9aa0c0; --accent:#00b4ff; --amber:#fbbf24;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  @supports (height:100dvh){ html,body{height:100dvh;} }
+  body{
+    font-family:"Segoe UI","Microsoft YaHei","PingFang SC",system-ui,sans-serif;
+    background:var(--bg); color:var(--ink); overflow:hidden;
+    display:flex; flex-direction:column;
+  }
+  header{
+    min-height:56px; flex:0 0 auto; display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+    padding:8px 14px; background:linear-gradient(180deg,#161936,#0f1226);
+    border-bottom:1px solid var(--line); z-index:5;
+  }
+  header h1{font-size:16.5px; font-weight:700; letter-spacing:.5px; white-space:nowrap;}
+  header h1 span{color:var(--accent);}
+  header .sub{font-size:11px; color:var(--muted); white-space:nowrap;}
+  .spacer{flex:1;}
+  .facs{display:flex; gap:4px; background:var(--panel2); border:1px solid var(--line); border-radius:10px; padding:3px;}
+  .facs .fb{
+    height:26px; padding:0 12px; border:none; border-radius:7px; background:transparent;
+    color:var(--muted); font-size:12px; cursor:pointer; white-space:nowrap;
+  }
+  .facs .fb.active{background:var(--accent); color:#0a0c1c; font-weight:700;}
+  .search{position:relative;}
+  .search input{
+    width:230px; height:32px; border-radius:16px; border:1px solid var(--line);
+    background:#13152e; color:var(--ink); padding:0 14px 0 32px; font-size:13px; outline:none;
+  }
+  .search input:focus{border-color:var(--accent);}
+  .search .ic{position:absolute; left:11px; top:7px; color:var(--muted); font-size:13px;}
+  .dd{
+    position:absolute; top:40px; right:0; width:340px; max-height:360px; overflow:auto;
+    background:var(--panel2); border:1px solid var(--line); border-radius:10px;
+    box-shadow:0 8px 24px rgba(0,0,0,.5); display:none; z-index:20;
+  }
+  .dd .item{padding:8px 12px; cursor:pointer; font-size:12.5px; border-bottom:1px solid var(--line);}
+  .dd .item:hover{background:#282b52;}
+  .dd .item .t{color:var(--ink);}
+  .dd .item .c{color:var(--muted); font-size:11px; margin-left:6px;}
+  .dd .item .pt{background:#fbbf24; color:#0a0c1c; font-size:10px; padding:1px 6px; border-radius:999px; margin-left:6px;}
+  .btn{
+    height:30px; padding:0 12px; border-radius:8px; border:1px solid var(--line);
+    background:var(--panel2); color:var(--ink); font-size:12px; cursor:pointer; white-space:nowrap;
+  }
+  .btn:hover{border-color:var(--accent);}
+  .btn.active{background:var(--accent); color:#0a0c1c; border-color:var(--accent);}
+  .main{flex:1; display:flex; min-height:0;}
+  .stage{flex:1; position:relative; min-width:0;}
+  #canvas{position:absolute; inset:0; width:100%; height:100%; display:block; cursor:grab; touch-action:none; -webkit-user-select:none; user-select:none;}
+  #canvas.dragging{cursor:grabbing;}
+  .legend{
+    position:absolute; left:12px; bottom:12px; display:flex; flex-wrap:wrap; gap:6px;
+    max-width:64%; z-index:6;
+  }
+  .lg{
+    display:flex; align-items:center; gap:6px; background:rgba(15,18,38,.92);
+    border:1px solid var(--line); border-radius:999px; padding:4px 10px; font-size:11.5px;
+    cursor:pointer; user-select:none; transition:opacity .15s;
+  }
+  .lg .dot{width:11px; height:11px; border-radius:50%; flex:0 0 auto;}
+  .lg.off{opacity:.35;}
+  .lg.off .dot{background:#555 !important;}
+  .hint{
+    position:absolute; right:12px; top:12px; z-index:6; font-size:11px; color:var(--muted);
+    background:rgba(15,18,38,.85); border:1px solid var(--line); border-radius:8px; padding:6px 10px;
+  }
+  .emptyfac{
+    position:absolute; inset:0; display:none; align-items:center; justify-content:center;
+    flex-direction:column; gap:10px; color:var(--muted); font-size:14px; z-index:4;
+  }
+  .emptyfac b{color:var(--accent); font-size:18px;}
+  .panel{
+    width:400px; flex:0 0 400px; background:var(--panel); border-left:1px solid var(--line);
+    overflow-y:auto; padding:18px; display:flex; flex-direction:column; gap:14px;
+  }
+  .panel .empty{color:var(--muted); font-size:13px; line-height:1.8;}
+  .panel .empty b{color:var(--accent);}
+  .node-title{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+  .node-title h2{font-size:18px; font-weight:700; line-height:1.25;}
+  .badge{font-size:11px; padding:2px 9px; border-radius:999px; color:#0a0c1c; font-weight:700; white-space:nowrap;}
+  .badge.fac{background:var(--amber);}
+  .sec-title{
+    font-size:11.5px; font-weight:700; letter-spacing:1px; color:var(--muted);
+    text-transform:uppercase; margin-bottom:6px; border-bottom:1px solid var(--line); padding-bottom:4px;
+  }
+  .def{font-size:13.5px; line-height:1.8; color:var(--ink);}
+  .papers{display:flex; flex-direction:column; gap:6px;}
+  .paper-row{
+    font-size:12.5px; padding:8px 10px; background:var(--panel2); border:1px solid var(--line);
+    border-radius:8px; cursor:pointer; transition:border-color .12s;
+  }
+  .paper-row:hover{border-color:var(--accent);}
+  .paper-row .nm{color:var(--ink); font-weight:600;}
+  .paper-row .ly{color:var(--muted); font-size:10.5px; margin-left:8px;}
+  .paper-row .doi{color:#7dd3fc; font-size:10.5px; display:block; margin-top:2px; word-break:break-all;}
+  .paper-row .concl{color:var(--muted); font-size:11.5px; display:block; margin-top:4px; line-height:1.6;}
+  .rel{display:flex; flex-direction:column; gap:4px;}
+  .rel-row{
+    display:flex; align-items:baseline; gap:6px; font-size:12.5px; padding:5px 8px;
+    background:var(--panel2); border:1px solid var(--line); border-radius:8px; cursor:pointer;
+  }
+  .rel-row:hover{border-color:var(--accent);}
+  .rel-row .dir{color:var(--muted); font-size:11px; flex:0 0 auto;}
+  .rel-row .lab{color:var(--amber); flex:0 0 auto; font-weight:600;}
+  .rel-row .name{color:var(--ink);}
+  .rel-row .name:hover{color:var(--accent); text-decoration:underline;}
+  .rel-row .cat{color:var(--muted); font-size:10.5px; margin-left:auto;}
+  .stat{font-size:11px; color:var(--muted);}
+  footer{
+    flex:0 0 auto; background:#0b0d20; border-top:1px solid var(--line); padding:6px 14px;
+    font-size:10.5px; color:#6a7093; display:flex; gap:16px; flex-wrap:wrap;
+  }
+  footer b{color:#8a90b3; font-weight:600;}
+  /* ==== 手机窄屏适配（触屏版） ==== */
+  @media (max-width: 900px){
+    header{min-height:48px; gap:6px; padding:6px 8px;}
+    header h1{font-size:13.5px;}
+    header .sub{display:none;}
+    .facs{order:9; width:100%; justify-content:stretch;}
+    .facs .fb{flex:1;}
+    .search{flex:1; min-width:120px;}
+    .search input{width:100%;}
+    .btn{padding:0 7px; font-size:11px;}
+    .main{flex-direction:column;}
+    .stage{flex:1; min-height:52vh;}
+    .panel{width:100%; flex:0 0 44vh; max-height:44vh; border-left:none; border-top:1px solid var(--line);}
+    .hint{display:none;}
+    .legend{max-width:100%; gap:4px;}
+    .lg{padding:3px 8px; font-size:10.5px;}
+    .dd{position:fixed; left:8px; right:8px; top:96px; width:auto;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>大科学装置 · <span>知识谱系云图</span></h1>
+  <div class="sub">光子源 · 中子源 · 离子源 —— 装置原理 → 束线技术 → 材料科学应用</div>
+  <div class="spacer"></div>
+  <div class="facs" id="facs">
+    <button class="fb active" data-fac="photon">光子源</button>
+    <button class="fb" data-fac="neutron">中子源</button>
+    <button class="fb" data-fac="ion">离子源</button>
+    <button class="fb" data-fac="all">全部</button>
+  </div>
+  <div class="facs" id="views" title="视图：知识主图隐藏装置名称对象；装置聚簇单独团聚装置及其所用原理">
+    <button class="fb active" data-view="science">知识主图</button>
+    <button class="fb" data-view="device">装置聚簇</button>
+    <button class="fb" data-view="all">全部</button>
+  </div>
+  <div class="search">
+    <span class="ic">🔍</span>
+    <input id="q" type="text" placeholder="搜索概念 / 装置 / 论文名…" autocomplete="off">
+    <div class="dd" id="dd"></div>
+  </div>
+  <button class="btn" id="btnLabels" title="显示/隐藏所有边上的关系文字">边标签</button>
+  <button class="btn" id="btnText" title="显示/隐藏节点名称">节点名</button>
+  <button class="btn" id="btnReLayout">重新布局</button>
+  <button class="btn" id="btnFit">复位视图</button>
+</header>
+
+<div class="main">
+  <div class="stage" id="stage">
+    <canvas id="canvas"></canvas>
+    <div class="emptyfac" id="emptyfac"><b>该装置板块暂无对象</b>待后续论文入库扩充</div>
+    <div class="legend" id="legend"></div>
+    <div class="hint">滚轮缩放 · 拖拽空白平移 · 拖拽节点移动 · 点击选中 · ESC 取消<br>节点越大 = 关系越多（知识核心）</div>
+  </div>
+  <aside class="panel" id="panel">
+    <div class="empty">
+      <b>使用说明</b><br>
+      · 点击图中任一<b>节点</b>，右侧显示其【定义】与【通俗】解释、<b>来源论文</b>与全部关系连线。<br>
+      · 点击关系行中的节点名可跳转到该邻居节点。<br>
+      · 顶部搜索框支持<b>反向检索</b>：输入论文名（如 Seddon、Wehrenberg）可查看该论文结论及引用它的所有对象。<br>
+      · <b>知识主图</b>：隐藏装置名称对象（LCLS/SACLA 等），只留原理、技术、应用与 BCC 联用对象；<b>装置聚簇</b>：装置单独团聚并与其所用原理连线。<br>
+      · 顶部可切换<b>光子源 / 中子源 / 离子源</b>板块（后续扩充）；红色节点为与 <b>BCC 孪晶本体联用</b>的跨域对象；<b>节点越大 = 关系越多（知识核心）</b>。<br>
+      · 图例可点击隐藏/显示某一类节点；数据在 <b>graph-data.js</b> 中编辑。
+    </div>
+  </aside>
+</div>
+
+<footer>
+  <span>数据文件：<b>graph-data.js</b>（论文引用表 · 装置/概念/技术/应用对象与关系）</span>
+  <span>本体依据：<b>knowledge/photon-source-ontology.md</b> · 联用 <b>knowledge/bcc-ontology.md</b></span>
+  <span>对象 <b id="nCount">0</b> · 关系 <b id="eCount">0</b> · 当前 <b id="fCount">0</b></span>
+</footer>
+
+<script>
+/* =====================================================================
+ *  大科学装置知识谱系云图 —— 数据文件（可独立编辑，保存后刷新 大科学装置-index.html）
+ *  =====================================================================
+ *  - papers:      文献表（不渲染成节点）。name=作者年份, year, layer=所属层级,
+ *                 doi, conclusion=结论摘要。key 被 nodes[].papers 引用。
+ *  - categories:  节点类别（key 与 node.cat 对应；cross=与 BCC 孪晶本体联用的跨域对象）
+ *  - nodes:       知识对象节点。字段: id(唯一), name(显示名), cat(类别key),
+ *                 fac(装置板块: photon/neutron/ion/common), def(【定义】+【通俗】),
+ *                 papers(来源文献key数组)
+ *  - edges:       关系。字段: s(起点id), t(终点id), r(关系文字)，含义 = s —(r)→ t
+ *  - 依据本体: knowledge/photon-source-ontology.md（联用 knowledge/bcc-ontology.md）
+ *  ===================================================================== */
+window.LSF_GRAPH = {
+  meta: {
+    title: '大科学装置知识谱系云图',
+    stage: '三板块齐备 · 光子源（同步辐射+XFEL）· 中子源（散裂+衍射）· 离子源（辐照）',
+    version: '1.0',
+    basedOn: 'knowledge/photon-source-ontology.md',
+    linkedOntology: 'knowledge/bcc-ontology.md（cross 类节点为联用对象）'
+  },
+
+  papers: {
+    'p-hk07': {name:'Huang & Kim 2007', year:2007, layer:'光子源·FEL理论',
+      doi:'10.1103/PhysRevSTAB.10.034801',
+      conclusion:'系统综述高增益 FEL 理论：从散粒噪声启动、指数增长到饱和的全过程（SASE 模式）；给出共振波长 λ1=λu(1+K²/2)/2γ²、1D 功率增益长度 LG0=λu/(4π√3ρ) 等标度关系；分析横向相干（光学导引）、纵向相干（混沌光多尖峰）、谐波含量、尾场与机器误差的影响；总结 seeding、自种子、束流调节、发射度交换等增强方案。'},
+    'p-mt10': {name:'McNeil & Thompson 2010', year:2010, layer:'光子源·FEL原理综述',
+      doi:'10.1038/nphoton.2010.239',
+      conclusion:'X 射线 FEL 综述：强度比其他实验室源高 10⁸–10¹⁰ 倍；给出普适标度 FEL 方程、Pierce 参数 ρ（X 射线区 10⁻⁴–10⁻³）、合作长度、归一化发射度判据 εn<γλ1/4π；对比 LCLS/FLASH/European XFEL/SACLA/FERMI/SwissFEL 等设施；展望 seeding、自种子、XFELO、阿秒脉冲与等离子体加速。'},
+    'p-pel17': {name:'Pellegrini 2017', year:2017, layer:'光子源·XFEL历史与科学',
+      doi:'10.1088/1402-4896/aa5281',
+      conclusion:'XFEL 使 X 射线源亮度提高 10⁹–10¹⁰ 倍，首次实现埃-飞秒时空尺度的结构动力学研究；重点回顾世界首台硬 X 射线 XFEL（LCLS，2009 年 1.5 Å 出光）的物理原理、自种子实现与物理/化学/生物实验结果；介绍 SACLA、FLASH、European XFEL、SwissFEL、Fermi 等装置及应用（相干衍射成像、X 射线全息、XPCS、串行晶体学）。'},
+    'p-sed17': {name:'Seddon 2017 (综述)', year:2017, layer:'光子源·装置与科学大综述',
+      doi:'10.1088/1361-6633/aa7cca',
+      conclusion:'短波长 FEL 源与科学全景综述：系统讲 FEL 物理（微聚束、SASE、seeding、锥度、自种子、XFELO）与辐射特性；列表对比现役/在建装置（FLASH、LCLS/LCLS-II、SACLA、FERMI、European XFEL、SwissFEL、PAL-XFEL、SXFEL、CLARA）及储存环/ERL/HHG 光源；覆盖束线光学（反射镜、单色器）与光子诊断；应用含 SFX/单颗粒成像、AMO、光化学、表面与材料、冲击物理、固体密度等离子体、EUV 光刻。'},
+    'p-bil05': {name:'Bilderback 2005', year:2005, layer:'光子源·同步辐射光源综述',
+      doi:'10.1088/0953-4075/38/9/022',
+      conclusion:'第三代同步辐射光源综述：回顾同步辐射起源与爱因斯坦相对论的基础作用（辐射前向开角~1/γ）；系统梳理弯铁/扭摆器/波荡器光源的亮度-发射度物理与三代光源历史；介绍在建与设计中的下一代装置（PETRA III、超高高能 X 射线源、能量回收直线加速器 ERL、XFEL）及其对材料科学/物理/化学/生物等领域的支撑。'},
+    'p-uhl20': {name:'Uhlmann 2020', year:2020, layer:'光子源·原位增材实验装置',
+      doi:'10.1063/1.5143766',
+      conclusion:'研制用于激光粉末床熔融(LPBF)过程的原位高能同步辐射 XRD 系统：在 PETRA III 的 P07(HEMS) 束线以 750×70 μm² 束斑、10 Hz 采样率、透射模式记录 Inconel 625 多层构件（100 层×50 μm）打印过程中的完整衍射环，可实时分析晶格间距变化，追踪应力产生与织构演化动力学。'},
+    'p-wd00': {name:'Wanner & Dunand 2000', year:2000, layer:'光子源·块体晶格应变',
+      doi:'10.1007/BF02830344',
+      conclusion:'用 65 keV 单色同步辐射 X 射线透射技术研究 Cu-Mo 复合材料（1.5 mm 厚）加载下的内部载荷传递：由衍射环畸变计算两相体平均弹性应变、由环颗粒性关联 Bragg 峰宽化；揭示弹塑性过渡与三阶段载荷分配（低应力弹性、基体屈服后载荷向 Mo 转移、高应力下增强相损伤）；与中子衍射相比精度相近而测量时间缩短一个数量级以上。'},
+    'p-weh17': {name:'Wehrenberg 2017', year:2017, layer:'光子源·冲击孪晶(BCC Ta)',
+      doi:'10.1038/nature24061',
+      conclusion:'在 LCLS 的 MEC 端站用 50 fs/9.6 keV 飞秒原位 XRD 测量激光冲击压缩 BCC 钽（10–300 GPa）：孪晶与晶格转动发生在几十皮秒量级；孪晶起始于约 25 GPa、40–80 GPa 孪晶主导（75 GPa 时孪晶分数 30–40%），但 >150 GPa 时孪晶分数降至 <10%、转为位错滑移主导；全程未见 >0.1% 六方 ω 相；实验与 Ravelo 势 MD 模拟可比。'},
+    'p-ber20': {name:'Bernier 2020 (HEDM综述)', year:2020, layer:'光子源·高能衍射显微术',
+      doi:'10.1146/annurev-matsci-070616-124125',
+      conclusion:'高能 X 射线衍射显微术(HEDM，APS 1-ID 束线发展的 3DXRD 实现)综述：远场模式(ff-HEDM)给晶粒平均取向/质心/弹性畸变、近场模式(nf-HEDM)给 1 μm 空间、<0.1° 取向分辨的晶胞取向图；E≥50 keV 穿透毫米级金属/陶瓷；应用覆盖晶粒长大、再结晶、织构、取向梯度、变形孪晶、退火孪晶、塑性变形与增材制造；并比较 DCT/DAXM/BCDI/暗场 X 射线显微术等方法。'},
+    'p-lil20': {name:'Lilensten 2020', year:2020, layer:'光子源·TRIP/TWIP钛合金',
+      doi:'10.1016/j.mtla.2020.100700',
+      conclusion:'用 Calphad+Bo-Md 电子设计法设计双相 α/β 合金 Ti-7Cr-1.5Sn（β 基体含 20% α 析出）：屈服 760 MPa（比单相 β 参考合金高约 200 MPa）；SOLEIL DiffAbs 束线原位同步辐射 XRD 与 EBSD 证实 TRIP 与 TWIP 机制并存——{332}<113> 与 {112}<111> 两种孪晶共同贡献塑性，α 析出相被孪晶剪切而不阻碍孪晶传播。'},
+    'p-cho23': {name:'Chong 2023', year:2023, layer:'光子源·β钛氧间隙与孪晶',
+      doi:'10.1016/j.actamat.2023.119165',
+      conclusion:'Ti-12Mo 亚稳 β 钛合金中晶粒细化反常降低抗拉强度——SPring-8 BL13XU 原位同步辐射 XRD 揭示应变诱发 α″ 马氏体比母相 β 更软（晶格应变/应力低一个数量级）；Ti-12Mo-0.3O 中氧双重作用：抑制 α″ 相变避免软化、偏聚 {332}<113> 孪晶界（APT 证实，峰值 1.79 at.%）限制孪晶增厚并促进新孪晶形核，实现强度-塑性协同。'},
+    'p-als11': {name:'Als-Nielsen & McMorrow 2011 (教材)', year:2011, layer:'光子源·X射线物理基础',
+      doi:'10.1002/9781119998365',
+      conclusion:'《Elements of Modern X-ray Physics》第 2 版（Wiley）：已读附录 B/C/D/E/F。经典电偶极辐射给出汤姆孙散射（σT=0.665 barn，r₀=2.818×10⁻¹⁵ m）、散射 π 相移→折射率<1、偏振因子；电磁场量子化给出光子数与产生/湮灭算符，量子汤姆孙截面与经典等价；高斯统计→德拜-沃勒因子；傅里叶变换/倒空间/卷积定理/帕特森函数；附录 F 给出费米赝势与中子散射长度 b（对应 r₀）及中子折射率。'},
+    'p-pok19': {name:'Pokharel 2019', year:2019, layer:'中子源·中子衍射应用',
+      doi:'10.1016/j.ijplas.2019.06.005',
+      conclusion:'在 LANSCE 的 SMARTS 谱仪上对 LENS 增材制造 304L 不锈钢（奥氏体+约 2.5% 铁素体）做原位热处理中子衍射（10 K/min 升温至 1375 K 保温 1 h）：奥氏体 CTE 约为铁素体 1.5 倍，冷却时收缩失配使铁素体晶粒受压（晶格应变偏离理论值达约 2800 μ-strain），铁素体通过塑性变形协调相应力（CPFE 模拟 von Mises 应力最高约 450 MPa）；铁素体在加热中逐渐消失（<1350 K 完全转变）；as-built 位错密度约 1.3±0.1×10¹⁴ m⁻²。'},
+    'p-mas06': {name:'Mason 2006 (SNS)', year:2006, layer:'中子源·散裂源装置',
+      doi:'10.1016/j.physb.2006.05.281',
+      conclusion:'橡树岭散裂中子源（SNS）2006 年建成时用加速器产生世界最强脉冲中子束：1 GeV 直线加速器、汞靶、24 个谱仪位（首批 16–17 台：液体/磁性反射仪、背散射谱仪、ARCS/CNCS/SEQUOIA/HYSPEC 斩波谱仪、VULCAN 工程衍射仪、POWGEN3 粉末衍射、SNAP 高压衍射、TOPAZ 单晶、NOMAD 无序材料、MaNDi 等）；初始功率目标 1.4 MW，升级路线 2+ MW/3 MW；与 HFIR 反应堆源互补，服务材料科学、凝聚态物理、化学、生物等。'},
+    'p-che23': {name:'Chen 2023', year:2023, layer:'中子源·实时中子衍射应用',
+      doi:'10.1016/j.matdes.2023.112135',
+      conclusion:'在 SNS 的 VULCAN 工程材料衍射仪上实时（原位）中子衍射研究大尺寸 Inconel 718 高温合金 718°C 退火过程的残余应力弛豫：发现多阶段弛豫动力学（第 I 阶段快速弛豫伴位错密度增加、第 II 阶段减慢、第 III 阶段原子重排/位错部分湮灭），与竞争性应力弛豫机制（位错滑移/回复/扩散重排）相关；14–20 h 后残余偏应力大幅释放；偏应力分量对 d0（无应力晶格间距）变化不敏感，即使成分非均匀样品也能准确测定。'},
+    'p-har19': {name:'Harrison 2019 (综述)', year:2019, layer:'离子源·离子模拟中子综述',
+      doi:'10.1016/j.vacuum.2018.11.050',
+      conclusion:'综述用离子束模拟钨中子辐照损伤的现状与问题：离子束可复现位错环类型/尺寸、空洞超点阵、热物性退化等部分特征，但复现中子损伤机制复杂性与嬗变效应仍在初期；系统讨论位错环形核（1/2<111> 滑移型 vs <100> 不动型）、离子/中子剂量率差异（10⁻³ vs 10⁻⁷ dpa/s）与 Mansur 温度位移、嬗变产物（Re/Ta/Os 与 H/He，DEMO 1.6 GW 谱约 6/2 appm/年），指出需结合掺杂嬗变产物的合金与同时轻离子注入才能更完整复现中子损伤。'},
+    'p-wan24': {name:'Wang 2024', year:2024, layer:'离子源·W辐照缺陷回复',
+      doi:'10.1016/j.actamat.2024.119942',
+      conclusion:'纯钨室温经 6 MeV Cu³⁺ 辐照至 0.05 dpa（非饱和）与 0.6 dpa（饱和）后 473–1873 K 等时退火（20000 s），TEM+DB-PAS 给出缺陷热演化：初始缺陷浓度不改变演化温度依赖性但决定回复程度；473 K 即确认纳米空洞形成；1873 K 使非饱和钨缺陷完全消除、饱和钨残留少量被空洞钉扎的位错（完全回复预计约 2000 K）；将重离子辐照钨回复阶段重定义为四阶段 I(20K–RT)/II(RT–653K)/III(653–1123K)/IV(1123–2000K)。'},
+    'p-wan23': {name:'Wang 2023', year:2023, layer:'离子源·W位移损伤动态平衡',
+      doi:'10.1016/j.actamat.2022.118578',
+      conclusion:'室温重离子辐照钨中位移损伤缺陷动态平衡及其对氘滞留的影响：随剂量增大，间隙型缺陷由位错环（≤0.1 dpa）→位错线（0.1–0.15 dpa）→位错网络（≥0.15 dpa），≥0.2 dpa 达网络与环共存稳态；以缺陷密度/尺寸恒定、硬度饱和（2.66±0.10 GPa）、氘滞留饱和（>0.2 dpa，约 1.77 at.%）三重证据确认动态平衡——缺陷产生与湮灭相互制约使总缺陷含量趋近常数。'},
+    'p-cun21': {name:'Cunningham 2021', year:2021, layer:'离子源·纳米晶W晶界掺杂',
+      doi:'10.1016/j.actamat.2021.116629',
+      conclusion:'20 at.% Ti 掺杂纳米晶钨（W-20Ti）重离子辐照（原位 1.7 MeV Au³⁺ 至 20 dpa + 离位 1.5 MeV Au⁺ 至约 400 dpa）：相对纯纳米晶 W 呈现更小缺陷环（4–8 vs 约 16 nm²）与延迟饱和剂量；级联热峰模型分析表明 Ti 稳定纳米结构抵抗辐照诱导晶粒长大（400 dpa 稳定于约 30 nm，纯 W 预测 >60 nm）；Ti 偏聚晶界降低晶界能/迁移率并增强缺陷吸收。'},
+    'p-ela19': {name:'El-Atwani 2019', year:2019, layer:'离子源·纳米晶W抗位错环',
+      doi:'10.1016/j.actamat.2018.11.024',
+      conclusion:'原位 TEM 离子辐照（1 MeV Kr⁺²）研究等轴 35 nm 晶粒钨在室温与 1073 K 相对 85 nm/超细晶/粗晶钨的抗位错环性能：NCW-35 nm 位错环密度显著更低；KMC 模拟表明小晶粒更高的晶界间隙原子储存与晶内缺陷复合至少部分解释其高耐受性；实验揭示晶界对位错环的快速高效吸收是辐照期间向晶界输运缺陷的主导因素。'},
+    'p-was15': {name:'Was 2015 (综述)', year:2015, layer:'离子源·离子模拟反应堆辐照',
+      doi:'10.1557/jmr.2015.73',
+      conclusion:'系统论述离子辐照模拟反应堆中子辐照的贡献与挑战：优势（高损伤速率约 10⁴ 倍、低成本、低活化、可控、可原位）与固有难点（PKA 谱差异、无嬗变产物、注入间隙原子、浅穿透与表面效应）；用质子辐照（位错环/RIS/硬化/位错通道/蠕变/IASCC）与自离子辐照（HT9 钢）逐项 benchmark 中子辐照，多数特征可定性定量复现；剂量率差异用 Mansur 温度平移补偿。'},
+    'p-zin14': {name:'Zinkle & Snead 2014 (综述)', year:2014, layer:'离子源·聚变抗辐照设计',
+      doi:'10.1146/annurev-matsci-070813-113627',
+      conclusion:'面向聚变与第四代裂变（损伤近 200 dpa、大量嬗变 H/He）的结构材料需求，系统归纳五类辐照降解现象（低温硬化脆化、RIS 与相不稳定、辐照蠕变、空洞肿胀、高温 He 脆）及其温度区间；提出抗辐照三策略（本征耐辐照基体相、点缺陷不动材料、高汇强度微结构）；认定 RAFM 钢（含 ODS）与 SiC/SiC 为最稳健结构材料选项。'},
+    'p-zin13': {name:'Zinkle & Was 2013 (综述)', year:2013, layer:'离子源·核能材料挑战',
+      doi:'10.1016/j.actamat.2012.11.004',
+      conclusion:'综述核能系统材料挑战：给出 dpa 国际标准定义；系统阐述五大块体辐照降解效应（低温硬化脆化、辐照诱导偏聚与相不稳定、辐照蠕变、空洞肿胀、高温氦脆）与腐蚀/SCC 问题；覆盖水冷堆延寿、压力容器中子脆化、第四代裂变与聚变 H/He 高浓度问题；指出高注量辐照设施匮乏是发展第四代裂变与聚变结构材料的关键瓶颈。'},
+    'p-kna16': {name:'Knaster 2016 (综述)', year:2016, layer:'离子源·聚变材料综述',
+      doi:'10.1038/NPHYS3735',
+      conclusion:'系统回顾聚变材料研究：初级辐照损伤物理（PKA、级联、NRT-dpa 标准）、聚变/裂变差异（14.1 MeV 中子、He/dpa 约 12 appm vs 快裂变 0.3）、多尺度计算模拟方法学、包层/偏滤器等堆内部件、低活化材料与 IFMIF 聚变中子源（两台 125 mA/40 MeV 氘核直线加速器打锂靶，>20 dpaNRT/年）；指出缺乏聚变中子源是路线图关键待办。'},
+    'p-he24': {name:'He 2024', year:2024, layer:'离子源·IFE脉冲辐照模拟',
+      doi:'10.1016/j.jnucmat.2024.155325',
+      conclusion:'用随机团簇动力学（SCD）模拟激光惯性聚变能（以 LIFE 为原型）脉冲辐照下 Fe-9Cr 缺陷团簇演化：对比 1/2/5/10 Hz 脉冲与等平均剂量率连续辐照，几乎所有情形下脉冲辐照抑制 He-空位团簇形成、SIA 团簇密度比连续辐照低至一个数量级；脉冲辐照通常比连续辐照危害更小。'},
+    'p-zin09': {name:'Zinkle & Busby 2009 (综述)', year:2009, layer:'离子源·裂变/聚变结构材料',
+      doi:'10.1016/S1369-7021(09)70294-9',
+      conclusion:'综述裂变与聚变结构材料：裂变（包壳、堆芯、压力容器）与聚变（第一壁、包层、偏滤器）部件及候选材料体系（铁素体钢、V 合金、SiC/SiC）；阐述 dpa 定义与五大辐照威胁及其温度区间；提出高密度纳米颗粒同时提供强度与点缺陷复合中心的设计策略（纳米团簇强化 14YWT 等先进钢）。'},
+  },
+
+  categories: [
+    {key:'facility',    name:'装置/设施',   color:'#38bdf8'},
+    {key:'component',   name:'部件/硬件',   color:'#22d3ee'},
+    {key:'concept',     name:'核心概念',    color:'#34d399'},
+    {key:'theory',      name:'理论/模型',   color:'#f97316'},
+    {key:'law',         name:'定律/原理',   color:'#e2e8f0'},
+    {key:'phenomenon',  name:'现象/效应',   color:'#facc15'},
+    {key:'process',     name:'过程',        color:'#fb7185'},
+    {key:'property',    name:'性质/参数',   color:'#2dd4bf'},
+    {key:'tech',        name:'技术/方法',   color:'#a78bfa'},
+    {key:'application', name:'应用方向',    color:'#f472b6'},
+    {key:'material',    name:'材料对象',    color:'#94a3b8'},
+    {key:'cross',       name:'BCC孪晶联用', color:'#f43f5e'},
+  ],
+
+  nodes: [
+    /* ================= 一、X 射线物理基础（教材附录，fac: common/photon） ================= */
+    {id:'electric-dipole-radiation', name:'电偶极辐射', cat:'theory', fac:'common', papers:['p-als11'],
+     def:'【定义】入射平面波电场驱动电荷分布振荡，电荷作为辐射源；远场极限下辐射电场由电偶极矩的二阶时间导数 p̈(t′) 决定（t′=t−r/c，推迟时间）。【通俗】电荷被入射电磁波驱动振荡而向外发光，辐射强度由电荷加速度决定，并随观察角按 cosψ 变化。'},
+    {id:'thomson-scattering', name:'汤姆孙散射', cat:'concept', fac:'common', papers:['p-als11','p-sed17'],
+     def:'【定义】自由电子对电磁波的经典散射：微分散射截面 dσ/dΩ=r₀²cos²ψ，总截面 σT=(8π/3)r₀²=0.665 barn，与光子能量无关。【通俗】单个自由电子散射 X 射线的强度可精确算出且不随能量改变；XFEL 上亦用其对等离子体测温度密度。'},
+    {id:'thomson-scattering-length', name:'汤姆孙散射长度 r₀', cat:'property', fac:'photon', papers:['p-als11'],
+     def:'【定义】r₀=e²/(4πε₀mc²)=2.818×10⁻¹⁵ m（经典电子半径），辐射场与入射场之比的前置因子，是 X 射线-物质散射强度的基本长度量。【通俗】表征单个电子散射电磁波强度的基本常数，约 2.8 飞米。'},
+    {id:'polarization-factor', name:'偏振因子', cat:'property', fac:'photon', papers:['p-als11'],
+     def:'【定义】经典描述为 cosψ（偶极矩方向与观察方向夹角）；量子描述为 P=(ε̂u·ε̂v)²（入射与散射偏振单位矢量点积平方），给出 X 射线散射的偏振依赖。【通俗】散射强度随入射与出射偏振方向的夹角变化。'},
+    {id:'x-ray-refractive-index', name:'X射线折射率 n<1', cat:'phenomenon', fac:'photon', papers:['p-als11'],
+     def:'【定义】散射场与入射场之间的负号意味着 π 相移，由此折射率必然小于 1（X 射线区多数原子电子可视作自由电子）。【通俗】X 射线被电子散射后相位反转，使材料对 X 射线的折射率略小于 1。'},
+    {id:'quantized-em-field', name:'量子化电磁场与光子', cat:'theory', fac:'common', papers:['p-als11'],
+     def:'【定义】对电磁场量子化即对矢势量子化：把系数提升为满足谐振子对易关系的产生/湮灭算符；辐射场哈密顿量 H=Σℏω_k a†a，本征值给出各模式的光子数（占有数）。【通俗】电磁场由一系列独立谐振子模式组成，每个模式里的激发一份一份的，就是光子。'},
+    {id:'form-factor', name:'形状因子 f(Q)', cat:'concept', fac:'photon', papers:['p-als11'],
+     def:'【定义】量子汤姆孙散射截面 dσ/dΩ=(e²/4πε₀mc²)²(ε̂u·ε̂v)²|f(Q)|² 中的因子 f(Q)=⟨p|e^{iQ·r}|p⟩，是散射中心电荷分布对散射幅度的调制，与经典结果等价。【通俗】原子/分子内部电荷分布"抹平"散射强度的程度，Q 越大越弱。'},
+    {id:'debye-waller-factor', name:'德拜-沃勒因子', cat:'phenomenon', fac:'photon', papers:['p-als11'],
+     def:'【定义】原子位置围绕平均值的统计涨落（如晶格热振动）导致布拉格峰强度随波矢 Q 增大而减弱的因子。【通俗】原子热振动使衍射峰变弱，Q 越大减弱越明显。'},
+    {id:'fourier-reciprocal-space', name:'傅里叶变换与倒空间', cat:'concept', fac:'common', papers:['p-als11'],
+     def:'【定义】散射振幅是物体密度分布的傅里叶变换 F(q)=∫f(x)e^{iqx}dx；q 空间即倒空间，实空间越延展倒空间越局域（高斯宽度积 Δx·Δq=8ln2 为常数）。【通俗】散射图案是样品内部结构"按空间频率分解"的结果；样品越细，散射越散开。'},
+    {id:'convolution-theorem', name:'卷积定理', cat:'law', fac:'common', papers:['p-als11'],
+     def:'【定义】两函数卷积的傅里叶变换等于各自傅里叶变换的乘积 H(q)=F(q)G(q)；晶体密度可视作格点函数与格点内容函数的卷积。【通俗】"晶格 × 每个格点上的内容"整体散射 = 两者散射相乘。'},
+    {id:'patterson-function', name:'帕特森函数', cat:'concept', fac:'photon', papers:['p-als11'],
+     def:'【定义】由测量强度 I(Q) 直接傅里叶变换得到的量 P(r)=∫f*(r′)f(r+r′)dr′，即散射振幅模平方的变换（自相关），不含相位信息。【通俗】由强度（而非相位）直接算出的"自相关图"，给出原子间距离约束但不含相位。'},
+    {id:'fermi-pseudopotential', name:'费米赝势', cat:'theory', fac:'common', papers:['p-als11'],
+     def:'【定义】中子-核散射势程极短（~10⁻¹⁵ m ≪ 热中子波长 ~10⁻¹⁰ m），用狄拉克 δ 函数近似：V_F(r)=(4πℏ²/2m_n)·b·δ(r)，b 为中子散射长度。【通俗】把中子与核的极短程作用压成一个 δ 函数势，参数即散射长度 b。'},
+    {id:'neutron-scattering-length', name:'中子散射长度 b', cat:'property', fac:'common', papers:['p-als11'],
+     def:'【定义】一阶微扰论中散射势傅里叶变换 V(Q)=4π(ℏ²/2m_n)b 的系数 b，表征单核散射中子强度；在折射率推导中替代 X 射线散射长度 r₀ 的位置。【通俗】单个原子核散射中子的"强度系数"，对应 X 射线里的 r₀。'},
+    {id:'neutron-refractive-index', name:'中子折射率', cat:'theory', fac:'common', papers:['p-als11'],
+     def:'【定义】由费米赝势与能量守恒得 k²(1−n²)=4πbρ（ρ 为核数密度），与 X 射线公式同构，仅以 b 替代 r₀。【通俗】中子进入材料后的折射率由核密度与散射长度直接算出，公式结构与 X 射线一致。'},
+
+    /* ================= 二、FEL 核心物理（原理三篇 + Seddon 综述合并） ================= */
+    {id:'free-electron-laser', name:'自由电子激光 FEL', cat:'concept', fac:'photon', papers:['p-hk07','p-mt10','p-pel17','p-sed17'],
+     def:'【定义】相对论电子束穿过周期性磁场（波荡器）并通过受激辐射放大电磁波的可调谐、高功率、相干短波光源（Madey 发明，1970s 斯坦福验证）；X 射线波段高增益模式可在单次通过中从散粒噪声放大到 GW/fs 级脉冲。【通俗】用高能电子束在交变磁场中摆动发光、光又反过来调制电子集体放大的激光装置。'},
+    {id:'undulator', name:'波荡器', cat:'component', fac:'photon', papers:['p-hk07','p-mt10','p-sed17'],
+     def:'【定义】由周期性交替磁极构成的插入件，迫使相对论电子横向摆动并自发辐射；周期 λu 典型几厘米，是 FEL 的核心部件。【通俗】让电子边走边左右摆动的周期性磁铁阵列，摆动即发光。'},
+    {id:'undulator-parameter', name:'波荡器参数 K', cat:'property', fac:'photon', papers:['p-hk07','p-mt10','p-sed17'],
+     def:'【定义】无量纲波荡器强度参数 K=eB₀/(mcku)=0.934·B₀[T]·λu[cm]（平面波荡器），典型值 1–3；决定辐射波长、摆幅与谐波含量。【通俗】表示波荡器磁场强弱的数，越大电子摆得越狠、辐射越硬。'},
+    {id:'resonance-condition', name:'共振波长条件（波荡器波长公式）', cat:'law', fac:'photon', papers:['p-hk07','p-mt10','p-pel17','p-sed17','p-bil05'],
+     def:'【定义】波荡器轴上辐射波长 λ=(λ0/2nγ²)(1+K²/2+γ²θ²)（低场轴上即空间周期 λ0 除以 2γ²），由电子能量（γ² 依赖）、波荡器周期与 K=eB̂λ0/2πmc 共同决定；FEL 共振波长 λ1=λu(1+K²/2)/(2γ²) 为其基波形式，波长可通过电子能量连续调谐。实例：20 mm 周期波荡器+6 GeV(γ≈12000) 电子束 → 0.058 nm。【通俗】电子多快、磁铁周期多长、磁场多强三者共同决定发出什么颜色的光。'},
+    {id:'spontaneous-undulator-radiation', name:'波荡器自发辐射', cat:'phenomenon', fac:'photon', papers:['p-mt10'],
+     def:'【定义】电子在波荡器中各自独立（相位不相关）发出的辐射，总功率近似等于 N 个独立散射电子功率之和（非相干）。【通俗】电子各自乱发光的"普通"波荡器辐射，光强只随电子数线性增长。'},
+    {id:'high-gain-fel', name:'高增益机制', cat:'process', fac:'photon', papers:['p-hk07','p-mt10'],
+     def:'【定义】足够亮的电子束与足够长的波荡器使束流-辐射集体相互作用导致辐射强度沿波荡器指数增长的机制，无需光学腔，可放大种子信号或散粒噪声。【通俗】光强沿波荡器指数级翻倍增长，是 X 射线 FEL 的放大原理。'},
+    {id:'micro-bunching', name:'微聚束', cat:'phenomenon', fac:'photon', papers:['p-hk07','p-sed17'],
+     def:'【定义】电子与辐射共振交换能量、经波荡器色散后在辐射波长尺度上形成的周期密度调制；微聚束电子相干辐射是 FEL 放大的微观载体。【通俗】电子被光场捋成相隔一个光波长的小团，从而步调一致地发光。'},
+    {id:'pendulum-equations', name:'摆方程', cat:'theory', fac:'photon', papers:['p-hk07'],
+     def:'【定义】描述电子在波荡器场与辐射场合成的有质动力势中纵向相空间运动的方程组，是 FEL 一维理论的出发点。【通俗】把电子在光场中的运动简化成钟摆式势阱运动，能量调制由此算出。'},
+    {id:'universally-scaled-equations', name:'普适标度FEL方程', cat:'theory', fac:'photon', papers:['p-mt10','p-pel17'],
+     def:'【定义】1D 平面波极限下由洛伦兹方程与麦克斯韦方程得到的自洽耦合方程，经变量变换后不含自由参数、只依赖 Pierce 参数 ρ。【通俗】把 FEL 行为归一化成只用 ρ 一个参数描述的标准方程组。'},
+    {id:'pierce-parameter', name:'Pierce 参数 ρ', cat:'concept', fac:'photon', papers:['p-hk07','p-mt10','p-pel17','p-sed17'],
+     def:'【定义】高增益 FEL 的基本无量纲标度参数，衡量电子-辐射耦合强度与饱和效率，集中描述 FEL 性能与输出；短波长区典型 10⁻⁴≲ρ≲10⁻³，饱和时电子相对能量损失≈ρ。【通俗】FEL"放大能力强弱"的综合评分，越大效率越高、增益越短。'},
+    {id:'gain-length', name:'增益长度', cat:'property', fac:'photon', papers:['p-hk07','p-sed17'],
+     def:'【定义】辐射功率增长 e 倍所需的波荡器距离；1D 单能束功率增益长度 LG0=λu/(4π√3ρ)（电场口径为 λu/(2π√3ρ)）。【通俗】光强每翻约 2.7 倍需要的磁铁长度，越短放大越快。'},
+    {id:'saturation', name:'饱和', cat:'process', fac:'photon', papers:['p-hk07','p-sed17'],
+     def:'【定义】指数增长因束流失去足够能量破坏共振条件而终止、辐射强度与微聚束达最大值的阶段；饱和功率 P≈ρ·P_beam。【通俗】光强涨到顶不再指数增长的状态。'},
+    {id:'sase', name:'SASE 自放大自发辐射', cat:'process', fac:'photon', papers:['p-hk07','p-mt10','p-pel17','p-sed17'],
+     def:'【定义】X 射线 FEL 默认运行模式：电子束亚波长尺度随机密度涨落（散粒噪声）触发并指数放大辐射，单次通过长波荡器达到饱和，无需镜子或种子，产生 GW/fs 级准相干脉冲。【通俗】靠电子束自身噪声"白手起家"单趟放大成强光的模式。'},
+    {id:'shot-noise', name:'散粒噪声', cat:'phenomenon', fac:'photon', papers:['p-sed17'],
+     def:'【定义】电子束团中亚波长尺度的随机微观密度涨落，构成 SASE 启动所需的初始聚束 b₀，总足以触发指数增长。【通俗】电子束里天生的随机疏密，是 SASE 的起跑点。'},
+    {id:'cooperation-length', name:'合作长度 lc', cat:'concept', fac:'photon', papers:['p-mt10','p-pel17','p-sed17'],
+     def:'【定义】lc=λ1/(4πρ)，即一个增益长度内的辐射-电子滑移量，决定 SASE 时间相干区（尖峰）尺度：尖峰长≈πlc、相干长≈3lc。【通俗】光在一个增益长度里超前电子的距离，决定每个相干小片段多长。'},
+    {id:'slippage', name:'滑移', cat:'phenomenon', fac:'photon', papers:['p-sed17'],
+     def:'【定义】辐射以略快于电子的速度向前传播、相对电子不断超前的现象，由电子速度与波荡器轨迹共同决定，定义 FEL 波长与脉冲时间特性。【通俗】光比电子跑得快一点，不断滑到电子束前方。'},
+    {id:'ponderomotive-wave', name:'有质动力波', cat:'concept', fac:'photon', papers:['p-sed17'],
+     def:'【定义】辐射场与波荡器场拍频形成、相速度小于光速的波；电子在其势阱中与场持续交换能量，是微聚束的物理基础。【通俗】光场与磁铁场合拍形成的慢速波，电子在其中被持续加减速。'},
+    {id:'transverse-coherence', name:'横向（空间）相干性', cat:'property', fac:'photon', papers:['p-hk07','p-sed17'],
+     def:'【定义】辐射横截面接近单横模（近衍射极限）的程度；因光学导引，SASE FEL 在饱和前可达近全横向相干。【通俗】光束横截面上各点相位一致、可聚焦成极小光斑的性质。'},
+    {id:'temporal-coherence', name:'时间（纵向）相干性', cat:'property', fac:'photon', papers:['p-hk07','p-mt10','p-sed17'],
+     def:'【定义】辐射脉冲沿纵向相位相关的程度；SASE 因噪声启动使纵向相干远低于傅里叶极限，表现为多个相位不相关尖峰（混沌光），相干时间由合作长度决定（硬 X 射线区几百阿秒）。【通俗】光脉冲在时间方向上相位整齐的程度，SASE 因噪声而不够整齐。'},
+    {id:'optical-guiding', name:'光学导引', cat:'phenomenon', fac:'photon', papers:['p-hk07','p-pel17'],
+     def:'【定义】高增益指数增长阶段辐射横向分布基本不变、被导引传播的现象（又称 gain guiding），使衍射损耗被放大补偿，SASE 饱和前可近全横向相干。【通俗】光在电子束内被"管道化"而不发散地向前传。'},
+    {id:'nonlinear-harmonic-generation', name:'非线性谐波产生', cat:'phenomenon', fac:'photon', papers:['p-hk07','p-mt10'],
+     def:'【定义】平面波荡器中电子纵向速度的周期振荡使轴上出现奇次谐波辐射（n=1,3,5…）；接近饱和时基频强聚束产生丰富的高次谐波。【通俗】除主波长外还"附带"整数倍频率的短波长光。'},
+    {id:'quantum-recoil-diffusion', name:'量子反冲与量子扩散', cat:'phenomenon', fac:'photon', papers:['p-mt10'],
+     def:'【定义】单光子发射反冲及自发辐射累积对电子能量的扰动，随 γ⁴ 增长，限制 FEL 最小可行波长至 ~1 Å 量级（如 LCLS）。【通俗】电子每发光就被"踢"一下、能量越走越散，限制了波长能做多短。'},
+    {id:'normalized-emittance', name:'归一化发射度 εn', cat:'property', fac:'photon', papers:['p-hk07','p-mt10'],
+     def:'【定义】εn=βγε（β=v/c，超相对论 β≈1 时 εn≈γε），衡量电子束横向相空间体积；保证良好横向相干的判据为 εn<γλ1/4π。【通俗】电子束横向散开程度的度量（含相对论归一），越小光束越平行。'},
+    {id:'emittance', name:'发射度 ε', cat:'property', fac:'photon', papers:['p-sed17'],
+     def:'【定义】电子束品质量，严格定义为束团横向相空间（位置-动量）的 RMS 面积，近似口径为束横向尺寸与发散角的乘积；越小束品质越好，是 FEL 增益与亮度的基础参数。【通俗】描述电子束"多聚焦、多平行"的数，越小越好用。'},
+    {id:'electron-beam-brightness', name:'电子束亮度', cat:'property', fac:'photon', papers:['p-hk07','p-mt10'],
+     def:'【定义】束流横向相空间密度量，正比于峰值电流、反比于归一化发射度平方（B⊥=Ie/(4π²εn²)），决定 FEL 增益性能。【通俗】电子束"又强又细又齐"的程度，越亮 FEL 越好放大。'},
+    {id:'spectral-brightness', name:'光谱亮度（辉度）', cat:'property', fac:'photon', papers:['p-sed17','p-bil05'],
+     def:'【定义】每单位时间、单位光子能量带宽、单位立体角、单位源尺寸发射的光子数（与通量成正比、与水平/垂直发射度成反比），是光源首要品质因数；FEL 峰值亮度比储存环光源高约 9 个数量级（约 10⁹ 倍，文献口径 10⁸–10¹⁰ 倍；B≈8×10⁹·P/(ρλ)）。【通俗】单位面积、单位张角、单位带宽里的光子密度，衡量光源有多亮。'},
+    {id:'energy-spread', name:'能散', cat:'property', fac:'photon', papers:['p-hk07','p-pel17'],
+     def:'【定义】电子束内能量的相对分散（rms），导致共振波长散布而退化微聚束；要求 σE/E<0.5ρ（即小于 ρ 量级）。【通俗】电子束里电子能量不齐的程度，太散就聚不了束。'},
+    {id:'wakefield', name:'尾场', cat:'phenomenon', fac:'photon', papers:['p-hk07'],
+     def:'【定义】高流强电子束团在小间隙真空室中激发的短程电磁场，改变沿波荡器与沿束团的能量分布而干扰增益（LCLS 主因是真空管电阻壁）。【通俗】强电子束在细管道里"带起"的电磁扰动，会打乱放大过程。'},
+    {id:'undulator-taper', name:'波荡器锥度', cat:'tech', fac:'photon', papers:['p-hk07','p-sed17'],
+     def:'【定义】沿波荡器逐渐减小磁场强度（K 参数）以补偿电子能量损失、维持共振条件的技术，可使饱和功率提高 3–4 倍至约 100 GW。【通俗】随电子变慢逐步调弱磁场，让共振条件一直满足、电子持续交能给光。'},
+    {id:'seeding', name:'种子注入', cat:'tech', fac:'photon', papers:['p-hk07','p-sed17'],
+     def:'【定义】用时间相干的种子光启动并主导 FEL 放大、使输出继承种子相干性的技术路线，用于克服 SASE 固有噪声、改善时间相干性与稳定性。【通俗】用一个"整齐"的弱光作引子，让放大后的光也整齐。'},
+    {id:'self-seeding', name:'自种子', cat:'tech', fac:'photon', papers:['p-hk07','p-pel17','p-sed17'],
+     def:'【定义】用第一段波荡器产生的 SASE 光经（金刚石）单色器滤窄后注入第二段波荡器放大的方案；LCLS 硬 X 射线自种子使带宽降低 40 倍（至 ~5×10⁻⁵）。【通俗】把自己发的光过滤后"回喂"给自己再放大，光谱大幅变窄。'},
+    {id:'hghg', name:'HGHG 高增益谐波产生', cat:'tech', fac:'photon', papers:['p-hk07','p-mt10','p-sed17'],
+     def:'【定义】以亚谐波相干种子给束流加能量调制、经色散段转为密度调制、再在调至谐波的辐射段产生短波长相干辐射的种子方案（FERMI 采用）。【通俗】用较长波长的种子光经"调制-聚束-谐波"三级跳得到短波长相干光。'},
+    {id:'eehg', name:'EEHG 回声增强谐波产生', cat:'tech', fac:'photon', papers:['p-hk07','p-mt10','p-sed17'],
+     def:'【定义】用两段激光能量调制加两段强色散 chicane 在高次谐波处实现相干电子聚束的种子技术；聚束随谐波数 k 以 k^(−1/3) 衰减，优于 HGHG 的指数衰减。【通俗】两级调制"揉"电子相位空间，把种子推到更短波长。'},
+    {id:'optical-klystron', name:'光学速调管', cat:'tech', fac:'photon', papers:['p-hk07'],
+     def:'【定义】在波荡器段间插入色散段（磁 chicane）以加速微聚束形成的 FEL 增强方法。【通俗】在波荡器之间加"错开器"，让聚束更快更彻底。'},
+    {id:'beam-conditioning', name:'束流调节', cat:'tech', fac:'photon', papers:['p-hk07'],
+     def:'【定义】使每个电子的能量偏离正比于其 betatron 振幅平方，以补偿有限发射度角散布对增益退化的技术。【通俗】按电子摆动幅度"量身定制"能量，抵消发射度的坏影响。'},
+    {id:'emittance-exchange', name:'发射度交换', cat:'tech', fac:'photon', papers:['p-hk07'],
+     def:'【定义】用平束射频枪加横向-纵向发射度交换束线，把较小的纵向发射度换到横向以提升横向亮度的技术。【通俗】把束流纵向的好品质"挪"到横向来用。'},
+    {id:'fel-oscillator', name:'振荡器型FEL', cat:'concept', fac:'photon', papers:['p-sed17'],
+     def:'【定义】引入光学腔、使辐射与多批电子束团反复作用实现放大的低增益 FEL 构型，是早期 FEL 的实现方式。【通俗】用两面镜子让光来回走、逐次增强的激光式构型。'},
+    {id:'xfelo', name:'XFELO 振荡器', cat:'concept', fac:'photon', papers:['p-mt10','p-sed17'],
+     def:'【定义】用金刚石晶体环形腔实现 X 射线波段稳定、变换极限输出的 FEL 振荡器方案；带宽可达 10⁻⁵–10⁻⁴，但单脉冲能量小（~mJ 以下）。【通俗】用金刚石镜子做 X 光环形腔、输出极窄带宽稳定光的未来方案。'},
+    {id:'linear-accelerator', name:'直线加速器', cat:'component', fac:'photon', papers:['p-sed17','p-pel17'],
+     def:'【定义】沿直线把电子加速到多 GeV 能量的加速器，是硬 X 射线 FEL 的驱动源；铜腔典型加速梯度数十 MV/m，结构可长达数百米至 1 km（LCLS）。【通俗】沿一条直线把电子推到接近光速的机器，FEL 的"发动机"。'},
+    {id:'rf-acceleration', name:'射频加速', cat:'tech', fac:'photon', papers:['p-sed17'],
+     def:'【定义】用射频电磁场在谐振腔内对电子束团加速（并可随频率递增进行压缩）的技术，如 SACLA 末段 5.7 GHz 常导腔。【通俗】用高频电磁波在金属腔里持续推电子加速。'},
+    {id:'superconducting-accelerator', name:'超导加速器', cat:'tech', fac:'photon', papers:['p-sed17'],
+     def:'【定义】用超导射频腔加速的技术：热负载低，可提供高重复率（>5000 束/秒）电子束（FLASH、European XFEL、LCLS-II 采用）。【通俗】用零电阻超导腔加速，发热少、可以几乎不停地出束。'},
+    {id:'photocathode-rf-gun', name:'光阴极射频枪', cat:'component', fac:'photon', papers:['p-hk07','p-pel17','p-sed17'],
+     def:'【定义】用短激光脉冲打在光阴极上经光电发射产生短电子束团、并在高峰值射频场下加速的高亮度注入器，是 XFEL 关键部件（~1 μm 归一化发射度 @1 nC）。【通俗】用激光从金属阴极打出电子并立刻高速加速的高品质电子源。'},
+    {id:'thermionic-electron-gun', name:'热阴极电子枪', cat:'component', fac:'photon', papers:['p-sed17'],
+     def:'【定义】加热阴极热发射产生电子束团的电子枪；SACLA 用 CeB₆ 单晶阴极，产生较长束团后再压缩。【通俗】靠加热阴极"烤"出电子流，再压缩成短束。'},
+    {id:'bunch-compression-chicane', name:'束团压缩磁chicane', cat:'component', fac:'photon', papers:['p-sed17'],
+     def:'【定义】利用色散使不同能量电子的路径长度不同、把能量调制转化为密度调制（压缩束团）的磁铁阵列。【通俗】一排磁铁让快慢电子走不同路长，把电子束"挤短"。'},
+    {id:'energy-recovery-linac', name:'能量回收直线加速器 ERL', cat:'facility', fac:'photon', papers:['p-sed17','p-bil05'],
+     def:'【定义】用类似储存环的磁格引导电子、但电子只绕环一圈（至多几圈）即减速回收能量并丢弃的加速器构型；束团三维尺寸小，可获得更亮、更相干、更短脉冲的 X 射线。Cornell ERL 设计 5.3 GeV/200 mA，高相干模式横向发射度 8 pm rad、横束尺寸可小至 2 µm RMS、相干通量 >3000 倍 APS；X 射线波段尚未建成。【通俗】电子只走一圈就回收能量，避免储存环里束团"变大"。'},
+    {id:'storage-ring-source', name:'储存环光源', cat:'facility', fac:'photon', papers:['p-sed17','p-bil05'],
+     def:'【定义】把多 GeV 电子储存在固定能量闭合轨道上尽可能多圈循环、持续穿过弯铁/插入件产生同步辐射的高亮度 X 射线源（全球 >50 台在运）；束寿命典型 5–100 h、束长约 10 ps，单脉冲能量比 FEL 低 5–6 个数量级。三代光源中的高能环：ESRF 6 GeV/844 m、APS 7 GeV/1060 m、SPring-8 8 GeV/1436 m。【通俗】电子在环里一圈圈转、每圈过磁铁发光的传统同步辐射装置。'},
+
+    /* ================= 三、FEL 装置实体（facility） ================= */
+    {id:'lcls', name:'LCLS', cat:'facility', fac:'photon', papers:['p-hk07','p-mt10','p-pel17','p-sed17','p-weh17'],
+     def:'【定义】美国 SLAC 的世界首台埃波长硬 X 射线 FEL（SASE 模式，正常导铜加速器 120 Hz，2009 年 1.5 Å 首次出光、10 月对用户开放）；设计 13.6 GeV、波荡器周期 30 mm、波长 0.12–2.2 nm；已实现自种子与双色运行；MEC 端站用于极端条件物质研究。【通俗】世界第一台能出硬 X 射线激光的装置，材料冲击、生物、化学等领域的旗舰光源。'},
+    {id:'lcls-ii', name:'LCLS-II', cat:'facility', fac:'photon', papers:['p-sed17'],
+     def:'【定义】LCLS 的升级装置：新增超导射频直线加速器以 CW 模式 1 MHz 运行（≤4 GeV），与原铜直线加速器（≤15 GeV）并行。【通俗】LCLS 的高重复率升级版，每秒最多百万发脉冲。'},
+    {id:'flash', name:'FLASH', cat:'facility', fac:'photon', papers:['p-hk07','p-mt10','p-pel17','p-sed17'],
+     def:'【定义】德国 DESY 的软 X 射线 SASE FEL（前身 Tesla Test Facility，2000 年 109 nm 首次出光，2005 年对用户开放）；超导加速器，波长 4–52 nm，5000 脉冲/秒（10 Hz 宏脉冲含 500 个 1 MHz 微脉冲）。【通俗】世界上第一台软 X 射线 FEL 用户装置。'},
+    {id:'sacla', name:'SACLA', cat:'facility', fac:'photon', papers:['p-mt10','p-pel17','p-sed17'],
+     def:'【定义】日本 RIKEN/SPring-8 的紧凑型硬 X 射线 SASE FEL：真空内波荡器（周期 18 mm）、热阴极 CeB₆ 枪、5.7 GHz 加速，全长仅 750 m（LCLS 约 3 km），最短波长 0.6 Å（0.08–0.25 nm 运行）。【通俗】日本的紧凑型硬 X 光 FEL，比 LCLS 短得多。'},
+    {id:'european-xfel', name:'European XFEL', cat:'facility', fac:'photon', papers:['p-mt10','p-pel17','p-sed17'],
+     def:'【定义】德国 DESY（汉堡）的超导直线加速器硬/软 X 射线 FEL：重复率 27×10³ 脉冲/秒，能量 8–17.5 GeV，波长至 0.04 nm（HXR）/0.4–5 nm（SXR），2017 年出光。【通俗】欧洲的超高重复率硬 X 光 FEL。'},
+    {id:'fermi', name:'FERMI@Elettra', cat:'facility', fac:'photon', papers:['p-mt10','p-pel17','p-sed17'],
+     def:'【定义】意大利 Elettra 的世界第一台种子型短波长 FEL（HGHG 原理），软 X 射线 20–80 nm、25–200 fs 时间相干脉冲，rms 带宽 5×10⁻⁴、逐发波长稳定性 7×10⁻⁵，可全控偏振。【通俗】意大利的"种子式"软 X 光 FEL，光质比 SASE 稳定。'},
+    {id:'swissfel', name:'SwissFEL', cat:'facility', fac:'photon', papers:['p-mt10','p-pel17','p-sed17'],
+     def:'【定义】瑞士 PSI 的 X 射线 FEL，含 Aramis（硬 X，0.1–0.7 nm）与 Athos（软 X，0.7–7 nm）两条线，2017 年出光。【通俗】瑞士的新 X 光 FEL，硬软两条线。'},
+    {id:'pal-xfel', name:'PAL-XFEL', cat:'facility', fac:'photon', papers:['p-sed17'],
+     def:'【定义】韩国浦项加速器实验室的 X 射线 FEL，含软 X（SX，1.0–4.5 nm）与硬 X（HX，0.06–0.6 nm）两条线，2016 年出光。【通俗】韩国的 X 光 FEL。'},
+    {id:'sxfel', name:'SXFEL 上海软X射线FEL', cat:'facility', fac:'photon', papers:['p-sed17'],
+     def:'【定义】上海应用物理研究所（SINAP）的软 X 射线 FEL（2–9 nm），先作硬 X 光 FEL 研发原型，拟采用 HGHG 与 EEHG 外种子方案。【通俗】上海的软 X 光 FEL 原型装置。'},
+    {id:'clara', name:'CLARA', cat:'facility', fac:'photon', papers:['p-sed17'],
+     def:'【定义】英国 Daresbury 实验室在建的 FEL 测试装置，用于实验验证无光学元件的变换极限方案等。【通俗】英国的 FEL 技术试验台。'},
+    {id:'als', name:'ALS', cat:'facility', fac:'photon', papers:['p-sed17'],
+     def:'【定义】美国伯克利劳伦斯实验室的同步辐射光源（储存环，非 FEL）；串行晶体学方法与首个样品输运系统在此测试。【通俗】伯克利的同步辐射装置。'},
+
+    /* ================= 四、束线光学与探测器组件 ================= */
+    {id:'xfel-mirror', name:'XFEL 反射镜', cat:'component', fac:'photon', papers:['p-sed17'],
+     def:'【定义】以石英/硅为基底、弹性发射加工(EEM)抛光至亚纳米面形、镀低 Z 材料（B₄C/碳）的掠入射反射镜，反射率>97%，用于 XFEL 束线传输。【通俗】高精度"反光镜"，把强 X 光无损送进实验站。'},
+    {id:'monochromator', name:'单色器', cat:'component', fac:'photon', papers:['p-sed17'],
+     def:'【定义】用晶体（如通道切割单色器 CCM）或光栅从 FEL 宽谱中选出窄带光子的束线元件；会改变脉宽（受时间-带宽积限制）。【通俗】"滤光器"，把 X 光光谱压窄。'},
+    {id:'cspad', name:'CSPAD 探测器', cat:'component', fac:'photon', papers:['p-sed17','p-weh17'],
+     def:'【定义】Cornell-SLAC 二维混合像素阵列 X 射线探测器，用于飞秒 X 射线散射/衍射测量（Wehrenberg 2017 冲击实验中以多台阵列记录衍射花样）。【通俗】快速二维 X 光"相机"，记录散射图案。'},
+    {id:'xtcav', name:'XTCAV 横向偏转腔', cat:'component', fac:'photon', papers:['p-sed17'],
+     def:'【定义】装在 LCLS 下游的 X 波段横向射频偏转腔，测束团纵向能量分布、反推光子脉宽与到达时间抖动。【通俗】"电子束纵向切片机"，量脉宽和时间抖动。'},
+
+    /* ================= 五、实验技术与应用方向 ================= */
+    {id:'pump-probe', name:'泵浦-探测', cat:'tech', fac:'photon', papers:['p-sed17'],
+     def:'【定义】用一束光（常为光学激光）激发样品、用延时的另一束（X 射线）探测其瞬时响应的时间分辨方法，是 XFEL 实验的基本范式。【通俗】"打一下"再"拍一下"，看样品瞬间怎么变。'},
+    {id:'sfx', name:'串行飞秒晶体学 SFX', cat:'tech', fac:'photon', papers:['p-sed17','p-pel17'],
+     def:'【定义】让蛋白纳米晶随机取向、单列连续穿过脉冲 X 束，逐颗"衍射后摧毁"，合并数千衍射图重构结构的方法；利用"衍射前摧毁"机制实现室温近无辐射损伤。【通俗】纳米晶排成队一颗颗被 X 光拍完即毁，拼出结构。'},
+    {id:'single-particle-imaging', name:'单颗粒成像', cat:'tech', fac:'photon', papers:['p-sed17'],
+     def:'【定义】每发 X 射线只放一颗颗粒（如单个病毒），由连续散射确定取向、合并成三维衍射体积再解相位重建电荷密度图的方法。【通俗】一次只拍一个病毒，靠海量单发拼出三维像。'},
+    {id:'cdi', name:'相干衍射成像 CDI', cat:'tech', fac:'photon', papers:['p-sed17','p-pel17'],
+     def:'【定义】无透镜（相干衍射）成像：由样品散射花样经相位恢复反演重建实空间密度分布。【通俗】不用镜头，靠解算散射斑纹还原图像。'},
+    {id:'xpcs', name:'X射线光子相关谱 XPCS', cat:'tech', fac:'photon', papers:['p-pel17'],
+     def:'【定义】利用 XFEL 横向相干性、通过散射强度涨落的时间关联研究凝聚态体系慢动力学的技术（Pellegrini 列为依赖横向相干性的应用之一）。【通俗】看散射斑纹随时间怎么"抖动"，推样品内部动力学的快慢。'},
+    {id:'x-ray-spectroscopy', name:'XAS/XES 光谱', cat:'tech', fac:'photon', papers:['p-sed17'],
+     def:'【定义】X 射线吸收谱（XAS，探测空态）与发射谱（XES，探测占据态）的联用，获取元素与化学态信息。【通俗】测样品吸了多少光和放出什么光，识别元素与价态。'},
+    {id:'rixs', name:'RIXS 共振非弹性X射线散射', cat:'tech', fac:'photon', papers:['p-sed17'],
+     def:'【定义】高能量分辨（>1 eV）的共振 X 射线发射谱，探测激发态电子结构；已用于探测键解离等化学反应。【通俗】共振条件下高精度测"放出的光"能量，看激发态。'},
+    {id:'time-resolved-xrd', name:'时间分辨X射线衍射', cat:'tech', fac:'photon', papers:['p-sed17','p-weh17'],
+     def:'【定义】用超短 X 射线脉冲探测非平衡激发后晶格/结构随时间的演化（晶格动力学、冲击、相变）；飞秒脉冲可在结构变化发生前完成探测。【通俗】用极短 X 光"连续抓拍"晶格如何动。'},
+    {id:'x-ray-scattering', name:'X射线散射', cat:'tech', fac:'photon', papers:['p-sed17'],
+     def:'【定义】用 X 射线弹性/非弹性散射（SAXS/WAXS/XDS/Thomson 散射）探测样品结构因子与集体激发、诊断等离子体参数的实验手段。【通俗】看 X 光被样品弹开的角度分布，推结构与物态。'},
+    {id:'structural-biology', name:'结构生物学', cat:'application', fac:'photon', papers:['p-sed17','p-pel17'],
+     def:'【定义】用 FEL 的"衍射前摧毁"机制在室温下测蛋白/病毒结构与时域动力学的应用领域（SFX、串行飞秒光谱、单颗粒成像）。【通俗】用超短强 X 光在样品被毁前拍下生物大分子结构。'},
+    {id:'amophysics', name:'原子分子团簇物理', cat:'application', fac:'photon', papers:['p-sed17'],
+     def:'【定义】用强 X 射线脉冲研究原子多光子电离、分子库仑爆炸、团簇纳米等离子体的应用领域。【通俗】用强 X 光看原子/分子/团簇被"打"后如何反应。'},
+    {id:'photochemistry', name:'光化学', cat:'application', fac:'photon', papers:['p-sed17'],
+     def:'【定义】用 XFEL 光谱与散射研究光激发分子电子与几何结构变化的飞秒化学领域。【通俗】看分子被光激发后如何改键、重排。'},
+    {id:'surfaces-materials', name:'表面与材料科学', cat:'application', fac:'photon', papers:['p-sed17'],
+     def:'【定义】用时间分辨光电子谱、共振散射研究固体表面/材料非平衡电子结构动态的应用领域。【通俗】看材料表面和体内的电子怎么被光搅动。'},
+    {id:'condensed-matter', name:'强关联凝聚态物理', cat:'application', fac:'photon', papers:['p-sed17'],
+     def:'【定义】研究强关联体系（超导、电荷序、轨道序、绝缘体-金属转变）非平衡动力学与相变的 FEL 应用领域，常联用 THz 泵浦。【通俗】看强关联材料里电荷、自旋、晶格如何耦合演化。'},
+    {id:'ultrafast-magnetism', name:'超快磁学', cat:'application', fac:'photon', papers:['p-sed17'],
+     def:'【定义】用相干成像与散射实现飞秒时间+纳米空间分辨的磁性动力学研究领域。【通俗】看磁畴在飞秒激光下如何退磁、翻转。'},
+    {id:'shock-physics', name:'冲击物理', cat:'application', fac:'photon', papers:['p-sed17','p-weh17'],
+     def:'【定义】用光学激光驱动冲击波、X 射线衍射研究晶格级响应（Hugoniot 弹性极限、极限强度、相变、孪晶、位错、熔化再结晶）的领域。【通俗】用激光轰材料、用 X 光看它被压时晶格怎么变。'},
+    {id:'solid-density-plasma', name:'固体密度等离子体', cat:'application', fac:'photon', papers:['p-sed17'],
+     def:'【定义】研究温度>1 eV、密度达固体量级（10²²–10²³ cm⁻³）的高能量密度等离子体的领域，用 X 射线散射/Thomson 散射诊断。【通俗】又热又密、和固体一样稠的等离子体。'},
+    {id:'high-energy-density', name:'高能量密度物理', cat:'application', fac:'photon', papers:['p-sed17','p-weh17'],
+     def:'【定义】以 X 射线等容加热等方式创造并诊断温/热稠密等离子体等极端物态的应用领域（LCLS MEC 端站亦属此范畴）。【通俗】造出并研究极端高温高压稠密的物态。'},
+    {id:'industrial-materials', name:'工业材料科学', cat:'application', fac:'photon', papers:['p-sed17'],
+     def:'【定义】用 FEL 泵浦-探测冲击+衍射成像研究工程材料（钢/镍/钛合金）相变、孪晶、位错运动的工业应用方向。【通俗】用 X 光 FEL 看工程金属在载荷下怎么变形、相变。'},
+    {id:'euv-lithography', name:'EUV光刻', cat:'application', fac:'photon', papers:['p-sed17'],
+     def:'【定义】用 13.5 nm 短波长光刻制造集成电路；FEL 因高平均功率与波长可扩展性成为候选光源的工业应用方向。【通俗】用极短波长光在芯片上刻更细的线路。'},
+
+    /* ================= 六、同步辐射与储存环光源（Bilderback 2005 + Uhlmann 2020） ================= */
+    {id:'synchrotron-radiation', name:'同步辐射', cat:'phenomenon', fac:'photon', papers:['p-bil05','p-sed17'],
+     def:'【定义】带电粒子被加速时辐射电磁波并损失能量；加速场源于磁场时称同步辐射。能量损失率正比于 B²γ²；特性：宽能可调、高亮度、极端准直、偏振与时间结构。【通俗】电子在磁场中拐弯/振荡时向外发出电磁辐射，电子能量越高、磁场越强辐射越强。'},
+    {id:'synchrotron-accelerator', name:'同步加速器', cat:'facility', fac:'photon', papers:['p-bil05'],
+     def:'【定义】一系列磁铁把电子（或质子）轨迹约束成闭合环、环上 RF 腔提供加速电场的加速器；电子超相对论时绕环一周时间几乎与能量无关，可用固定频率 RF 逐圈加速。【通俗】用一圈磁铁让粒子走闭合路径、用射频腔反复加速的机器。'},
+    {id:'bending-magnet', name:'弯转磁铁', cat:'component', fac:'photon', papers:['p-bil05'],
+     def:'【定义】具有均匀磁场、使带电粒子轨迹偏转的磁铁，是磁格的基本元件之一，也是第一/二代光源的主要辐射源。【通俗】用均匀磁场把电子轨迹拐弯的磁铁。'},
+    {id:'quadrupole-magnet', name:'四极磁铁', cat:'component', fac:'photon', papers:['p-bil05'],
+     def:'【定义】利用场梯度按粒子初始位置对其偏转、从而聚焦电子束的磁聚焦元件（类比可见光透镜）。【通俗】像透镜一样把电子束聚焦的磁铁。'},
+    {id:'insertion-device', name:'插入件', cat:'component', fac:'photon', papers:['p-bil05'],
+     def:'【定义】插入储存环直线节的磁装置（波荡器、扭摆器等），是第三代光源产生高亮辐射的元件；束线上可配多个可独立调谐的插入件。【通俗】放在储存环直线段、专门产生高强度辐射的磁铁装置。'},
+    {id:'wiggler', name:'扭摆器', cat:'component', fac:'photon', papers:['p-bil05'],
+     def:'【定义】波荡器的特殊类型：长周期（200–500 mm）与高场（1–2 T）；用作阻尼扭摆器降低发射度，或作高能 X 射线源（如 K=7.7 硬 X 射线扭摆器）。【通俗】周期更长、磁场更强的"大波荡器"，用于降发射度或产生更高能光子。'},
+    {id:'relativistic-factor', name:'相对论因子 γ', cat:'concept', fac:'photon', papers:['p-bil05'],
+     def:'【定义】电子能量 E=γmc² 中的爱因斯坦相对论因子；1 GeV 电子（静质量 0.5 MeV）γ=2000。【通俗】粒子能量与静能量之比，衡量它多接近光速。'},
+    {id:'relativistic-radiation-effects', name:'相对论辐射效应', cat:'concept', fac:'photon', papers:['p-bil05'],
+     def:'【定义】超相对论粒子（β≈1，γ≫1）使同步辐射集中在沿电子速度方向、张角 θ≃1/γ 的小锥内（角度收缩），且电子被加速到高能时质量增加；两者均由狭义相对论解释，共同支撑同步辐射光源与 FEL 的物理。【通俗】电子越接近光速，辐射越向前收窄成小锥，且电子"越重"。'},
+    {id:'first-generation-source', name:'第一代光源', cat:'concept', fac:'photon', papers:['p-bil05'],
+     def:'【定义】最早的光源：源自为理解物质与粒子相互作用基本规律而建的高能粒子加速器，同步辐射仅是其运行的"副产品"。【通俗】早期借用高能物理加速器顺带产生的同步辐射。'},
+    {id:'second-generation-source', name:'第二代光源', cat:'concept', fac:'photon', papers:['p-bil05'],
+     def:'【定义】以扭摆器与弯转磁铁为辐射源的专用储存环光源（如 DORIS III），提供高通量但束斑较大、难以聚焦到微米以下。【通俗】专为供光而建的储存环，但束斑偏大。'},
+    {id:'third-generation-source', name:'第三代光源', cat:'concept', fac:'photon', papers:['p-bil05','p-uhl20'],
+     def:'【定义】1990 年代初开始运行、以低发射度与波荡器为特征的光源，提供 100 nm–1 µm 尺寸的极亮束；其发展使时间关键制造过程（如 LPBF）的原位衍射实验成为可能。【通俗】用波荡器+低发射度储存环，束又亮又小，支撑原位实验。'},
+    {id:'beamline', name:'束线', cat:'component', fac:'photon', papers:['p-bil05','p-sed17'],
+     def:'【定义】从储存环把光子引向实验站的系统，配备反射镜（把束重新聚焦到样品）与单色器（选出一窄谱段）。【通俗】把光从储存环引到样品的一套镜子+选能装置。'},
+    {id:'esrf', name:'ESRF', cat:'facility', fac:'photon', papers:['p-bil05'],
+     def:'【定义】位于法国 Grenoble 的第三代高能同步辐射光源：6 GeV、200 mA，同步辐射功率达 1 MW（需 2 MW 电能供 RF）；周长 844 m、发射度 3.8 nm rad、32 直线节。【通俗】欧洲的高能同步辐射大装置。'},
+    {id:'aps', name:'APS 先进光子源', cat:'facility', fac:'photon', papers:['p-bil05','p-ber20'],
+     def:'【定义】美国阿贡国家实验室的第三代高能同步辐射光源：7 GeV、周长 1060 m、100 mA、发射度 3 nm rad、40 直线节；其 1-ID 束线（超导波荡器，42–120 keV、80 keV 时 6×10¹² 光子/s）是 HEDM 技术的开发地。【通俗】美国的高能同步辐射大装置，HEDM 诞生于此。'},
+    {id:'spring-8', name:'SPring-8', cat:'facility', fac:'photon', papers:['p-bil05','p-cho23'],
+     def:'【定义】位于日本兵库县的第三代高能同步辐射光源：8 GeV、周长 1436 m、100 mA、发射度 3 nm rad、48 直线节；率先大规模发展小磁隙真空内波荡器技术；其 BL13XU 束线用于原位同步辐射 XRD（Chong 2023）。【通俗】日本的高能同步辐射大装置。'},
+    {id:'petra-iii', name:'PETRA III', cat:'facility', fac:'photon', papers:['p-bil05','p-uhl20'],
+     def:'【定义】德国 DESY 将 2304 m 周长 PETRA 储存环（原电子-正电子对撞机）改造而成的第三代硬 X 射线光源（2007 年起运行）：6 GeV、初始 100 mA、目标发射度 1 nm rad（1% 耦合）、20 台阻尼扭摆器、约 13 条束线；P07(HEMS) 高能材料科学束线供 LPBF 原位 XRD 实验（Uhlmann 2020）。【通俗】德国 DESY 把对撞机储存环改造成硬 X 射线光源。'},
+    {id:'uhxs', name:'UHXS 终极高能X射线源', cat:'facility', fac:'photon', papers:['p-bil05'],
+     def:'【定义】拟议的大容量终极储存环光源：7 GeV、2200 m 周长、500 mA、水平发射度约 0.2 nm rad（垂直 <0.01 nm rad）、40–50 条波荡器束线、覆盖 0.5–500 keV（侧重 10–20 keV）；尚未建成。【通俗】设想中性能最强的储存环光源。'},
+    {id:'lpbf', name:'激光粉末床熔融 LPBF', cat:'tech', fac:'photon', papers:['p-uhl20'],
+     def:'【定义】粉末床增材制造技术（又称 Laser Beam Melting / Selective Laser Melting）：激光对粉末床高度局域的能量输入造成高温度梯度，结合反复重熔/凝固循环可产生高机械应力；可制造复杂几何并保持良好力学性能。【通俗】用激光逐层熔化金属粉末、层层堆积成型零件的增材制造方法。'},
+    {id:'high-energy-synchrotron-radiation', name:'高能同步辐射', cat:'concept', fac:'photon', papers:['p-uhl20'],
+     def:'【定义】第三代光源的高能同步辐射 X 射线（如 98.02 keV）对增材制造等过程的熔化/凝固提供体相（bulk）敏感的洞察，使时间关键制造过程的原位衍射实验成为可能。【通俗】能量高、穿透力强的同步辐射 X 射线，能看材料内部。'},
+    {id:'in-situ-sxrd', name:'原位同步辐射XRD', cat:'tech', fac:'photon', papers:['p-uhl20','p-lil20','p-cho23'],
+     def:'【定义】在外场（激光打印/拉伸加载）进行中同步采集的同步辐射 X 射线衍射实验，分析晶格间距/相分数随时间演化，揭示应力产生、相变与织构演化动力学；本文例：LPBF 过程原位（10 Hz 采样）、拉伸原位（SOLEIL DiffAbs、SPring-8 BL13XU）。【通俗】一边打印或拉伸、一边拍 X 光衍射，实时看晶格与相怎么变。'},
+    {id:'transmission-mode', name:'透射模式', cat:'tech', fac:'photon', papers:['p-uhl20'],
+     def:'【定义】同步辐射 X 射线穿过样品、用下游 2D 探测器收集衍射的测量几何；可观测样品任意测量位置并收集完整衍射环。【通俗】X 射线穿透样品再打到探测器上。'},
+    {id:'gauge-volume', name:'测量体积（束斑）', cat:'concept', fac:'photon', papers:['p-uhl20'],
+     def:'【定义】被同步辐射 X 射线照射、用于衍射测量的样品内体积；由束斑定义（本文 750×70 µm²），可相对样品设定纵向与横向位置。【通俗】X 射线实际照到并采集信号的那一小块体积。'},
+    {id:'hems-p07', name:'HEMS 束线 P07', cat:'facility', fac:'photon', papers:['p-uhl20'],
+     def:'【定义】DESY PETRA III 的高能材料科学束线（High Energy Materials Science beamline）；Uhlmann 2020 的 InSituLPBF 装置专为其设计，过程舱安装在其实验棚六轴台上，98.02 keV、束斑 750×70 µm²、10 Hz 采样。【通俗】PETRA III 上做高能材料科学实验的束线。'},
+    {id:'insitu-lpbf-system', name:'InSituLPBF 系统', cat:'facility', fac:'photon', papers:['p-uhl20'],
+     def:'【定义】Uhlmann 2020 研制的 LPBF 原位衍射装置：基于 AconityMINI 工业机改造，含控制柜、过程舱、惰性气体循环过滤三模块；单模连续 Yb 光纤激光器（λL=1070 nm、400 W），打印参数 PL=55 W、vL=50 mm/s、层厚 50 µm；可对 100 层 Inconel 625 构件原位测晶格应变。【通俗】一台专为同步辐射束线原位衍射改造的小型 LPBF 打印装置。'},
+    {id:'inconel-625', name:'Inconel 625', cat:'material', fac:'photon', papers:['p-uhl20'],
+     def:'【定义】镍基高温合金（面心立方），本文用作 LPBF 粉末材料（粒径 20–63 µm）；通常分析其第 4 条衍射环（311 晶面）计算晶格应变。【通俗】一种面心立方镍基高温合金，打印研究的标准材料。'},
+    {id:'residual-stress', name:'残余应力', cat:'property', fac:'common', papers:['p-uhl20','p-pok19','p-che23'],
+     def:'【定义】无外力时仍存在于材料内部的自平衡应力：LPBF 打印件由高温度梯度与重熔/凝固循环产生；增材 304L 由两相 CTE 失配产生（铁素体受压）；Inconel 718 由制造工序（淬火/时效/机加工）引入，718°C 退火 14–20 h 大幅弛豫；由实测晶面间距相对 d0 的偏差换算。【通俗】零件做出来后不加载也憋在里面的内部应力。'},
+
+    /* ================= 七、高能 X 射线衍射显微术 HEDM 与块体应变技术（Bernier 2020 + Wanner & Dunand 2000） ================= */
+    {id:'hedm', name:'高能X射线衍射显微术 HEDM', cat:'tech', fac:'photon', papers:['p-ber20'],
+     def:'【定义】三维 X 射线衍射显微术(3DXRD)的一种实现（APS 1-ID 束线发展）：无损测绘体块多晶材料内部的晶体取向场、应变状态、晶粒形状与位置、晶内取向分布及晶界特征；空间分辨率约 1 µm、取向分辨率 <0.1°。【通俗】用高能 X 射线穿过整块金属/陶瓷，无损测出里面每个晶粒的取向、位置、形状和应变。'},
+    {id:'3d-xrd', name:'三维X射线衍射显微术 3DXRD', cat:'tech', fac:'photon', papers:['p-ber20'],
+     def:'【定义】此类高能衍射显微技术的通称；HEDM 特指 APS 1-ID 束线发展的一套，ESRF、CHESS、PETRA-III、SPring-8 等处有同类实现。【通俗】这类技术的总称，HEDM 是美国 APS 的命名。'},
+    {id:'ff-hedm', name:'远场HEDM', cat:'tech', fac:'photon', papers:['p-ber20'],
+     def:'【定义】大画幅工业探测器置于样品下游 1–1.5 m、box beam 照射 3D 体积、单次旋转扫描（Δω=180°/360°）的 HEDM 模式；衍射峰近似落在德拜-谢乐环上；输出晶粒平均取向、质心位置与弹性畸变；比近场快约 100 倍，取向分辨下限约 0.5°。【通俗】探测器离样品远，一次旋转扫整个体积，得到每个晶粒的平均取向、中心和应变。'},
+    {id:'nf-hedm', name:'近场HEDM', cat:'tech', fac:'photon', papers:['p-ber20'],
+     def:'【定义】晶胞取向成像技术：高分辨 CCD 探测器置于样品下游 5–15 mm、线聚焦束（约 2 µm FWHM）照射平面截面，体素级前向建模重建取向图；约 1 µm 空间、0.1° 取向分辨率，可分辨晶界，可重建塑性变形金属至 20% 应变。【通俗】探测器离样品近，逐层扫截面，得到体素级取向图，能看清晶界。'},
+    {id:'he-uct', name:'高能微计算机层析 HE-µCT', cat:'tech', fac:'photon', papers:['p-ber20'],
+     def:'【定义】高能版常规层析（层析重建），常与 HEDM 联用：微米分辨测定样品形状、空洞位置、第二相图；可同时采集吸收与相位衬度信息。【通俗】用高能 X 射线做微米级断层扫描，看样品外形、孔洞和第二相分布。'},
+    {id:'crystal-orientation-field', name:'晶粒取向场', cat:'concept', fac:'photon', papers:['p-ber20'],
+     def:'【定义】以晶体单胞取向为衬度机制、对体块多晶内部晶格取向的三维空间分布作图（HEDM 的核心输出之一）。【通俗】用每个小区域的晶格朝向当颜色，画出三维取向分布图。'},
+    {id:'grain-shape-position', name:'晶粒形状与位置', cat:'concept', fac:'photon', papers:['p-ber20'],
+     def:'【定义】HEDM 重建所得每个晶粒的形状与质心位置；nf-HEDM 由衍射斑投影反推晶粒截面形状并组装成 3D 晶粒集合。【通俗】重建出每个晶粒长什么样、在样品里哪个位置。'},
+    {id:'intragranular-orientation-distribution', name:'晶内取向分布', cat:'concept', fac:'photon', papers:['p-ber20'],
+     def:'【定义】单晶粒内部的取向分布（含取向梯度/镶嵌结构）；nf-HEDM 直接测得，ff-HEDM 经衍射峰强度分布可提取更高阶量。【通俗】一个晶粒内部各处取向不完全相同，测这个差异的分布。'},
+    {id:'spatial-orientation-resolution', name:'空间/取向分辨率', cat:'property', fac:'photon', papers:['p-ber20'],
+     def:'【定义】HEDM 性能指标：空间分辨率约 1 µm、取向分辨率 <0.1°；ff-HEDM 取向分辨下限约 0.5°（取向太近的晶粒峰不可分辨重叠）。【通俗】能区分的最小尺寸约 1 微米、最小取向差小于 0.1 度。'},
+    {id:'high-energy-penetration', name:'高能X射线穿透', cat:'property', fac:'photon', papers:['p-ber20'],
+     def:'【定义】E≥50 keV 的 X 射线对 Z≤56（钡）元素固体穿透 ≳1 mm、对所有材料 ≳100 µm；比实验室 Cu Kα（8.05 keV）/Mo Kα（17.5 keV）源深一至两个数量级，可研究约 1 mm 截面的体块样品。【通俗】高能 X 射线能穿进毫米厚的金属样品内部。'},
+    {id:'rotating-crystal-method', name:'旋转晶体法', cat:'tech', fac:'photon', papers:['p-ber20'],
+     def:'【定义】HEDM 仪器构型类比标准旋转晶体法：样品绕近垂直入射束的轴旋转（通常 Δω=180° 或 360°），以最大化记录每个晶粒的衍射束数。【通俗】边照边把样品转一圈，让更多晶面满足衍射条件。'},
+    {id:'forward-modeling-reconstruction', name:'前向建模重建', cat:'tech', fac:'photon', papers:['p-ber20'],
+     def:'【定义】nf-HEDM 的体素级重建算法：对每个体素试取向、模拟散射并与实验像匹配，取完整度 C（0≤C≤1，模拟峰与实验强度重叠比例）最大的取向赋值，逐层得取向图。【通俗】用计算机逐个试每个小格的取向，看哪个取向模拟出的衍射图案和实验最像。'},
+    {id:'area-detector', name:'面探测器', cat:'component', fac:'photon', papers:['p-ber20','p-wd00','p-uhl20'],
+     def:'【定义】高像素数二维探测器：ff-HEDM 用 GE 41RT/Dexela 2923/Pilatus 2M CdTe/Eiger，nf-HEDM 用 LuAG 闪烁体+5 倍放大 CCD（1.48 µm 有效像素）；Wanner 用 MAR CCD（132 mm 屏、64 µm 像素）；Uhlmann 用 Perkin-Elmer XRD1621（2048×2048、200 µm 像素）。【通俗】大面积二维"底片"，一次记下许多衍射斑。'},
+    {id:'dct', name:'衍射衬度层析 DCT', cat:'tech', fac:'photon', papers:['p-ber20'],
+     def:'【定义】用 box beam（而非线聚焦束）产生 3D 晶粒图的层析技术，单次旋转扫描即可；但仅适用于极轻变形样品（塑性峰宽化受限）；已移植到实验室源。【通俗】另一种 3D 晶粒成像法，一次转一圈就行，但只适合几乎不变形的样品。'},
+    {id:'bcdi', name:'布拉格相干衍射成像 BCDI', cat:'tech', fac:'photon', papers:['p-ber20'],
+     def:'【定义】对纳米晶体/晶粒相干照射、远场测布拉格峰的傅里叶功率谱，以约 30 nm 分辨晶粒形状与内部原子位移场；与 HEDM 互补（可看纳米尺度机制）。【通俗】用相干 X 射线看单个纳米晶，能分辨到约 30 纳米。'},
+    {id:'dark-field-xrm', name:'暗场X射线显微术', cat:'tech', fac:'photon', papers:['p-ber20'],
+     def:'【定义】用复合折射透镜（CRL）聚焦衍射束成像、可选特定衍射束的 X 射线显微术；可成像单晶中单个位错的位移场，类比 TEM 弱束成像但应变分辨率更佳。【通俗】只挑一束衍射光成像，能看清单个位错周围的畸变。'},
+    {id:'synchrotron-x-ray-transmission', name:'同步辐射X射线透射技术', cat:'tech', fac:'photon', papers:['p-wd00'],
+     def:'【定义】多晶样品受单色平行高能束（65 keV）照射、二维探测器记录完整环状衍射图以测块体晶格应变的技术（由 Daymond & Withers 先述）。【通俗】用同步辐射单色高能 X 射线穿透样品，拍下完整衍射环来测晶格应变。'},
+    {id:'ring-distortion', name:'衍射环畸变', cat:'phenomenon', fac:'photon', papers:['p-wd00'],
+     def:'【定义】拉伸加载下完整衍射圆环畸变为椭圆（半轴沿/垂于载荷方向），据环直径变化换算两相体平均弹性应变。【通俗】加载时衍射环从正圆被拉成椭圆，椭圆度反映晶格应变。'},
+    {id:'volume-averaged-elastic-strain', name:'体平均弹性应变', cat:'property', fac:'photon', papers:['p-wd00'],
+     def:'【定义】两相各自在衍射体积内平均的弹性晶格应变（纵向/横向分量），由环半轴按公式（含校准物质校正）计算：εS=(dS−d0S)/d0S。【通俗】把衍射环直径变化换算成每一相平均被拉长/缩短多少。'},
+    {id:'ring-graininess', name:'衍射环颗粒性', cat:'phenomenon', fac:'photon', papers:['p-wd00'],
+     def:'【定义】因衍射体积内处于衍射条件的晶粒数有限而呈斑点状/颗粒状的强度起伏，与 Bragg 峰宽化相关；变形时 Cu 环颗粒性下降、Mo 环基本不变。【通俗】衍射环不是平滑线而是一串斑点，因为被照到的晶粒太少。'},
+    {id:'bragg-peak-broadening', name:'Bragg峰宽化', cat:'phenomenon', fac:'photon', papers:['p-wd00'],
+     def:'【定义】与环颗粒性相关的衍射峰展宽，反映晶粒实空间尺寸与晶格缺陷结构；缺陷密度增加→倒格点展宽→更多晶粒贡献→环更平滑。【通俗】晶格里缺陷越多，衍射峰越宽、环越平滑。'},
+    {id:'load-transfer', name:'载荷传递/分配', cat:'process', fac:'photon', papers:['p-wd00'],
+     def:'【定义】软基体向硬增强相的载荷传递：弹性阶段分配比恒定，基体屈服后增强相承担更大比例载荷；以增强相载荷分数 lMo=fMo·σMo/σappl 量化。【通俗】受力时软的部分把力转给硬的部分承担。'},
+    {id:'cu-mo-composite', name:'Cu-Mo 复合材料', cat:'material', fac:'photon', papers:['p-wd00'],
+     def:'【定义】粉末冶金（热等静压）制备的铜基体+钼颗粒复合材料（7.5 或 15 vol% Mo）；Mo 为 BCC 金属，是同步辐射透射应变测量的对象材料。【通俗】铜里嵌钼颗粒的复合材料（钼硬、铜软）。'},
+    {id:'elastoplastic-transition', name:'弹塑性过渡', cat:'process', fac:'photon', papers:['p-wd00'],
+     def:'【定义】Cu-Mo 复合材料三阶段载荷分配：低应力两相均线弹性（区I）；中间应力基体屈服、载荷重分配向增强相（区II）；更高应力（Cu-7.5Mo 约>100 MPa、Cu-15Mo 约>170 MPa）趋势反转、增强相损伤致承载效率下降（区III）。【通俗】应力从小到大时，材料从"都弹性"过渡到"基体屈服"，再到"增强相损伤"。'},
+    {id:'neutron-diffraction-comparison', name:'中子衍射对比', cat:'tech', fac:'common', papers:['p-wd00'],
+     def:'【定义】同步辐射透射技术与常规中子衍射的对比结论：精度相近而测量时间缩短一个数量级以上、衍射体积小约三个数量级；但中子穿透深度大约一个数量级（可测更厚样品）。【通俗】X 射线透射法比中子衍射快得多、用样少得多，但中子能穿更厚的样品。'},
+    {id:'grain-growth', name:'晶粒长大', cat:'process', fac:'photon', papers:['p-ber20'],
+     def:'【定义】退火中晶粒尺寸演化过程；nf-HEDM 表明"超额面数"（本晶粒面数减邻居平均面数）是比初始尺寸/邻居数更好的增长预测因子；新晶粒在三重线处出现并含孪晶关系。【通俗】加热时晶粒逐渐长大合并的过程，HEDM 可三维跟踪。'},
+    {id:'recrystallization', name:'再结晶', cat:'process', fac:'photon', papers:['p-ber20'],
+     def:'【定义】退火中出现无畸变新取向晶粒的过程；nf-HEDM 观察到衍射峰锐化（对应回复）与新取向出现（对应再结晶）。【通俗】变形金属加热后长出新的无应变晶粒。'},
+    {id:'texture-development', name:'织构演化', cat:'process', fac:'photon', papers:['p-ber20'],
+     def:'【定义】晶粒取向择优分布的演化过程（HEDM 应用之一）；晶体塑性模拟的平均织构演化与实验相符，但单个晶粒存在显著偏差。【通俗】晶粒取向从杂乱变得有规律（或反之）的过程。'},
+    {id:'orientation-gradient', name:'取向梯度', cat:'phenomenon', fac:'photon', papers:['p-ber20'],
+     def:'【定义】晶内取向随空间的变化（可连续，也可含不连续/镶嵌结构），由塑性变形产生，常以 KAM（核平均取向差）量化；KAM 一般随距晶界距离减小。【通俗】一个晶粒内部取向从一处到另一处逐渐或突然改变。'},
+    {id:'annealing-twinning', name:'退火孪晶', cat:'process', fac:'photon', papers:['p-ber20'],
+     def:'【定义】退火/晶粒长大中形成的孪晶；nf-HEDM 证实新晶粒在三重线出现且总与母晶粒呈孪晶关系，验证退火孪晶可经晶界分解形成（综述对象为 FCC 材料）。【通俗】加热长大时在晶界处新长出的、与母晶粒成孪晶关系的晶粒。'},
+    {id:'plastic-deformation', name:'塑性变形', cat:'process', fac:'photon', papers:['p-ber20'],
+     def:'【定义】不可逆变形；nf-HEDM 对塑性变形金属的重建可到 20% 应变（视材料），给出晶粒重定向、晶粒碎化、取向梯度及其与晶界距离的关系。【通俗】材料被拉到不能弹回来的永久变形，HEDM 可三维观察。'},
+    {id:'additive-manufacturing', name:'增材制造', cat:'application', fac:'common', papers:['p-ber20','p-uhl20','p-pok19'],
+     def:'【定义】3D 打印等逐层成形工艺；HEDM 用于研究增材制造微观组织（Bernier 综述），原位高能 XRD 用于 LPBF 打印过程应力/织构监测（Uhlmann 2020），原位中子衍射用于 LENS 304L 相应力研究（Pokharel 2019）。【通俗】逐层打印成形，X 射线/中子从"过程"到"组织"都能看。'},
+    {id:'soleil-diffabs', name:'SOLEIL DiffAbs 束线', cat:'facility', fac:'photon', papers:['p-lil20'],
+     def:'【定义】法国 SOLEIL 同步辐射装置的衍射/吸收（DiffAbs）束线；Lilensten 2020 在此做原位拉伸 XRD（反射模式，12.475 keV，λ=0.994 Å，XPAD-S140 探测器）。【通俗】法国同步辐射光源上边拉伸边拍衍射的束线。'},
+    {id:'spring8-bl13xu', name:'SPring-8 BL13XU 束线', cat:'facility', fac:'photon', papers:['p-cho23'],
+     def:'【定义】日本 SPring-8 的 BL13XU 束线；Chong 2023 在此做原位拉伸 XRD（30 keV，λ=0.0413 nm，六个 MYTHEN 一维探测器），实时测相分数与晶格应变。【通俗】日本同步辐射光源上做原位拉伸衍射的束线。'},
+    {id:'bragg-law', name:'布拉格定律/方程', cat:'law', fac:'common', papers:['p-ber20','p-uhl20'],
+     def:'【定义】nλ=2d·sinθ：X 射线在晶体中衍射的角条件；由衍射环半径（正比于布拉格角）反推晶面间距 d；高能 X 射线把倒空间压进前向、布拉格角很小，使透射几何面探测器覆盖大片倒空间。【通俗】由衍射角与波长反推晶面间距的基本公式。'},
+    {id:'debye-scherrer-ring', name:'德拜-谢乐环', cat:'concept', fac:'photon', papers:['p-ber20','p-weh17','p-uhl20'],
+     def:'【定义】多晶样品衍射形成的一组同心环（Uhlmann 篇原文称 diffraction rings/concentric rings，未用 Debye-Scherrer 字样）：理想多晶的粉末衍射环，ff-HEDM 中晶粒衍射峰近似落在其上便于与 Miller 指数关联；强织构样品只在环上特定方位出现织构斑，环的椭圆畸变与斑展宽分别携带应变与晶格转动信息。【通俗】多晶材料衍射出的一圈圈环，环的位置、形状和亮斑分布都能读出晶体信息。'},
+
+    /* ================= 八、光子源 × 材料应用：实验技术与装置（Wehrenberg 2017 / Lilensten 2020 / Chong 2023） ================= */
+    {id:'mec-endstation', name:'MEC 极端条件端站', cat:'component', fac:'photon', papers:['p-weh17'],
+     def:'【定义】LCLS 上进行极端条件下（冲击、高压、高能密度）物质研究的实验端站；Wehrenberg 2017 钽冲击压缩原位 XRD 在此完成。【通俗】LCLS 上专门做高压高能冲击实验的实验舱位。'},
+    {id:'femtosecond-xrd', name:'飞秒原位X射线衍射', cat:'tech', fac:'photon', papers:['p-weh17'],
+     def:'【定义】以飞秒级 X 射线脉冲（如 50 fs/9.6 keV）为探针、在冲击加载进行中记录衍射花样、捕捉晶格级微观过程的技术；脉冲短于结构变化所需时间。【通俗】用极短的 X 光在材料被冲击压着的瞬间拍下衍射照片。'},
+    {id:'laser-shock-compression', name:'激光驱动冲击压缩', cat:'tech', fac:'photon', papers:['p-weh17'],
+     def:'【定义】用频率倍频（527 nm）纳秒方波脉冲激光直接烧蚀靶面、经烧蚀层驱动平面冲击波进入样品的加载技术。【通俗】用强激光打在材料表面，靠烧蚀反冲推出平面冲击波压进样品。'},
+    {id:'shock-compression', name:'冲击压缩', cat:'process', fac:'photon', papers:['p-weh17'],
+     def:'【定义】压力驱动冲击波在固体中传播、使材料快速经历高压高应变率（>10⁹ s⁻¹）塑性变形的过程；Wehrenberg 2017 覆盖 10–300 GPa（至熔化）。【通俗】一道冲击波快速压过材料，把它在极短时间内压到很高压力。'},
+    {id:'tantalum', name:'钽 Ta', cat:'material', fac:'photon', papers:['p-weh17'],
+     def:'【定义】体心立方（bcc）难熔金属（α-Ta，a=3.308 Å）；因高冲击阻抗与高 X 射线不透明度而用于高能密度物理；DFT 显示 bcc 相稳定至 700 GPa。【通俗】高密度难熔 bcc 金属，高压冲击实验的标准材料。'},
+    {id:'hkl-shift-broadening', name:'hkl峰位移与展宽', cat:'phenomenon', fac:'photon', papers:['p-weh17'],
+     def:'【定义】冲击压缩使晶面间距减小→衍射线移向更高 2θ；晶格转动使织构斑沿方位角 χ 展宽甚至分裂为两个斑；Debye 环偏离圆形可指示剪切应力。【通俗】压得越狠衍射峰越往大角度挪；晶格一转，衍射斑就拉长或裂开。'},
+    {id:'yield-strength-work-hardening', name:'屈服强度与加工硬化', cat:'property', fac:'photon', papers:['p-lil20','p-cho23'],
+     def:'【定义】TRIP/TWIP 钛合金力学指标：Ti-7Cr-1.5Sn 屈服 760 MPa/均匀延伸 0.29/抗拉 1200 MPa（比单相参考合金屈服高 >200 MPa）；Ti-12Mo-0.3O 晶粒细化至 4.5 µm 时屈服 826 MPa、抗拉 1064 MPa 而均匀延伸保持 24%。【通俗】材料开始永久变形的应力，和它越拉越硬的能力。'},
+    {id:'ti-7cr-1.5sn', name:'Ti-7Cr-1.5Sn 双相合金', cat:'material', fac:'photon', papers:['p-lil20'],
+     def:'【定义】经相图热力学计算与 d 电子合金设计法设计的双相 α/β TRIP/TWIP 钛合金：β 基体含约 20% α 析出相（富 Ti 贫 Cr），屈服 760 MPa；{332}<113> 与 {112}<111> 孪晶并存，α 析出相被孪晶剪切而不阻碍孪晶传播。【通俗】基体是 β 相、含 20% α 析出颗粒的钛合金，边孪晶边相变。'},
+    {id:'ti-8.5cr-1.5sn', name:'Ti-8.5Cr-1.5Sn 参考合金', cat:'material', fac:'photon', papers:['p-lil20'],
+     def:'【定义】单相 β TRIP/TWIP 参考合金：屈服 550 MPa、抗拉 >1200 MPa、均匀变形 0.36，作为双相设计的性能基准。【通俗】用来对照的单相 β 钛合金。'},
+    {id:'alpha-precipitate', name:'α 析出相', cat:'material', fac:'photon', papers:['p-lil20'],
+     def:'【定义】β 基体中析出的 hcp α 相（约 20% 体积分数，成分 Ti-0.5Cr-2.1Sn，a=2.933 Å、c=4.669 Å），与基体满足 Burgers 取向关系，用于提高屈服强度。【通俗】β 基体里析出的 hcp 小颗粒，用来变硬。'},
+    {id:'ti-12mo', name:'Ti-12Mo 亚稳β钛合金', cat:'material', fac:'photon', papers:['p-cho23'],
+     def:'【定义】典型亚稳 β 钛合金（bcc 基体），同时显示 TRIP 与 TWIP 效应；主导变形孪晶模式为 {332}<113>（s≈0.354，取向差 51°）；晶粒细化（50/10/4.5 µm）反常降低抗拉强度，因应变诱发 α″ 相变增强。【通俗】会同时孪晶和相变的钛钼合金。'},
+    {id:'ti-12mo-0.3o', name:'Ti-12Mo-0.3O 三元合金', cat:'material', fac:'photon', papers:['p-cho23'],
+     def:'【定义】添加氧（0.300 wt.%/0.96 at.%）的 Ti-12Mo 三元合金：氧抑制 α″ 相变避免软化、并偏聚孪晶界促进孪晶形核，实现强度-塑性协同（晶粒细化后屈服 826 MPa、均匀延伸 24%）。【通俗】加了氧的 Ti-12Mo，更硬还不脆。'},
+    {id:'oxygen-interstitial', name:'氧间隙原子', cat:'material', fac:'photon', papers:['p-cho23'],
+     def:'【定义】固溶于 β 钛晶格间隙位的氧原子；少量即可显著提高屈服强度，并对变形机制有双重作用（抑制 α″ 相变 + 偏聚孪晶界）；bcc 结构中氧扩散系数约 1.72×10⁻¹² m²/s。【通俗】钻在晶格缝隙里的氧原子，让材料变硬并改孪晶行为。'},
+
+    /* ================= 九、跨域联用对象（cat: cross，与 BCC 孪晶本体联用；fac: common 跨板块可见） ================= */
+    {id:'x-twinning-112-111', name:'变形孪晶 {112}<111>', cat:'cross', fac:'common', papers:['p-weh17','p-lil20','p-cho23','p-ber20'],
+     def:'【定义】（BCC 孪晶本体 bcc-ontology §1.2/§1.4）BCC 金属的主导变形孪晶系统：孪晶面 {112}、孪生方向 <111>、切变 s=1/√2。光子源证据：Ta 冲击中 {112} 镜面孪晶（25 GPa 起始、40–80 GPa 主导）；β-Ti 中 {112}<111> 孪晶取向差 60° 与 {332}<113> 并存；HEDM 可 3D 观测孪晶变体与 Schmid 因子（综述实例为 HCP/FCC，BCC 案例文本未见）。【通俗】bcc 金属最常见的孪晶模式，同步辐射/XFEL 衍射可原位捕捉其形成与竞争。'},
+    {id:'x-twinning-332-113', name:'{332}<113> 孪晶', cat:'cross', fac:'common', papers:['p-lil20','p-cho23'],
+     def:'【定义】（BCC 孪晶本体未覆盖，本图谱首次录入）亚稳 β 钛合金中主导的变形孪晶模式：取向差约 51°、孪生切变 s≈0.354；其原子机制文献仍有争议；随 β 相稳定性降低成为先于相变的主导机制。【通俗】亚稳 β 钛合金特有的孪晶，取向差 51 度，比 {112}<111> 更易激活。'},
+    {id:'x-twin-boundary', name:'孪晶界', cat:'cross', fac:'common', papers:['p-cho23'],
+     def:'【定义】（BCC 孪晶本体 entity-twin-boundary）分隔孪晶与基体的界面，是孪生位错的滑移面、为孪晶增厚提供通道。光子源证据：氧原子在 {332}<113> 孪晶界偏聚（APT：峰值 1.79 at.% vs 基体 0.92 at.%）钉扎界面、限制增厚。【通俗】孪晶与母体的分界面，氧原子会在这里聚集并"钉住"它。'},
+    {id:'x-slip', name:'位错滑移', cat:'cross', fac:'common', papers:['p-weh17'],
+     def:'【定义】（BCC 孪晶本体 §1.3）位错在主滑移系上的运动，是塑性变形的基本机制之一。光子源证据：Ta 冲击中与孪晶竞争，>150 GPa 时转为滑移主导塑性。【通俗】位错排队滑动来变形，高压冲击下压过孪晶成为主导。'},
+    {id:'x-twinning-slip-competition', name:'滑移-孪生竞争', cat:'cross', fac:'common', papers:['p-weh17'],
+     def:'【定义】塑性变形的两种基本微观机制——孪晶（形成镜像晶格）与滑移（位错产生与运动）之间的竞争，冲击下随压力此消彼长；Nature 篇给出定量图景：孪晶起始 ~25 GPa、40–80 GPa 主导、>150 GPa 让位于滑移。【通俗】材料被压变形时到底靠孪晶还是靠位错滑动，二者互相竞争。'},
+    {id:'x-twinning-slip-transition', name:'孪晶→滑移主导转变', cat:'cross', fac:'common', papers:['p-weh17'],
+     def:'【定义】冲击压力升高时主导变形机制由孪晶转向位错滑移的转变：>150–175 GPa 时孪晶分数降至 <10%，塑性转为滑移主导；回收实验无法准确到达的机制区间。【通俗】压力越高，变形从靠孪晶变成主要靠位错滑动。'},
+    {id:'x-twin-lattice-rotation', name:'孪晶诱导晶格转动', cat:'cross', fac:'common', papers:['p-weh17'],
+     def:'【定义】横向受限单轴压缩中滑移与孪晶都使晶格转动，孪晶额外在孪晶粒中产生镜像转动，表现为织构斑 χ 角变化（如 46 GPa 时 {112} 镜面孪晶+额外 2.5° 转动），发生在几十皮秒量级。【通俗】孪晶让晶粒取向额外转过一个角度，反映在衍射斑位置移动上。'},
+    {id:'x-elastic-shear-strain', name:'弹性剪切应变', cat:'cross', fac:'common', papers:['p-weh17'],
+     def:'【定义】冲击态中残余的弹性剪切应变；Nature 篇经 Debye 环畸变分析判定其可忽略（2%–3% 剪切应变即不匹配），即冲击态弹性应变近似严格静水压。【通俗】材料被冲击压过后残留的剪切方向弹性变形，实验证明它很小。'},
+    {id:'x-martensite', name:'α″ 马氏体', cat:'cross', fac:'common', papers:['p-lil20','p-cho23'],
+     def:'【定义】（BCC 孪晶本体未覆盖，本图谱首次录入）β 钛合金应力/应变诱发的正交结构马氏体相；原位同步辐射 XRD 揭示其比母相 β 更软（晶格应变/应力低一个数量级，纳米硬度 2.976 vs 3.586 GPa），与 TRIP 钢中 α′ 马氏体比奥氏体硬相反。【通俗】亚稳 β 钛合金变形生成的正交结构相，比原来的 β 相还软。'},
+    {id:'x-simt', name:'应力诱发马氏体相变 SIMT', cat:'cross', fac:'common', papers:['p-lil20','p-cho23'],
+     def:'【定义】机械加载下 β 相转变为 α″（或 α′）马氏体的相变过程，是 TRIP 效应的来源；随 β 相稳定性降低，变形机制依次从位错滑移→变形孪晶→SIMT 演化。【通俗】加载时 β 相转成马氏体相的相变。'},
+    {id:'x-trip-twip', name:'TRIP/TWIP 效应', cat:'cross', fac:'common', papers:['p-lil20','p-cho23'],
+     def:'【定义】相变诱导塑性（TRIP：应力诱发马氏体相变带来的塑性）与孪晶诱导塑性（TWIP：变形孪晶细分晶粒、阻碍位错滑移提供应变硬化，即动态 Hall-Petch）；两者结合可获得高加工硬化与高延性。光子源证据：原位 XRD 证实 β-Ti 合金中两机制并存。【通俗】材料一边相变一边孪晶来变形变硬的两种效应。'},
+    {id:'x-beta-stability', name:'β 相稳定性', cat:'cross', fac:'common', papers:['p-lil20','p-cho23'],
+     def:'【定义】β（bcc）相抵抗应力诱发相变的力学稳定程度；稳定性越低，主导变形机制依次由位错滑移→变形孪晶→SIMT 转变；可由合金电子参数（Bo、Md）估计。【通俗】β 相"稳不稳"，越不稳越容易孪晶或相变。'},
+    {id:'x-hall-petch', name:'Hall-Petch 关系', cat:'cross', fac:'common', papers:['p-lil20','p-cho23'],
+     def:'【定义】晶粒细化减小位错平均自由程从而提高屈服强度（Hall-Petch）；孪晶细分晶粒并阻碍位错滑移提供应变硬化（动态 Hall-Petch）。例外：Ti-12Mo 中晶粒细化反降低抗拉强度（因 α″ 相变增强）。【通俗】晶粒或孪晶把材料切得越细，位错越难跑，材料越硬——但相变会破坏这个规律。'},
+    {id:'x-omega', name:'ω 相', cat:'cross', fac:'common', papers:['p-weh17','p-lil20','p-cho23'],
+     def:'【定义】由 bcc 相切变/冲击或相变形成的六方相；Nature 篇在冲击 Ta 中未观察到 >0.1%（与回收实验报道的差异源于原位 vs 冲击后回收）；β-Ti 合金中观察到 (002)ω 反射与无热 ω（ωath）析出。【通俗】一种六方过渡相，在冲击样品或某些钛合金里出现。'},
+    {id:'x-grain-boundary', name:'晶界', cat:'cross', fac:'common', papers:['p-ber20','p-cho23','p-ela19','p-cun21'],
+     def:'【定义】（BCC 孪晶本体 entity-grain-boundary）分隔取向不同晶粒的界面，是位错障碍与孪晶优先形核位点；辐照中晶界扮演缺陷"中性汇"角色：纳米晶钨（35 nm 等轴晶）晶界快速高效吸收位错环、储存间隙原子，是高辐照耐受性的主导因素；Ti 偏聚晶界可增强有效汇强度并抑制晶界迁移。【通俗】晶粒之间的界面，常是孪晶形核处，也是辐照缺陷的"垃圾桶"。'},
+    {id:'x-lattice-strain', name:'晶格应变', cat:'cross', fac:'common', papers:['p-uhl20','p-wd00','p-weh17','p-cho23','p-pok19','p-che23'],
+     def:'【定义】晶面间距相对无应力值 d0 的相对变化量 ε=(d−d0)/d0；由衍射环直径/峰位移换算，是光子源与 BCC 力学本体之间最直接的物理量桥：LPBF 过程（ε311 峰 ~0.8%）、Cu-Mo 加载、Ta 冲击（hkl 位移）、β-Ti 拉伸（α″ 比 β 低一个数量级）均以此量化。【通俗】晶格被拉长或压短了多少，由衍射峰挪了多少算出来。'},
+    {id:'x-texture', name:'织构', cat:'cross', fac:'common', papers:['p-uhl20','p-wd00','p-ber20','p-weh17','p-pok19','p-che23'],
+     def:'【定义】（foundations-ontology §1.1）多晶材料晶粒取向的择优分布。光子源证据：Ta 箔 [110] 纤维织构的织构斑 χ 角变化追踪晶格转动；HEDM 给出 3D 逐晶粒织构数据（平均演化符合、单晶粒有显著偏差）；LPBF 过程存在织构演化；HIP Cu-Mo 近似无织构。【通俗】晶粒取向是否偏向某个方向，衍射环上的亮斑位置能反映。'},
+    {id:'x-twin-growth-nucleation', name:'孪晶长大受限/形核促进', cat:'cross', fac:'common', papers:['p-cho23'],
+     def:'【定义】（与 BCC 孪晶本体 §1.4 形核/长大机制联用）{332}<113> 孪晶增厚能垒高于形核能垒；偏聚氧钉扎孪晶界限制增厚，转而促进更多新孪晶形核（12% 应变时孪晶平均厚度从 2.2 µm 降至 1.7 µm），实现更强微结构细化与连续应变硬化。【通俗】氧让已有孪晶长不厚，只好不断长新孪晶，组织越变越细密。'},
+    {id:'x-oxygen-tb-segregation', name:'氧偏聚孪晶界', cat:'cross', fac:'common', papers:['p-cho23'],
+     def:'【定义】氧原子在 {332}<113> 孪晶界处偏聚的现象（Chong 2023 首次在亚稳 β 钛合金中直接证实）：峰值 1.79 at.% vs 基体 0.92 at.%；偏聚限制孪晶增厚并促进新孪晶形核。【通俗】氧原子聚集到孪晶界面上，像钉在界面上一样限制孪晶长厚。'},
+    {id:'x-oxygen-suppresses-simt', name:'氧抑制α″相变', cat:'cross', fac:'common', papers:['p-cho23'],
+     def:'【定义】间隙氧显著抑制应变诱发 β→α″ 相变（即便细晶亦然），变形意义上是 β 稳定化元素；DFT 显示 β→α″ 相变能垒从无氧 2.0 meV/atom 升至含氧平均 4.26 meV/atom；避免过量软 α″ 相导致软化。【通俗】加了氧材料不容易转成 α″ 相，也就不会因软相而变软。'},
+    {id:'x-alpha-prime-prime-softening', name:'α″ 马氏体软化', cat:'cross', fac:'common', papers:['p-cho23'],
+     def:'【定义】应变诱发 α″ 相比母相 β 更软的性质：其晶格应变/应力约低一个数量级，纳米硬度更低（2.976 vs 3.586 GPa）；是 Ti-12Mo 晶粒细化反常降低强度的根因。【通俗】新生成的 α″ 相比 β 相还软，起不到硬化作用反而软化。'},
+    {id:'x-grain-refinement-anomaly', name:'晶粒细化反常软化', cat:'cross', fac:'common', papers:['p-cho23'],
+     def:'【定义】Ti-12Mo 中晶粒细化反而降低极限抗拉强度并诱发吕德斯变形的现象（845→770→765 MPa，晶粒 50/10/4.5 µm），与常规 Hall-Petch 强化相反；根因是 α″ 相变增强（细晶 12% 应变时 α″ 面积分数达 65%）。【通俗】晶粒做小了本该变硬，这里反而变软，因为软 α″ 相变更多。'},
+    {id:'x-precipitate-sheared', name:'析出相被孪晶剪切', cat:'cross', fac:'common', papers:['p-lil20'],
+     def:'【定义】变形孪晶扫过 α 析出相时将其剪切的交互现象：11 个孪晶/析出相交互中析出相全部被剪切（Pi→Pi′），析出相不阻碍孪晶传播；剪切面上孪晶以相同取向差穿过。【通俗】孪晶穿过去时把析出相切过去，析出相挡不住它。'},
+    {id:'x-burgers-or', name:'Burgers 取向关系', cat:'cross', fac:'common', papers:['p-lil20'],
+     def:'【定义】α 析出相与 β 基体间的取向关系：{110}β//{0001}α 且 <1-11>β//<11-20>α。【通俗】析出相和基体之间固定的取向对应关系。'},
+    {id:'x-luders', name:'吕德斯变形', cat:'cross', fac:'common', papers:['p-cho23'],
+     def:'【定义】细晶 Ti-12Mo 中出现的不连续屈服现象：屈服跌落（~20 MPa）后出现约恒定流变应力的吕德斯变形平台（10 µm 晶粒 2.0%、4.5 µm 晶粒 8.0%），与晶粒细化反常软化相伴。【通俗】拉伸曲线开头"掉一下再平走"的现象，应变带在样品里推进。'},
+
+    /* ================= 十、中子源板块（Mason 2006 SNS / Pokharel 2019 / Chen 2023） ================= */
+    {id:'n-sns', name:'散裂中子源 SNS', cat:'facility', fac:'neutron', papers:['p-mas06'],
+     def:'【定义】美国橡树岭国家实验室（ORNL）用加速器产生世界最强脉冲中子束的用户装置（六家 DOE 实验室合作，2006 年建成）：250 m 直线加速器（室温+超导段）至 1 GeV 质子，打液态汞靶；仪器大厅可容纳 24 台谱仪（首批 16 台=2 反射仪+7 谱仪+7 衍射仪）；初始功率目标 1.4 MW、升级路线 ≥3 MW。【通俗】用加速器质子打汞靶、一批批产生中子的国家级大装置，供全球用户做材料研究。'},
+    {id:'n-hfir', name:'HFIR 高通量同位素反应堆', cat:'facility', fac:'neutron', papers:['p-mas06'],
+     def:'【定义】ORNL 的高通量同位素反应堆（研究堆型稳态中子源），与 SNS 互补，构成材料结构与动力学研究的综合能力。【通俗】橡树岭的另一台"连续出中子"的研究堆，与 SNS 脉冲源互补。'},
+    {id:'n-lansce', name:'LANSCE 洛斯阿拉莫斯中子科学中心', cat:'facility', fac:'neutron', papers:['p-pok19'],
+     def:'【定义】洛斯阿拉莫斯国家实验室的散裂中子设施：800 MeV 质子打钨靶产生 20 Hz 脉冲中子，经 283 K 水慢化器慢化；其卢汉中心（Lujan Center）设有 SMARTS 与 HIPPO 等谱仪。【通俗】洛斯阿拉莫斯的脉冲中子源，专做应力/织构类材料测量。'},
+    {id:'n-vulcan', name:'VULCAN 工程材料衍射仪', cat:'facility', fac:'neutron', papers:['p-mas06','p-che23'],
+     def:'【定义】SNS 的工程材料衍射仪：测工程部件残余应力与加工/使用中的材料行为，配 MTS 载荷架可原位加载加热；Chen 2023 用其 60 Hz 斩波（带心 0.19 nm，测 (200)(220)(311)(222) 峰）做 Inconel 718 实时应力弛豫。【通俗】橡树岭专测大零件内部应力的那台中子衍射仪，能边加热边测。'},
+    {id:'n-smarts', name:'SMARTS 谱仪', cat:'facility', fac:'neutron', papers:['p-pok19'],
+     def:'【定义】LANSCE 卢汉中心的"材料温度与应力研究谱仪"：入射飞行路径 31 m，+90° 组波长 0.4–3.7 Å、157° 背散射组 0.3–3.1 Å；配高温真空炉（钨网加热）做原位中子衍射。【通俗】洛斯阿拉莫斯一台专门做温度/应力原位衍射的谱仪。'},
+    {id:'n-hippo', name:'HIPPO 织构衍射仪', cat:'facility', fac:'neutron', papers:['p-pok19'],
+     def:'【定义】LANSCE 的飞行时间衍射仪，用于织构测量（取向分布函数极图）与定量相分析（如 304L 中铁素体分数 2.5±0.15 vol%）。【通俗】专门测晶粒取向分布与各相比例的衍射仪。'},
+    {id:'n-spallation', name:'散裂过程', cat:'process', fac:'neutron', papers:['p-pok19','p-mas06'],
+     def:'【定义】高能质子轰击重核靶（钨、汞）引发散裂反应释放中子的过程（LANSCE：800 MeV 质子打钨靶；SNS：1 GeV 质子打汞靶）。【通俗】用高速质子撞击重金属靶，把原子核里的中子撞出来。'},
+    {id:'n-pulsed-neutron', name:'脉冲中子', cat:'concept', fac:'neutron', papers:['p-mas06','p-pok19'],
+     def:'【定义】由加速器驱动散裂源以脉冲形式（如 LANSCE 20 Hz）产生的中子束，区别于反应堆的连续中子；配合飞行时间法一次记录连续波长谱。【通俗】中子不是连续流出，而是一批一批产生的。'},
+    {id:'n-mercury-target', name:'汞靶', cat:'component', fac:'neutron', papers:['p-mas06'],
+     def:'【定义】SNS 靶站用液态汞作散裂靶（配汞回路/汞流动系统，2005 年完成水试、秋季注汞）。【通俗】被质子轰击的液态金属靶，用来产生中子。'},
+    {id:'n-moderator', name:'慢化器', cat:'component', fac:'neutron', papers:['p-mas06','p-pok19'],
+     def:'【定义】将散裂产生的高能中子慢化到可用能量的装置；SNS 使用水慢化器，LANSCE 使用 283 K 水慢化器。【通俗】把快中子减速到适合实验能量的"减速器"。'},
+    {id:'n-neutron-scattering', name:'中子散射', cat:'tech', fac:'neutron', papers:['p-mas06'],
+     def:'【定义】用中子束探测材料结构与动力学的方法，覆盖弹性与非弹性散射，服务凝聚态物理、化学、工程材料、生物等领域。【通俗】让中子束打到样品上，由散射中子推断材料内部结构与原子运动。'},
+    {id:'n-elastic-scattering', name:'弹性中子散射', cat:'tech', fac:'neutron', papers:['p-mas06'],
+     def:'【定义】中子与样品作用后能量不变（仅动量改变）的散射，用于结构/衍射测量。【通俗】散射后能量不变，用来测原子排列（结构）。'},
+    {id:'n-inelastic-scattering', name:'非弹性中子散射', cat:'tech', fac:'neutron', papers:['p-mas06'],
+     def:'【定义】中子与样品作用时发生能量交换的散射，用于测材料动力学（磁激发/涨落、晶格振动）。【通俗】散射后能量改变，用来测原子/磁矩的运动。'},
+    {id:'n-spectrometer', name:'中子谱仪', cat:'component', fac:'neutron', papers:['p-mas06'],
+     def:'【定义】测量非弹性中子散射（能量分辨）的仪器；SNS 首批 16 台仪器含 7 台谱仪（ARCS/CNCS/SEQUOIA/HYSPEC/USESpec/VISION 等）。【通俗】专门测"中子能量变化"的仪器。'},
+    {id:'n-diffractometer', name:'中子衍射仪', cat:'component', fac:'neutron', papers:['p-mas06'],
+     def:'【定义】用中子衍射测晶体结构/晶格间距（弹性散射）的仪器；SNS 首批含 7 台衍射仪（POWGEN3 粉末、SNAP 高压、TOPAZ 单晶、NOMAD 无序材料、MaNDi 等）。【通俗】测材料晶格结构的仪器。'},
+    {id:'n-neutron-diffraction', name:'中子衍射', cat:'tech', fac:'neutron', papers:['p-pok19','p-che23'],
+     def:'【定义】利用中子与晶面的布拉格衍射测晶格间距/晶格应变的无损技术，用于块体（cm 级）残余应力、织构、相分数与位错密度（峰宽）测量；按 Hooke 定律由应变换算应力。【通俗】用中子衍射峰位置测晶格间距，进而算块体内部的应力。'},
+    {id:'n-tof-diffraction', name:'飞行时间中子衍射 TOF', cat:'tech', fac:'neutron', papers:['p-pok19','p-che23'],
+     def:'【定义】利用脉冲中子的飞行时间确定波长的中子衍射方法：事件模式记录、可按需切片，利于动力学测量（如原位应力弛豫）。【通俗】通过测中子从源到探测器的飞行时间区分不同波长，一次记录整条衍射谱。'},
+    {id:'n-in-situ-nd', name:'原位/实时中子衍射', cat:'tech', fac:'neutron', papers:['p-pok19','p-che23'],
+     def:'【定义】在加热、加载等过程进行中实时连续记录中子衍射数据的技术（如 10 K/min 升温至 1375 K 的原位热处理、718°C 退火实时弛豫）。【通俗】边加热/变形边连续测衍射，实时看晶格与应力怎么变。'},
+    {id:'n-cte', name:'热膨胀系数 CTE', cat:'property', fac:'neutron', papers:['p-pok19'],
+     def:'【定义】温度变化时晶格/尺寸的相对变化率；瞬时有效 CTE 为瞬时相应变对温度的导数（含机械与热应变两部分）；304L 中奥氏体理论 CTE 约为铁素体的 1.5 倍。【通俗】温度每升高一度，材料胀多少的相对量。'},
+    {id:'n-phase-stress', name:'相应力（相间残余应力）', cat:'property', fac:'neutron', papers:['p-pok19'],
+     def:'【定义】两相组织中分配到各相的平均残余应力；AM 304L 中铁素体相因 CTE 失配（奥氏体收缩更快）受压，铁素体经塑性变形协调（实测晶格应变偏离理论值达约 2800 μ-strain）；文中与"晶粒间残余应力/热致应力"互换使用。【通俗】多相材料里某一相单独憋着的那份内部应力。'},
+    {id:'n-deviatoric-stress', name:'偏应力', cat:'property', fac:'neutron', papers:['p-che23'],
+     def:'【定义】应力张量减去静水应力的偏量部分（σD,ii=σii−σH），与 von Mises 应力直接相关、是材料变形与失效的关键因子；对 d0（无应力晶格间距）变化不敏感，成分非均匀样品也能准确测定。【通俗】去掉均匀压/拉后剩下的"剪切形状改变"部分应力。'},
+    {id:'n-relaxation', name:'残余应力弛豫', cat:'process', fac:'neutron', papers:['p-che23'],
+     def:'【定义】高温退火过程中残余应力随时间降低的过程；Inconel 718 在 718°C 退火 14–20 h 后残余偏应力大幅释放（WQ 的 σD,LD 14 h 后约 60 MPa）；呈多阶段动力学：Stage I 快速塑性变形（位错增殖）、Stage II γ′/γ″ 析出硬化、Stage III 位错湮灭主导；偏应力弛豫近似 σD(t)=σD,0·e^(−kt)（k≈−0.0315/−0.0333 h⁻¹）。【通俗】加热保温时材料内部憋着的应力分阶段慢慢释放。'},
+    {id:'n-304l-am', name:'增材制造 304L 不锈钢', cat:'material', fac:'neutron', papers:['p-pok19'],
+     def:'【定义】LENS 激光近净成形（定向能量沉积）增材制造的 AISI 304L 奥氏体不锈钢：粉末 44–106 μm、Optomec LENS MR-7、1 kW Yb 光纤激光器、扫描间距 1016 μm、送粉率 2000 g/h、逐层旋转 90°；组织为奥氏体（约 98%）+约 2.5 vol% 铁素体；打印态位错密度约 1.3×10¹⁴ m⁻²。【通俗】激光逐层堆出来的 304L 不锈钢件，里面含约 2.5% 的铁素体。'},
+    {id:'n-ferrite-phase', name:'铁素体相（BCC）', cat:'material', fac:'neutron', papers:['p-pok19'],
+     def:'【定义】AM 304L 中约 2.5 vol%（±0.15）的体心立方（BCC）第二相：CPFE 模型中取 12 个 <111>{110} + 12 个 <111>{112} 滑移系；CTE 约为奥氏体 2/3，冷却时受压并塑性变形；加热时逐渐转变（800–1200 K 渐减、>1200 K 加速、<1350 K 完全转回奥氏体）。【通俗】钢里的 bcc 相，只占约 2.5%，加热时会变回奥氏体。'},
+    {id:'n-inconel-718', name:'Inconel 718 高温合金', cat:'material', fac:'neutron', papers:['p-che23'],
+     def:'【定义】沉淀硬化镍基高温合金（FCC γ 基体）：固溶、淬火、双级时效形成 γ′/γ″ 有序共格强化析出相，晶界可析出针状 δ 相；WQ 样品 δ 相约 9 wt%（中心最高 11.5 wt%）；用于航空航天与发电。【通俗】航空发动机常用的镍基高温合金，靠 γ′/γ″ 析出强化。'},
+    {id:'n-dislocation-density', name:'位错密度', cat:'cross', fac:'common', papers:['p-pok19','p-che23'],
+     def:'【定义】（与 BCC 孪晶本体"位错"对象对应）单位体积位错线总长度；中子衍射峰宽与位错密度相关（峰形分析 eCMWP/DLPA 定量）：AM 304L 打印态约 1.3±0.1×10¹⁴ m⁻²、热处理后低于检测限（约 10¹³ m⁻²）；Inconel 718 弛豫 Stage I 位错增殖、Stage III 部分湮灭。【通俗】材料里位错有多少的度量，衍射峰越宽通常位错越多。'},
+
+    /* ================= 十一、离子源板块·辐照基础与聚变材料（综述六篇） ================= */
+    {id:'i-dpa', name:'dpa 每原子离位数', cat:'concept', fac:'common', papers:['p-zin13','p-kna16'],
+     def:'【定义】国际标准化辐照损伤剂量单位：1 dpa 表示平均每个原子从其晶格位置被稳定离位一次；NRT 标准由 vNRT=0.8·E_damage/2E_threshold 折算弗伦克尔对数。典型值：轻水堆寿期末 1–10 dpa，聚变第一壁/包层约 150–200 dpa（5 年），ITER 设计寿命末 <3 dpa。【通俗】材料里每个原子平均被撞出原位多少次，是统一比较辐照损伤的标尺。'},
+    {id:'i-pka', name:'初级离位原子 PKA', cat:'concept', fac:'common', papers:['p-kna16','p-har19'],
+     def:'【定义】入射粒子碰撞后第一个反冲的原子；PKA 通过电子激发与弹性碰撞消耗动能，可继续撞出一批次级原子；LIFE 平均 PKA 能量 24.2 keV、DEMO 概念 14–26 keV；中子辐照 PKA 能量通常 <约 400 keV，高能自离子辐照 PKA 能谱可高两个量级——是影响位错环类型/形核的关键差异。【通俗】被入射粒子第一次直接撞飞的原子，是整个级联碰撞的起头。'},
+    {id:'i-ed', name:'离位阈值能', cat:'property', fac:'common', papers:['p-kna16'],
+     def:'【定义】使晶格原子形成稳定弗伦克尔对所需的最小方向平均能量 E_threshold；Fe 约 40 eV、W 约 95 eV。【通俗】把一个原子从晶格位置永久踢出所需的最小能量门槛，Fe 比 W 低。'},
+    {id:'i-cascade', name:'级联碰撞', cat:'process', fac:'common', papers:['p-kna16','p-har19','p-wan24'],
+     def:'【定义】PKA 及次级反冲原子接连碰撞、逐级产生离位原子的树状过程；级联在约皮秒内冷却并大部分复合（存活缺陷凝聚为位错环等团簇）；重离子/自离子产生高能量密度稠密级联、轻离子（H/He）产生稀疏级联（多为孤立弗伦克尔对）；弹道阶段后沉积动能局域热化形成热峰。【通俗】一个高能原子撞出的连锁碰撞树，短时间内打出一片点缺陷，随后大部分又复合掉。'},
+    {id:'i-defects', name:'点缺陷与缺陷团簇', cat:'concept', fac:'common', papers:['p-zin09','p-kna16','p-wan24','p-har19'],
+     def:'【定义】离位产生的空位+自间隙原子（SIA）弗伦克尔对，及存活点缺陷聚集形成的一维/二维/三维团簇（间隙型/空位型），成为位错运动障碍；从级联逃逸自由迁移的缺陷（FMD）驱动偏聚与肿胀。钨中 SIA 迁移能约 0.054 eV（~20 K 即开始迁移）、单空位迁移势垒 1.68 eV（迁移温度约 662 K）、间隙团簇迁移势垒 <0.1 eV。【通俗】辐照留下的空穴、间隙原子和它们抱团形成的小集团；间隙原子跑得快、空位跑得慢。'},
+    {id:'i-loop', name:'位错环', cat:'cross', fac:'common', papers:['p-zin14','p-was15','p-wan23','p-wan24','p-cun21','p-ela19','p-har19'],
+     def:'【定义】（foundations-ontology §6.2 锚点）级联产生的盘状二维缺陷团簇，含间隙型与空位型；BCC 金属中常见 Burgers 向量 a⟨100⟩ 与 a/2⟨111⟩：1/2<111> 环可滑移、<100> 环不可滑移（由高能密度级联直接形成或两个 1/2<111> 环反应生成）；钨重离子辐照中位错环是主要可见缺陷（n-SD 钨 1.93×10²² m⁻³/8.9 nm，W-20Ti 合金环面积 4–8 nm² 显著小于纯 W 约 16 nm²）。【通俗】一堆间隙原子或空位塌成的小圆盘状位错，挡住位错滑移使材料变硬。'},
+    {id:'i-swelling', name:'空洞肿胀', cat:'phenomenon', fac:'common', papers:['p-zin13'],
+     def:'【定义】辐照空位过饱和形核生长的空洞导致的体积膨胀：初始低肿胀瞬态后进入与剂量成正比的稳态肿胀（典型 0.2–1%/dpa）；He/H 促进空洞形核。【通俗】材料里长出空洞整体鼓胀，是高温辐照下最严重的尺寸不稳定。'},
+    {id:'i-creep', name:'辐照蠕变', cat:'phenomenon', fac:'common', papers:['p-zin13'],
+     def:'【定义】辐照下点缺陷过饱和与应力耦合导致的尺寸变化，变形量与外加应力和辐照剂量成正比（铁素体/奥氏体钢稳态蠕变柔量系数 0.5–1×10⁻⁶ MPa⁻¹dpa⁻¹）。【通俗】不靠高温、只靠辐照加应力就让材料慢慢流变形。'},
+    {id:'i-hardening', name:'辐照硬化/脆化', cat:'cross', fac:'common', papers:['p-zin13','p-zin09','p-wan23','p-cun21'],
+     def:'【定义】（foundations-ontology §6.3/§6.4 锚点）低温辐照产生高密度纳米缺陷团簇（位错环、氦泡等）阻碍位错运动，导致屈服强度/硬度升高、均匀伸长率与断裂韧性下降；分散障碍硬化按 Orowan 机制 Δτ=αGb√(Nd) 关联环密度与尺寸；钨 >0.2 dpa 时硬度稳定于 2.66±0.10 GPa；高汇强度（>10¹⁶/m²）微结构可明显降低辐照硬化。【通俗】低温被辐照后材料变硬但变脆，塑性大幅丧失。'},
+    {id:'i-ris-phase', name:'辐照诱导偏聚与相不稳定性', cat:'phenomenon', fac:'common', papers:['p-was15','p-zin13'],
+     def:'【定义】辐照点缺陷过饱和与持续缺陷通量耦合溶质，在汇（晶界等）处造成元素富集/贫化（RIS）；高剂量下辐照诱导/增强偏聚与级联弹道溶解使析出相形核、溶解或非晶化，改变基体成分与相稳定性。【通俗】辐照把溶质搬到晶界富集，还会打散或催生第二相颗粒。'},
+    {id:'i-he-embr', name:'氦脆', cat:'phenomenon', fac:'common', papers:['p-zin13','p-zin09'],
+     def:'【定义】嬗变 He 扩散至晶界形成大气泡、削弱晶界强度使总延伸率大幅下降的高温脆化现象，通常在 He 浓度 >10–100 appm 出现，限制材料上限使用温度。【通俗】氦在晶界吹出气泡把晶界撕开，高温下脆断。'},
+    {id:'i-transmutation', name:'嬗变产物 H/He', cat:'process', fac:'common', papers:['p-kna16','p-har19'],
+     def:'【定义】高能中子经 (n,α)/(n,p) 等非弹性反应在材料内产生 H、He（及固体嬗变元素）；钢中 H/He 生成阈能分别 ≥2 MeV、≥5 MeV；钨中主要嬗变产物为 Re、Ta、Os（DEMO 1.6 GW 谱约 6/2 appm H/He 每年）；双束离子辐照可按预设速率注入气体模拟嬗变。【通俗】中子打进原子核炼出氢、氦和铼钽锇等杂质，是辐照损伤的帮凶。'},
+    {id:'i-sink', name:'点缺陷汇（汇强度）', cat:'concept', fac:'common', papers:['p-zin14'],
+     def:'【定义】位错、晶界、析出相、空洞等吸收点缺陷的微观结构单元，捕获有效性以汇强度定量（如晶界 S_gb=60/d²）；高汇强度微结构降低点缺陷过饱和、抑制肿胀与硬化。【通俗】能吃掉辐照点缺陷的微观结构，密度越高材料越耐辐照。'},
+    {id:'i-mfrt', name:'速率理论/团簇动力学', cat:'theory', fac:'common', papers:['p-zin14','p-kna16','p-he24'],
+     def:'【定义】用缺陷浓度演化主方程描述辐照下点缺陷/团簇平均场演化的模拟框架，用于预测肿胀、偏聚、蠕变；随机团簇动力学（SCD）是其随机采样变体，可模拟多物种（V/SIA/He/H/Cr）团簇演化（He 2024 用之模拟脉冲辐照）。【通俗】不追单个缺陷、只算各类缺陷平均浓度如何随时间变的数学框架。'},
+    {id:'i-dt', name:'D-T 聚变反应', cat:'law', fac:'ion', papers:['p-zin14'],
+     def:'【定义】氘氚聚变反应：²H+³H→³He(3.5 MeV)+n(14.1 MeV)，净释能 17.6 MeV；是约束要求最低、最易实现的聚变反应。【通俗】氘和氚融合成一个氦核加一个高能中子，是目前最可行的聚变燃料反应。'},
+    {id:'i-fusion-neutron', name:'14.1 MeV 聚变中子', cat:'concept', fac:'ion', papers:['p-kna16','p-zin14'],
+     def:'【定义】D-T 聚变释放的 14.1 MeV 单能中子，能量远高于裂变中子（平均 <2 MeV）：既造成 150–200 dpa 位移损伤、又大量产生 H/He 嬗变，是聚变材料问题的总根源。【通俗】聚变特有的高能中子，又打损伤又造氢氦。'},
+    {id:'i-he-dpa', name:'氦/损伤比 He/dpa', cat:'property', fac:'ion', papers:['p-kna16','p-zin14'],
+     def:'【定义】单位损伤剂量的 He 生成量：聚变（14.1 MeV）约 12 appm/dpaNRT（主要经 ⁵⁶Fe(n,α)⁵³Cr），快裂变堆仅约 0.3 appm/dpa——聚变高约 50–100 倍；He 2024 表：LIFE 8.8 appm He/dpa、DEMO 10。【通俗】每打出 1 dpa 损伤同时造多少氦，聚变造氦效率比裂变高几十倍。'},
+    {id:'i-first-wall', name:'第一壁', cat:'component', fac:'ion', papers:['p-zin14','p-zin09'],
+     def:'【定义】直接面向等离子体、承受高热负荷与高中子/粒子通量的堆内壁面；稳态热流约 1–10 MW/m²；RAFM 钢是首选候选结构材料。【通俗】离等离子体最近、最先挨打的那面墙。'},
+    {id:'i-divertor', name:'偏滤器', cat:'component', fac:'ion', papers:['p-kna16'],
+     def:'【定义】约束等离子体的排灰系统：抽出氦灰与侵蚀杂质、吸收约 20% 聚变能、承受约 10 MW/m² 热流；钨（熔点 3410 °C）是偏滤器铠甲首选材料。【通俗】把等离子体废气抽走的部件，也是被烧得最狠的地方。'},
+    {id:'i-blanket', name:'包层', cat:'component', fac:'ion', papers:['p-zin09','p-zin14'],
+     def:'【定义】覆盖真空室内表面、屏蔽中子与热并增殖氚的部件；DEMO 包层需产氚并吸收聚变能（5 年累积 150–200 dpaNRT）。【通俗】包在等离子体外面的毯子，挡中子、取热、用锂再生氚燃料。'},
+    {id:'i-rafm', name:'RAFM 低活化钢', cat:'material', fac:'ion', papers:['p-zin14','p-he24'],
+     def:'【定义】以 W 代 Mo、Ta/V 代 Nb、去 Ni 的 8–14%Cr 低活化铁素体/马氏体钢（BCC 基体），使用温度上限约 550 °C，是聚变第一壁结构材料参考选材；Fe-9Cr 为其模型合金。【通俗】把放射性强元素换成低活化元素做的铁素体钢，聚变堆首选结构钢。'},
+    {id:'i-ods', name:'ODS 氧化物弥散强化钢', cat:'material', fac:'ion', papers:['p-kna16'],
+     def:'【定义】以弥散 Y₂O₃ 等纳米氧化物粒子强化并作为点缺陷/He 汇的铁素体钢，可将上限使用温度提高 100–200 °C、缓解脆化。【通俗】往钢里均匀撒纳米氧化物颗粒，既强化又能吞缺陷和氦的耐辐照钢。'},
+    {id:'i-v-alloy', name:'钒合金', cat:'material', fac:'ion', papers:['p-zin14'],
+     def:'【定义】候选聚变结构材料：适合自冷液态 Li 包层，但与其他高温冷却剂不兼容，且 <400 °C 有辐照脆化问题。【通俗】耐高温低活化的钒基合金，适合锂冷包层但低温易脆。'},
+    {id:'i-sic', name:'SiC/SiC 复合材料', cat:'material', fac:'ion', papers:['p-zin14'],
+     def:'【定义】碳化硅纤维增强碳化硅陶瓷基复合材料：可耐受约 1000 °C，500–800 °C 裂变堆辐照至 80 dpa 表现良好，但导热与断裂韧性不足。【通俗】又耐高温又耐辐照的陶瓷复合材料，高温聚变堆候选，但脆。'},
+    {id:'i-tungsten', name:'钨 W', cat:'material', fac:'ion', papers:['p-kna16','p-zin14','p-wan23','p-wan24','p-cun21','p-ela19','p-har19'],
+     def:'【定义】（BCC 孪晶本体 entity-tungsten-w 对应）熔点最高的 BCC 难熔金属（3410 °C，Harrison 记 3422 °C）、低蒸气压、低溅射率、低肿胀、低氚滞留、室温热导率约 170 W/m/K，是偏滤器铠甲首选材料（服役温度至 1400 °C），但脆、难加工；D-T 第一壁下嬗变为 Re/Os 速率约 0.25 at%/dpa；重离子辐照下位错环为最主要可见缺陷。【通俗】最耐烧的 bcc 金属，做偏滤器挡火面。'},
+    {id:'i-low-act', name:'低活化准则', cat:'concept', fac:'ion', papers:['p-zin14'],
+     def:'【定义】聚变选材要求材料在聚变中子下活化尽可能低且衰减快，以利复用/处置；候选合金主元素限于 Fe、Cr、Ti、V、W、Si、C。【通俗】材料被中子活化的放射性要低、衰减要快，才能少废料。'},
+    {id:'i-iter', name:'ITER', cat:'facility', fac:'ion', papers:['p-kna16'],
+     def:'【定义】在法国 Cadarache 建造的国际磁约束聚变装置（托卡马克），设计寿命末最大辐照损伤 <3 dpaNRT。【通俗】正在法国建造的全球最大托卡马克聚变实验装置。'},
+    {id:'i-demo', name:'DEMO 聚变示范堆', cat:'facility', fac:'ion', papers:['p-zin14'],
+     def:'【定义】ITER 之后的聚变技术示范堆：包层需增殖氚并吸收聚变能，材料承受更高剂量与 He/dpa（平均 PKA 能量 14–26 keV）。【通俗】ITER 之后的发电示范聚变堆，材料要求更苛刻。'},
+    {id:'i-ifmif', name:'IFMIF', cat:'facility', fac:'ion', papers:['p-kna16'],
+     def:'【定义】国际聚变材料辐照装置：两台 125 mA/40 MeV 连续波氘核直线加速器轰击液态锂靶、经 Li(d,xn) 反应产生聚变能谱中子，可在 500 cm³ 内提供 >20 dpaNRT/年，解决聚变材料无法用裂变堆测试的问题。【通俗】专门造聚变能谱中子去照材料的实验装置。'},
+    {id:'i-life', name:'LIFE 激光惯性聚变装置', cat:'facility', fac:'ion', papers:['p-he24'],
+     def:'【定义】激光惯性聚变能（IFE）示范点设计：132 MJ/发、1 μs 脉冲、1 Hz 重复率；每发剂量 4.2×10⁻⁸ dpa（剂量率 0.042 dpa/s），1 Hz 年剂量 1.4 dpa；平均 PKA 能量 24.2 keV；He 2024 以其为 IFE 原型。【通俗】用激光打靶产生脉冲聚变的装置，中子一阵一阵脉冲式到达第一壁。'},
+    {id:'i-ion-surrogate', name:'离子辐照模拟中子', cat:'tech', fac:'ion', papers:['p-was15','p-har19'],
+     def:'【定义】用离子束替代中子辐照研究辐照效应：损伤速率高（约 10⁴ 倍）、残余活化低或无、成本低 100–1000 倍、快 100–10000 倍、可控可原位观察；经同一炉次材料的反应堆/加速器逐项 benchmark，位错环/RIS/硬化/位错通道/蠕变/IASCC 等多数特征可定性定量复现；但复现中子损伤机制复杂性与嬗变效应仍是关键缺口。【通俗】用加速器离子束冒充中子照材料，又快又便宜还不带放射性。'},
+    {id:'i-proton-irr', name:'质子辐照', cat:'tech', fac:'ion', papers:['p-was15'],
+     def:'【定义】数 MeV 质子辐照：穿透数十微米、损伤剖面较平坦（几十微米内剂量率变化 <2 倍）、损伤速率较中子高约 10²–10³ 倍、活化低，是 benchmark 中子辐照最充分的轻离子手段。【通俗】用轻质子打材料，损伤分布均匀，最常用来复刻堆内损伤。'},
+    {id:'i-heavy-ion-irr', name:'重离子辐照', cat:'tech', fac:'ion', papers:['p-was15'],
+     def:'【定义】数 MeV 重离子辐照：剂量率极高（达反应堆约 10⁴ 倍、200 dpa 数天可达）、产生与中子相似的稠密级联，但穿透极浅、损伤剖面尖锐（约 2 μm 处尖峰）。【通俗】用重离子打材料，级联和中子很像，但只能打进表面一两微米。'},
+    {id:'i-self-ion-irr', name:'自离子辐照', cat:'tech', fac:'ion', papers:['p-was15'],
+     def:'【定义】用与靶成分相同的离子（如 Fe⁺ 照 Fe 基合金）辐照，避免外来元素化学效应，但会额外注入间隙原子。【通俗】用自己人离子打自己，不引入杂质，但会多塞进间隙原子。'},
+    {id:'i-injected', name:'注入间隙原子效应', cat:'phenomenon', fac:'ion', papers:['p-was15'],
+     def:'【定义】自/重离子停驻处构成额外间隙原子源，在损伤峰附近抑制空洞形核生长（如 5 MeV Ni⁺ 照 Fe-15Cr-35Ni 使峰值肿胀被抑制约 5 倍）。【通俗】打进去的离子落地成多余间隙原子，反而把附近空洞压下去。'},
+    {id:'i-rate-diff', name:'损伤速率差异与温度平移', cat:'property', fac:'ion', papers:['p-was15','p-har19'],
+     def:'【定义】离子辐照损伤速率可达反应堆约 10⁴ 倍（质子约 10²–10³ 倍；典型 10⁻³ dpa/s vs 中子 10⁻⁷ dpa/s），200 dpa 数天而非数十年可达；按 Mansur 不变性理论需相应升高辐照温度（如 Ni 肿胀实验约 +200 °C）补偿剂量率差异以保持缺陷行为等价。【通俗】离子打损伤比中子快上万倍，用升温补偿快打的影响。'},
+    {id:'i-depth-profile', name:'损伤深度分布', cat:'concept', fac:'ion', papers:['p-was15','p-wan24'],
+     def:'【定义】离子束损伤随深度变化：质子相对平坦（几十微米内剂量率变化 <2 倍），重离子连续变化并在约 2 μm 处急剧尖峰（6 MeV Cu³⁺ 在钨中损伤峰约 1000 nm、延伸至约 1800 nm）；分析须避开表面与注入区、挑选均匀区取样。【通俗】离子打出的损伤深度曲线，质子平、重离子尖，取样必须挑均匀区。'},
+    {id:'i-dual-beam', name:'双束离子辐照', cat:'tech', fac:'ion', papers:['p-was15'],
+     def:'【定义】一台加速器以自离子造损伤、另一台按预设速率注入气体（He 等），复现反应堆的 He/dpa 嬗变条件的模拟技术（可扩展至三束）。【通俗】同时打造损伤和造气体两束离子，把嬗变也一起模拟。'},
+    {id:'i-pulsed-irr', name:'脉冲辐照（IFE）', cat:'process', fac:'ion', papers:['p-he24'],
+     def:'【定义】激光惯性聚变能（IFE）下损伤以微秒级中子脉冲+最长约 1 秒脉冲间退火周期的不连续方式累积，与磁约束（MFE）连续辐照根本不同；SCD 模拟显示几乎所有情形下脉冲辐照抑制 He-空位团簇形成、SIA 团簇密度比连续辐照低至一个数量级。【通俗】聚变中子一阵一阵脉冲式打到第一壁，中间夹着退火空档，损伤积累比连续照温和。'},
+
+    /* ================= 十二、离子源板块·钨重离子辐照实验（Harrison/Wang/Cunningham/El-Atwani） ================= */
+    {id:'ibml-peking-tandem', name:'北大 IBML 串列加速器', cat:'facility', fac:'ion', papers:['p-wan24','p-wan23'],
+     def:'【定义】北京大学离子束材料实验室（IBML）的 NEC5SDH-2 2×1.7 MV 串列加速器，用于 6 MeV Cu³⁺ 重离子室温辐照钨制造位移损伤（Wang 2023/2024 两篇共用；损伤峰约 1000 nm、延伸至约 1800 nm）。【通俗】北大实验室的串列式离子加速器，用 6 MeV 铜离子轰击钨样品。'},
+    {id:'i3tem-sandia', name:'Sandia I³TEM 原位辐照电镜', cat:'facility', fac:'ion', papers:['p-cun21'],
+     def:'【定义】Sandia 国家实验室离子束实验室的 I³TEM 原位离子辐照透射电镜设施：6 MV HVE 串列加速器将 1.7 MeV Au³⁺ 离子引入 200 kV TEM 中辐照薄膜样品。【通俗】把离子束接进透射电镜，边轰击边实时看缺陷形成长大。'},
+    {id:'ivem-argonne', name:'阿贡 IVEM 原位辐照电镜', cat:'facility', fac:'ion', papers:['p-ela19'],
+     def:'【定义】阿贡国家实验室的中压电子显微镜（IVEM，300 kV）配串列加速器，用于 1 MeV Kr⁺² 离子的原位 TEM 辐照（剂量率 0.00075–0.002 dpa/s）。【通俗】阿贡的中压电镜接串列加速器，用氪离子原位辐照纳米晶钨。'},
+    {id:'i-thermal-spike', name:'热峰', cat:'phenomenon', fac:'ion', papers:['p-cun21'],
+     def:'【定义】级联碰撞弹道阶段后沉积动能被局域热化形成的瞬态高温区（W 中平均热峰能量约 23.0 keV、直径约 5.4 nm）；可与晶界作用驱动界面迁移（辐照诱导晶粒长大）。【通俗】级联刚结束瞬间材料里一小块极热区域，能把晶界推动。'},
+    {id:'i-recovery-stages', name:'缺陷回复阶段', cat:'concept', fac:'ion', papers:['p-wan24'],
+     def:'【定义】按温度区间与激活能划分的缺陷热回复阶段：早期中子研究分五阶段（I 20–103 K 间隙原子迁移、II 103–623 K、III 623–913 K 空位迁移、IV 913–1243 K、V >1243 K）；Wang 2024 针对重离子辐照钨重定义为四阶段：I(20 K–RT)、II(RT–653 K)、III(653–1123 K)、IV(1123–2000 K)；473 K 即确认纳米空洞形成，1873 K 使非饱和钨缺陷完全消除、饱和钨完全回复预计约 2000 K。【通俗】按"加热到什么温度哪些缺陷开始消失"把回复过程分成若干阶段。'},
+    {id:'i-damage-saturation', name:'损伤饱和', cat:'phenomenon', fac:'ion', papers:['p-wan24','p-wan23'],
+     def:'【定义】随剂量增大缺陷密度/尺寸不再显著增加而趋于平台的现象；重离子辐照钨在室温的饱和剂量约 0.2 dpa（临界饱和剂量 0.1–0.2 dpa），表现为位错环/线密度与尺寸恒定、硬度不再增加。【通俗】剂量加到一定程度后缺陷不再多了，趋于饱和。'},
+    {id:'i-dynamic-equilibrium', name:'位移损伤动态平衡', cat:'phenomenon', fac:'ion', papers:['p-wan23'],
+     def:'【定义】高剂量连续辐照下缺陷产生与湮灭相互制约、总缺陷含量趋近常数的稳态（钨 ≥0.2 dpa）：间隙型缺陷由位错环（≤0.1 dpa）→位错线（0.1–0.15 dpa）→位错网络（≥0.15 dpa）演化，网络与环共存；位错网络作为缺陷汇不断消耗新生弗伦克尔对。【通俗】一边造缺陷一边消缺陷，两者打平，缺陷总数不再变。'},
+    {id:'i-d-retention', name:'氘滞留', cat:'phenomenon', fac:'ion', papers:['p-wan23'],
+     def:'【定义】氘（D）被辐照缺陷（空位、位错等）俘获而滞留于钨中的现象；随 dpa 增加而在 >0.2 dpa 饱和（约 1.77 at.%），与缺陷动态平衡不可分；用低能（<15 eV）氘等离子体暴露标记位移损伤缺陷、NRA 测深度分布。【通俗】氘原子被损伤缺陷抓住留在钨里，损伤越多留得越多，到饱和后不再涨。'},
+    {id:'i-cavity-lattice', name:'空洞/气泡超点阵', cat:'phenomenon', fac:'ion', papers:['p-har19'],
+     def:'【定义】中子辐照钨中空洞（550 °C 时约 3 nm、点阵间距 19.5 nm）及 H/He 轻离子辐照中气泡（间距随能量 4.3→9.3 nm）在空间规则排列形成的超点阵结构。【通俗】空洞或气泡在晶体里排成规则点阵。'},
+    {id:'i-thermal-spike-grain-growth', name:'热峰诱导晶粒长大', cat:'phenomenon', fac:'ion', papers:['p-cun21'],
+     def:'【定义】级联热峰与晶界作用驱动的界面迁移/晶粒长大现象（低同系温度即可发生）；用热峰模型描述 D³−D₀³=Kφt：反冲原子热化产生的局域温度尖峰驱动跨晶界原子扩散。【通俗】靠级联热峰的热量推着晶界移动，让晶粒长大。'},
+    {id:'i-gb-doping', name:'晶界掺杂', cat:'tech', fac:'ion', papers:['p-cun21'],
+     def:'【定义】用溶质原子（本文 Ti，另引 Au）稳定纳米晶晶界的界面工程手段：溶质偏聚晶界、降低晶界能/迁移率，抑制热与辐照诱导晶粒长大并增强缺陷吸收。【通俗】往晶界里掺少量合金元素，把晶界钉住防止晶粒长大。'},
+    {id:'i-grain-growth-suppression', name:'辐照晶粒长大抑制', cat:'process', fac:'ion', papers:['p-cun21'],
+     def:'【定义】溶质/掺杂使纳米晶在辐照下晶粒尺寸稳定在更细值、低于纯金属热峰模型预测的过程：W-20Ti 在 400 dpa 稳定于约 30 nm，而纯 W 预测 >60 nm。【通俗】加了钛之后辐照下晶粒不再疯长，保持细晶。'},
+    {id:'i-in-situ-tem-irr', name:'原位TEM离子辐照', cat:'tech', fac:'ion', papers:['p-cun21','p-ela19'],
+     def:'【定义】在透射电镜内边离子辐照边实时观察缺陷演化/吸收的实验技术（Kr⁺²、Au³⁺ 等），可捕捉晶界对缺陷的实时快速吸收等动态过程。【通俗】在电镜里一边轰离子一边拍视频，实时看缺陷怎么变。'},
+    {id:'i-ncw', name:'纳米晶钨 NCW', cat:'material', fac:'ion', papers:['p-ela19','p-cun21'],
+     def:'【定义】晶粒尺寸在纳米尺度（<100 nm）的钨（等轴 35 nm 与 85 nm 两种）：因高晶界密度（晶界/表面比 3.8–7.9）而具高辐照耐受性——35 nm 晶粒钨位错环密度显著更低，晶界快速吸收位错环与间隙原子。【通俗】晶粒做到几十纳米的钨，晶界特别多，抗辐照。'},
+    {id:'i-w20ti', name:'W-20Ti 掺杂纳米晶钨', cat:'material', fac:'ion', papers:['p-cun21'],
+     def:'【定义】掺 20 at.% Ti 的纳米晶钨合金（原始晶粒 19±4.7 nm）：Ti 偏聚晶界稳定纳米结构、抵抗辐照诱导晶粒长大（400 dpa 稳定于 30±7.7 nm），产生更小缺陷环（4–8 nm² vs 纯 W 约 16 nm²）与延迟饱和剂量。【通俗】加了 20% 钛的纳米晶钨，晶界被钛钉住，更抗辐照长大。'},
+    {id:'x-loop-111', name:'1/2<111> 位错环', cat:'cross', fac:'common', papers:['p-har19'],
+     def:'【定义】（BCC 孪晶本体 §1.3 位错对象联用）Burgers 矢量 b=1/2⟨111⟩ 的位错环：BCC 金属中一般可滑移（glissile）、能量上更有利，可迁移至晶界/表面被吸收或与其他缺陷湮灭（模拟：直径约 7.5 nm 的环可从 13.9 nm 深度逃逸至表面）；是钨辐照组织的主导位错环类型。【通俗】能滑着走的位错环，柏氏矢量沿 <111>，与 BCC 螺位错同向。'},
+    {id:'x-loop-100', name:'<100> 位错环', cat:'cross', fac:'common', papers:['p-har19','p-ela19'],
+     def:'【定义】（BCC 孪晶本体 §1.3 位错对象联用）Burgers 矢量 b=⟨100⟩ 的位错环：BCC 金属中不可滑移（sessile）、能量上不利，由高能量密度级联直接形成或两个 1/2<111> 环反应生成，会积累并加剧硬化。【通俗】不能滑的卡住位错环，堆积起来让材料更硬更脆。'},
+    {id:'x-dislocation-network', name:'位错网络（位错线）', cat:'cross', fac:'common', papers:['p-wan23','p-wan24'],
+     def:'【定义】（BCC 孪晶本体 §1.3 位错对象联用）高位错环密度经弹性相互作用合并/纠缠形成的三维位错网络（或一维位错线）：钨辐照 ≥0.15 dpa 时成为主导间隙型缺陷构型并作为缺陷汇维持动态平衡；总位错密度（饱和钨）约 4.49×10¹⁴ m/m³。【通俗】很多位错线互相缠成一张网，高剂量辐照钨的主缺陷。'},
+    {id:'x-gb-segregation', name:'晶界偏聚（掺杂稳定）', cat:'cross', fac:'common', papers:['p-cun21'],
+     def:'【定义】（晶界工程对象，与 BCC 孪晶本体晶界对象联用）溶质原子（Ti）在晶界处富集的现象：降低晶界能与迁移率、抑制热与辐照诱导晶粒长大，并增强晶界对缺陷的汇强度（1000 °C 退火后 Ti 偏聚晶界）。【通俗】合金元素聚到晶界上，把晶界稳住并让它更能吸缺陷。'},
+  ],
+
+  edges: [
+    /* ---- 一、X 射线物理基础 ---- */
+    ['electric-dipole-radiation','thomson-scattering-length','推导出前置因子 r₀'],
+    ['electric-dipole-radiation','polarization-factor','产生 cosψ 偏振因子'],
+    ['electric-dipole-radiation','thomson-scattering','给出微分散射截面'],
+    ['thomson-scattering-length','thomson-scattering','决定总截面 σT'],
+    ['thomson-scattering','x-ray-refractive-index','π 相移导致 n<1'],
+    ['quantized-em-field','form-factor','量子导出形状因子'],
+    ['quantized-em-field','thomson-scattering','量子描述等价于经典'],
+    ['debye-waller-factor','bragg-law','衰减布拉格峰强度'],
+    ['convolution-theorem','fourier-reciprocal-space','是傅里叶变换性质'],
+    ['fourier-reciprocal-space','patterson-function','由强度直接变换定义'],
+    ['fermi-pseudopotential','neutron-scattering-length','引入散射长度 b'],
+    ['neutron-scattering-length','neutron-refractive-index','代入得折射率'],
+    ['neutron-scattering-length','thomson-scattering-length','对应替代（b 代 r₀）'],
+    /* ---- 二、FEL 物理 ---- */
+    ['undulator','free-electron-laser','构成核心器件'],
+    ['undulator','resonance-condition','决定辐射波长'],
+    ['undulator-parameter','resonance-condition','进入波长公式'],
+    ['linear-accelerator','free-electron-laser','驱动电子束'],
+    ['linear-accelerator','lcls','驱动（1 km 常导铜段）'],
+    ['photocathode-rf-gun','electron-beam-brightness','提供高亮度束'],
+    ['thermionic-electron-gun','sacla','被采用（CeB₆ 阴极）'],
+    ['rf-acceleration','linear-accelerator','实现加速'],
+    ['superconducting-accelerator','flash','驱动'],
+    ['superconducting-accelerator','european-xfel','驱动'],
+    ['superconducting-accelerator','lcls-ii','驱动'],
+    ['bunch-compression-chicane','hghg','能量调制转密度调制'],
+    ['micro-bunching','high-gain-fel','驱动相干放大'],
+    ['pendulum-equations','micro-bunching','描述其形成'],
+    ['pendulum-equations','high-gain-fel','一维理论出发点'],
+    ['universally-scaled-equations','high-gain-fel','普适描述'],
+    ['pierce-parameter','high-gain-fel','标度表征'],
+    ['pierce-parameter','gain-length','决定增益长度'],
+    ['saturation','high-gain-fel','终结指数增长'],
+    ['energy-spread','high-gain-fel','退化微聚束'],
+    ['normalized-emittance','high-gain-fel','限制增益'],
+    ['emittance','electron-beam-brightness','决定束亮度'],
+    ['electron-beam-brightness','high-gain-fel','决定增益性能'],
+    ['spontaneous-undulator-radiation','sase','充当启动噪声'],
+    ['sase','shot-noise','起始于散粒噪声'],
+    ['sase','micro-bunching','依赖自组织微聚束'],
+    ['optical-guiding','transverse-coherence','保证近全横向相干'],
+    ['cooperation-length','temporal-coherence','决定相干区尺度'],
+    ['slippage','cooperation-length','一个增益长度内的滑移'],
+    ['ponderomotive-wave','pendulum-equations','提供有质动力势'],
+    ['seeding','temporal-coherence','提高时间相干性'],
+    ['self-seeding','temporal-coherence','改善时间相干性'],
+    ['hghg','seeding','是一种种子方案'],
+    ['eehg','seeding','是一种种子方案'],
+    ['optical-klystron','micro-bunching','加速微聚束'],
+    ['beam-conditioning','normalized-emittance','补偿发射度角散布'],
+    ['emittance-exchange','electron-beam-brightness','提高横向亮度'],
+    ['nonlinear-harmonic-generation','high-gain-fel','伴生谐波辐射'],
+    ['quantum-recoil-diffusion','high-gain-fel','限制最短波长'],
+    ['wakefield','high-gain-fel','干扰增益'],
+    ['undulator-taper','saturation','补偿能量损失'],
+    ['undulator-taper','lcls','应用于（功率倍增）'],
+    ['fel-oscillator','free-electron-laser','低增益振荡器构型'],
+    ['xfelo','free-electron-laser','X 射线振荡器方案'],
+    ['monochromator','self-seeding','金刚石单色滤波'],
+    ['self-seeding','lcls','被实现于'],
+    ['eehg','sxfel','拟采用'],
+    ['xtcav','lcls','安装于'],
+    ['xfel-mirror','sacla','安装于'],
+    /* ---- 三、FEL 装置与运行模式 ---- */
+    ['lcls','sase','采用 SASE 模式'],
+    ['sacla','sase','采用 SASE 模式'],
+    ['fermi','hghg','采用 HGHG 种子'],
+    ['lcls-ii','lcls','是升级装置'],
+    ['flash','free-electron-laser','属于 FEL 实例'],
+    ['european-xfel','free-electron-laser','属于 FEL 实例'],
+    ['swissfel','free-electron-laser','属于 FEL 实例'],
+    ['pal-xfel','free-electron-laser','属于 FEL 实例'],
+    ['sxfel','free-electron-laser','属于 FEL 实例'],
+    ['clara','free-electron-laser','FEL 试验装置'],
+    ['free-electron-laser','storage-ring-source','亮度高约 9 个量级'],
+    ['energy-recovery-linac','storage-ring-source','区别于（单次通过）'],
+    /* ---- 四、XFEL 实验技术与应用领域 ---- */
+    ['pump-probe','time-resolved-xrd','用于时间分辨实验'],
+    ['sfx','structural-biology','用于结构解析'],
+    ['cdi','single-particle-imaging','用于相位重建'],
+    ['rixs','photochemistry','用于反应探测'],
+    ['rixs','x-ray-spectroscopy','是共振发射谱变体'],
+    ['x-ray-spectroscopy','photochemistry','用于电子结构探测'],
+    ['x-ray-scattering','solid-density-plasma','用于诊断'],
+    ['thomson-scattering','solid-density-plasma','用于等离子体诊断'],
+    ['shock-physics','industrial-materials','提供机制理解'],
+    ['transverse-coherence','cdi','支撑无透镜成像'],
+    ['transverse-coherence','xpcs','支撑相关谱技术'],
+    ['free-electron-laser','structural-biology','应用于'],
+    ['free-electron-laser','amophysics','应用于'],
+    ['free-electron-laser','photochemistry','应用于'],
+    ['free-electron-laser','surfaces-materials','应用于'],
+    ['free-electron-laser','condensed-matter','应用于'],
+    ['free-electron-laser','ultrafast-magnetism','应用于'],
+    ['free-electron-laser','shock-physics','应用于'],
+    ['free-electron-laser','solid-density-plasma','应用于'],
+    ['free-electron-laser','high-energy-density','应用于'],
+    ['free-electron-laser','industrial-materials','应用于'],
+    ['free-electron-laser','euv-lithography','候选光源'],
+    /* ---- 五、同步辐射与储存环光源 ---- */
+    ['synchrotron-accelerator','synchrotron-radiation','产生'],
+    ['synchrotron-radiation','relativistic-radiation-effects','特性由相对论决定'],
+    ['storage-ring-source','synchrotron-accelerator','固定能量型加速器'],
+    ['synchrotron-accelerator','bending-magnet','包含（偏转轨迹）'],
+    ['synchrotron-accelerator','quadrupole-magnet','包含（聚焦束流）'],
+    ['insertion-device','undulator','包含波荡器'],
+    ['wiggler','undulator','是特殊类型'],
+    ['undulator','synchrotron-radiation','产生（三代主要辐射源）'],
+    ['undulator','third-generation-source','是其主要辐射源'],
+    ['relativistic-factor','relativistic-radiation-effects','决定张角与增质量'],
+    ['emittance','spectral-brightness','决定（亮度反比于发射度）'],
+    ['first-generation-source','synchrotron-accelerator','源自高能加速器'],
+    ['second-generation-source','bending-magnet','依赖（辐射源）'],
+    ['second-generation-source','wiggler','依赖（辐射源）'],
+    ['third-generation-source','storage-ring-source','基于储存环'],
+    ['beamline','monochromator','配备（选窄谱段）'],
+    ['beamline','xfel-mirror','配备（重新聚焦）'],
+    ['esrf','third-generation-source','是三代高能光源'],
+    ['aps','third-generation-source','是三代高能光源'],
+    ['spring-8','third-generation-source','是三代高能光源'],
+    ['petra-iii','third-generation-source','改造为三代光源'],
+    ['petra-iii','wiggler','采用 20 台阻尼扭摆器'],
+    ['uhxs','storage-ring-source','拟议终极储存环'],
+    ['esrf','storage-ring-source','属于储存环光源'],
+    ['aps','storage-ring-source','属于储存环光源'],
+    ['spring-8','storage-ring-source','属于储存环光源'],
+    ['petra-iii','storage-ring-source','属于储存环光源'],
+    ['als','storage-ring-source','属于储存环光源'],
+    ['free-electron-laser','synchrotron-radiation','产生超短超亮脉冲'],
+    /* ---- 六、LPBF 原位实验装置（Uhlmann 2020） ---- */
+    ['lpbf','residual-stress','产生高机械应力'],
+    ['lpbf','x-texture','导致织构演化'],
+    ['lpbf','additive-manufacturing','是一种增材制造技术'],
+    ['in-situ-sxrd','lpbf','应用于制造过程'],
+    ['high-energy-synchrotron-radiation','in-situ-sxrd','提供体相敏感测量'],
+    ['in-situ-sxrd','x-lattice-strain','测量晶格应变'],
+    ['x-lattice-strain','residual-stress','经 Hooke 定律换算应力'],
+    ['debye-scherrer-ring','bragg-law','由环半径经布拉格角换算'],
+    ['transmission-mode','debye-scherrer-ring','收集完整衍射环'],
+    ['gauge-volume','in-situ-sxrd','界定测量区域'],
+    ['hems-p07','petra-iii','隶属于束线'],
+    ['inconel-625','lpbf','用作粉末材料'],
+    ['insitu-lpbf-system','in-situ-sxrd','实现原位衍射'],
+    ['insitu-lpbf-system','lpbf','基于工业机改造'],
+    ['insitu-lpbf-system','hems-p07','设计用于该束线'],
+    /* ---- 七、HEDM 与块体晶格应变 ---- */
+    ['hedm','3d-xrd','是 3DXRD 的一种实现'],
+    ['hedm','aps','开发于 1-ID 束线'],
+    ['hedm','ff-hedm','包含远场模式'],
+    ['hedm','nf-hedm','包含近场模式'],
+    ['hedm','he-uct','常与层析联用'],
+    ['ff-hedm','area-detector','使用大画幅探测器'],
+    ['nf-hedm','area-detector','使用高分辨探测器'],
+    ['hedm','high-energy-penetration','依赖高能穿透'],
+    ['hedm','bragg-law','基于布拉格衍射'],
+    ['hedm','rotating-crystal-method','构型类比于'],
+    ['nf-hedm','forward-modeling-reconstruction','采用前向建模重建'],
+    ['ff-hedm','debye-scherrer-ring','衍射峰近似落在环上'],
+    ['ff-hedm','crystal-orientation-field','输出晶粒平均取向'],
+    ['nf-hedm','grain-shape-position','测定晶粒形状位置'],
+    ['nf-hedm','intragranular-orientation-distribution','测得晶内取向分布'],
+    ['nf-hedm','x-grain-boundary','分辨晶界特征'],
+    ['hedm','spatial-orientation-resolution','具备 1µm/0.1° 指标'],
+    ['hedm','grain-growth','用于研究'],
+    ['hedm','recrystallization','用于研究'],
+    ['hedm','texture-development','用于研究'],
+    ['hedm','orientation-gradient','用于研究'],
+    ['hedm','x-twinning-112-111','用于研究孪晶（方法可迁移）'],
+    ['hedm','annealing-twinning','用于研究'],
+    ['hedm','plastic-deformation','用于研究'],
+    ['hedm','additive-manufacturing','用于研究组织'],
+    ['x-twinning-112-111','x-twin-boundary','产生孪晶-基体界面'],
+    ['annealing-twinning','x-twin-boundary','生成孪晶界（FCC 例）'],
+    ['hedm','dct','与 DCT 相关'],
+    ['hedm','bcdi','与 BCDI 互补'],
+    ['hedm','dark-field-xrm','与暗场显微术相关'],
+    ['synchrotron-x-ray-transmission','ring-distortion','测量环畸变'],
+    ['synchrotron-x-ray-transmission','ring-graininess','测量环颗粒性'],
+    ['ring-distortion','volume-averaged-elastic-strain','换算体平均应变'],
+    ['ring-graininess','bragg-peak-broadening','与峰宽化相关'],
+    ['synchrotron-x-ray-transmission','cu-mo-composite','应用于'],
+    ['cu-mo-composite','load-transfer','发生载荷传递'],
+    ['volume-averaged-elastic-strain','load-transfer','用于评估载荷分配'],
+    ['volume-averaged-elastic-strain','x-lattice-strain','是一种晶格应变量'],
+    ['load-transfer','elastoplastic-transition','随应力分区改变'],
+    ['synchrotron-x-ray-transmission','neutron-diffraction-comparison','与中子衍射对比'],
+    /* ---- 八、冲击孪晶与 β-Ti 应用（光子源 × BCC 联用） ---- */
+    ['lcls','mec-endstation','包含 MEC 端站'],
+    ['lcls','femtosecond-xrd','提供飞秒 X 射线脉冲'],
+    ['laser-shock-compression','shock-compression','驱动平面冲击波'],
+    ['shock-compression','tantalum','作用于样品'],
+    ['femtosecond-xrd','tantalum','原位探测'],
+    ['cspad','femtosecond-xrd','记录衍射花样'],
+    ['femtosecond-xrd','time-resolved-xrd','是其极限时间分辨形式'],
+    ['femtosecond-xrd','debye-scherrer-ring','记录衍射环'],
+    ['debye-scherrer-ring','hkl-shift-broadening','分析峰位移与展宽'],
+    ['shock-compression','shock-physics','属于研究范畴'],
+    ['shock-compression','x-twinning-slip-competition','激发机制竞争'],
+    ['x-twinning-slip-competition','x-twinning-slip-transition','随压力发生转变'],
+    ['x-twinning-slip-transition','x-slip','转变后滑移主导'],
+    ['tantalum','x-twinning-112-111','发生 {112} 镜面孪晶'],
+    ['x-twinning-112-111','x-twin-lattice-rotation','引起晶格转动'],
+    ['hkl-shift-broadening','x-twin-lattice-rotation','表征晶格转动'],
+    ['x-twin-lattice-rotation','x-texture','表现为织构斑变化'],
+    ['hkl-shift-broadening','x-elastic-shear-strain','用于分析剪切应变'],
+    ['shock-compression','x-elastic-shear-strain','冲击态残余剪切应变可忽略'],
+    ['x-omega','shock-compression','冲击可能诱发（本文未观察到）'],
+    ['x-simt','x-trip-twip','是 TRIP 的来源'],
+    ['x-twinning-332-113','x-trip-twip','是 TWIP 的来源'],
+    ['x-beta-stability','x-twinning-332-113','低稳定性促进孪晶'],
+    ['x-beta-stability','x-simt','更低稳定性触发相变'],
+    ['alpha-precipitate','ti-7cr-1.5sn','构成 20% 体积分数'],
+    ['ti-7cr-1.5sn','yield-strength-work-hardening','具备屈服 760 MPa'],
+    ['ti-8.5cr-1.5sn','yield-strength-work-hardening','作为性能基准'],
+    ['soleil-diffabs','in-situ-sxrd','实施原位拉伸 XRD'],
+    ['spring8-bl13xu','in-situ-sxrd','实施原位拉伸 XRD'],
+    ['in-situ-sxrd','x-simt','原位表征相变'],
+    ['in-situ-sxrd','x-martensite','检测 α″ 相'],
+    ['x-twinning-332-113','x-precipitate-sheared','剪切析出相'],
+    ['x-twinning-332-113','x-twinning-112-111','与另一孪晶模式并存'],
+    ['x-burgers-or','alpha-precipitate','描述析出相取向关系'],
+    ['oxygen-interstitial','x-oxygen-suppresses-simt','抑制相变'],
+    ['oxygen-interstitial','x-oxygen-tb-segregation','偏聚孪晶界'],
+    ['x-oxygen-tb-segregation','x-twin-boundary','发生于孪晶界'],
+    ['x-oxygen-tb-segregation','x-twin-growth-nucleation','导致长大受限'],
+    ['x-twin-boundary','x-twin-growth-nucleation','是增厚载体'],
+    ['x-twin-growth-nucleation','x-twinning-332-113','限制增厚、促进形核'],
+    ['spring8-bl13xu','x-alpha-prime-prime-softening','揭示 α″ 更软'],
+    ['x-alpha-prime-prime-softening','x-grain-refinement-anomaly','解释反常软化'],
+    ['x-grain-refinement-anomaly','x-luders','伴随不连续屈服'],
+    ['x-oxygen-suppresses-simt','yield-strength-work-hardening','维持高强度'],
+    ['x-hall-petch','x-grain-refinement-anomaly','出现例外（反常软化）'],
+    ['ti-12mo','x-martensite','应变诱发 α″ 相'],
+    ['x-martensite','x-simt','是相变产物'],
+    ['ti-12mo-0.3o','oxygen-interstitial','含间隙氧'],
+    ['ti-12mo','x-beta-stability','亚稳 β 实例'],
+    ['high-gain-fel','gain-length','以增益长度标度增长'],
+    ['high-gain-fel','saturation','增长至饱和'],
+    ['x-slip','x-twinning-slip-competition','是竞争机制之一'],
+    ['x-hall-petch','x-trip-twip','动态 Hall-Petch 支撑 TWIP'],
+    ['x-omega','ti-12mo','以无热 ω 析出存在'],
+    ['x-precipitate-sheared','alpha-precipitate','作用于 α 析出相'],
+    ['x-luders','ti-12mo','发生于细晶样品'],
+    ['x-twinning-332-113','x-twin-boundary','孪晶与基体的界面'],
+    /* ---- 九、中子源板块 ---- */
+    ['n-spallation','n-sns','是其中子产生机制'],
+    ['n-spallation','n-pulsed-neutron','产生脉冲中子'],
+    ['n-sns','n-pulsed-neutron','提供最强脉冲中子束'],
+    ['n-sns','n-mercury-target','包含汞靶'],
+    ['n-sns','n-moderator','包含慢化器'],
+    ['n-moderator','n-pulsed-neutron','慢化降能'],
+    ['n-sns','n-spectrometer','配备谱仪'],
+    ['n-sns','n-diffractometer','配备衍射仪'],
+    ['n-sns','n-vulcan','包含工程衍射仪'],
+    ['n-spectrometer','n-inelastic-scattering','用于测量'],
+    ['n-diffractometer','n-elastic-scattering','用于测量'],
+    ['n-neutron-scattering','n-elastic-scattering','分为'],
+    ['n-neutron-scattering','n-inelastic-scattering','分为'],
+    ['n-neutron-diffraction','n-elastic-scattering','基于弹性散射'],
+    ['n-neutron-diffraction','bragg-law','基于布拉格衍射'],
+    ['n-tof-diffraction','n-neutron-diffraction','是中子衍射的实现方式'],
+    ['n-in-situ-nd','n-tof-diffraction','采用飞行时间法'],
+    ['n-vulcan','n-diffractometer','是工程材料衍射仪'],
+    ['n-vulcan','n-in-situ-nd','实施原位实验'],
+    ['n-smarts','n-in-situ-nd','实施原位实验'],
+    ['n-lansce','n-smarts','包含'],
+    ['n-lansce','n-hippo','包含'],
+    ['n-hfir','n-sns','与散裂源互补'],
+    ['n-neutron-diffraction','x-lattice-strain','测量晶格应变'],
+    ['n-neutron-diffraction','n-dislocation-density','峰宽测位错密度'],
+    ['n-hippo','x-texture','测量织构'],
+    ['n-304l-am','additive-manufacturing','是增材制造材料'],
+    ['n-304l-am','n-ferrite-phase','含约 2.5 vol% 铁素体'],
+    ['n-cte','n-phase-stress','失配产生相应力'],
+    ['n-phase-stress','residual-stress','是相分辨残余应力'],
+    ['n-ferrite-phase','n-phase-stress','承受相应力'],
+    ['n-ferrite-phase','x-slip','含 BCC 滑移系'],
+    ['n-ferrite-phase','x-twinning-112-111','含 {112}<111> 滑移系（晶体学同族）'],
+    ['n-in-situ-nd','n-cte','由相应变求导得 CTE'],
+    ['n-deviatoric-stress','n-relaxation','追踪弛豫动力学'],
+    ['n-inconel-718','n-relaxation','发生高温应力弛豫'],
+    ['n-relaxation','residual-stress','弛豫残余应力'],
+    ['n-inconel-718','n-deviatoric-stress','用偏应力表征'],
+    ['n-dislocation-density','n-relaxation','在弛豫中增殖/湮灭'],
+    /* ---- 十、离子源板块·辐照物理与聚变材料 ---- */
+    ['i-dt','i-fusion-neutron','释放 14.1 MeV 中子'],
+    ['i-fusion-neutron','i-cascade','诱发级联'],
+    ['i-fusion-neutron','i-transmutation','产生嬗变产物'],
+    ['i-pka','i-cascade','可能引发级联'],
+    ['i-cascade','i-defects','产生点缺陷'],
+    ['i-cascade','i-thermal-spike','热化产生热峰'],
+    ['i-defects','i-loop','聚集为位错环'],
+    ['i-loop','i-hardening','引起硬化'],
+    ['i-transmutation','i-he-embr','引起氦脆'],
+    ['i-transmutation','i-swelling','促进肿胀'],
+    ['i-defects','i-ris-phase','自由迁移缺陷驱动偏聚'],
+    ['i-sink','i-swelling','抑制'],
+    ['i-sink','i-hardening','高汇强度抑制硬化'],
+    ['i-mfrt','i-swelling','预测肿胀'],
+    ['i-ion-surrogate','i-proton-irr','包含质子辐照'],
+    ['i-ion-surrogate','i-heavy-ion-irr','包含重离子辐照'],
+    ['i-ion-surrogate','i-self-ion-irr','包含自离子辐照'],
+    ['i-self-ion-irr','i-injected','伴生注入间隙原子'],
+    ['i-ion-surrogate','i-rate-diff','损伤速率高约 10⁴ 倍'],
+    ['i-proton-irr','i-depth-profile','具有平坦剖面'],
+    ['i-heavy-ion-irr','i-depth-profile','具有尖锐峰'],
+    ['i-dual-beam','i-transmutation','模拟气体嬗变'],
+    ['i-ifmif','i-fusion-neutron','提供聚变能谱中子'],
+    ['i-iter','i-first-wall','包含第一壁'],
+    ['i-demo','i-blanket','包含包层'],
+    ['i-rafm','i-first-wall','候选结构材料'],
+    ['i-tungsten','i-divertor','候选铠甲材料'],
+    ['i-ods','i-sink','提供高汇密度'],
+    ['i-low-act','i-rafm','约束成分'],
+    ['i-life','i-pulsed-irr','脉冲式中子损伤'],
+    ['i-pulsed-irr','i-defects','抑制缺陷团簇积累'],
+    ['i-mfrt','i-pulsed-irr','以 SCD 模拟'],
+    ['i-loop','x-slip','阻碍位错滑移'],
+    ['i-he-embr','x-grain-boundary','晶界气泡致脆化'],
+    ['i-hardening','x-slip','硬化阻碍位错滑移'],
+    /* ---- 十一、离子源板块·钨重离子辐照实验 ---- */
+    ['ibml-peking-tandem','i-cascade','产生级联位移损伤'],
+    ['ibml-peking-tandem','i-depth-profile','决定损伤深度分布'],
+    ['i3tem-sandia','i-in-situ-tem-irr','实现原位辐照'],
+    ['ivem-argonne','i-in-situ-tem-irr','实现原位辐照'],
+    ['i-thermal-spike','i-thermal-spike-grain-growth','驱动晶界迁移长大'],
+    ['i-defects','x-loop-111','间隙原子聚集形成滑移型环'],
+    ['i-defects','x-loop-100','高能密度级联直接形成不动型环'],
+    ['x-loop-111','x-loop-100','反应可生成不动型环'],
+    ['x-loop-111','x-grain-boundary','滑移迁移被晶界吸收'],
+    ['x-loop-100','i-hardening','堆积加剧硬化'],
+    ['i-loop','x-dislocation-network','合并纠缠形成网络'],
+    ['x-dislocation-network','i-dynamic-equilibrium','作为缺陷汇维持平衡'],
+    ['i-dynamic-equilibrium','i-damage-saturation','稳态表现为损伤饱和'],
+    ['i-dynamic-equilibrium','i-d-retention','导致氘滞留饱和'],
+    ['i-damage-saturation','i-hardening','使硬度增量饱和'],
+    ['i-recovery-stages','i-defects','描述缺陷热回复'],
+    ['x-grain-boundary','i-loop','吸收位错环'],
+    ['x-gb-segregation','i-gb-doping','偏聚实现掺杂稳定'],
+    ['i-gb-doping','i-grain-growth-suppression','抑制辐照晶粒长大'],
+    ['i-gb-doping','i-w20ti','用于掺杂纳米晶钨'],
+    ['i-w20ti','i-loop','生成更小缺陷环'],
+    ['i-ncw','x-grain-boundary','含高密度晶界'],
+    ['i-in-situ-tem-irr','x-grain-boundary','实时观察晶界吸收缺陷'],
+    ['i-rate-diff','i-ion-surrogate','剂量率差异需温度平移修正'],
+    ['i-transmutation','i-ion-surrogate','构成代理的关键缺口'],
+    ['i-ion-surrogate','i-tungsten','用于模拟钨中子损伤'],
+    ['i-cavity-lattice','i-tungsten','见于中子辐照钨'],
+    ['x-loop-111','i-loop','是滑移型位错环'],
+    ['x-loop-100','i-loop','是不动型位错环'],
+    /* ---- 补连（消孤立） ---- */
+    ['i-fusion-neutron','i-dpa','造成位移损伤剂量'],
+    ['i-dpa','i-damage-saturation','度量损伤饱和剂量'],
+    ['i-heavy-ion-irr','i-dpa','以 dpa 计量损伤'],
+    ['i-ed','i-dpa','是 dpa 换算参数'],
+    ['i-defects','i-creep','过饱和驱动辐照蠕变'],
+    ['i-creep','i-swelling','同属辐照尺寸不稳定'],
+    ['i-fusion-neutron','i-he-dpa','决定 He 生成率'],
+    ['i-he-dpa','i-he-embr','高 He/dpa 引发氦脆'],
+    ['i-v-alloy','i-blanket','用于自冷液态锂包层'],
+    ['i-sic','i-blanket','高温包层候选'],
+    ['i-low-act','i-v-alloy','限制候选主元素'],
+    ['i-low-act','i-sic','限制候选主元素'],
+    ['i-sic','i-rafm','同为最稳健结构材料选项'],
+  ],
+
+  /* ---- 装置层标记（deviceLayer）----
+   * 列入的对象 = 装置名称实体 + 纯硬件部件 + 装置世代概念：
+   * 在「知识主图」视图中隐藏（装置名不占主图空间），在「装置聚簇」视图中
+   * 单独团聚显示，并与它们所用到的原理（留在主图内、与主图研究有关联者，
+   * 如 SASE/HGHG/波荡器/原位XRD 等）连线。
+   * 未列入者默认 science 层（主图）。新增装置/部件对象时在此登记即可。 */
+  deviceLayer: [
+    /* 装置名称实体（facility） */
+    'energy-recovery-linac','storage-ring-source','synchrotron-accelerator',
+    'lcls','lcls-ii','flash','sacla','european-xfel','fermi','swissfel',
+    'pal-xfel','sxfel','clara','als','esrf','aps','spring-8','petra-iii',
+    'uhxs','hems-p07','insitu-lpbf-system','soleil-diffabs','spring8-bl13xu',
+    /* 纯硬件部件 */
+    'xfel-mirror','monochromator','cspad','xtcav','linear-accelerator',
+    'rf-acceleration','superconducting-accelerator','photocathode-rf-gun',
+    'thermionic-electron-gun','bunch-compression-chicane','bending-magnet',
+    'quadrupole-magnet','insertion-device','wiggler','area-detector',
+    'mec-endstation','beamline',
+    /* 装置世代/光源类型概念 */
+    'first-generation-source','second-generation-source','third-generation-source',
+    /* 中子源装置与部件 */
+    'n-sns','n-hfir','n-lansce','n-vulcan','n-smarts','n-hippo',
+    'n-mercury-target','n-moderator','n-spectrometer','n-diffractometer',
+    /* 离子源装置与部件 */
+    'i-iter','i-demo','i-ifmif','i-life','i-first-wall','i-divertor','i-blanket',
+    'ibml-peking-tandem','i3tem-sandia','ivem-argonne'
+  ]
+};
+
+</script>
+<script>
+/* =====================================================================
+ *  大科学装置知识谱系云图 —— 渲染引擎（一般无需修改；数据在 graph-data.js）
+ *  特点：装置板块筛选（光子/中子/离子，可扩充）、论文反向检索、
+ *        触屏捏合缩放、跨域（BCC 孪晶）联用节点
+ * ===================================================================== */
+(function(){
+  const DATA = window.LSF_GRAPH;
+  const byId = {}; DATA.nodes.forEach(n=>byId[n.id]=n);
+  const catByKey = {}; DATA.categories.forEach(c=>catByKey[c.key]=c);
+  const paperById = DATA.papers || {};
+
+  // ---- 运行时状态 ----
+  const deviceSet = new Set(DATA.deviceLayer || []);
+  const nodeList = DATA.nodes.map(n => ({
+    id:n.id, name:n.name, cat:n.cat, fac:n.fac||'common', def:n.def||'', papers:n.papers||[],
+    layer: deviceSet.has(n.id) ? 'device' : 'science',
+    x:0, y:0, vx:0, vy:0, r:0
+  }));
+  const byNode = {}; nodeList.forEach(n=>byNode[n.id]=n);
+
+  const FONT   = {facility:11.5, component:10, concept:11, theory:11, law:11, phenomenon:11, tech:10.5, property:10, process:11, application:11.5, material:11.5, cross:11};
+
+  const edges = DATA.edges.map(e=>({s:e[0], t:e[1], r:e[2]}));
+
+  // ---- 节点大小 ∝ 关系数量（出入度合计；类别只决定颜色，不再决定大小）----
+  const degMap = {};
+  edges.forEach(e=>{ degMap[e.s]=(degMap[e.s]||0)+1; degMap[e.t]=(degMap[e.t]||0)+1; });
+  nodeList.forEach(n=>{
+    const d = degMap[n.id]||0;
+    n.r = 8 + 9 * Math.pow(Math.min(d,20)/20, 0.55);   // d=0→8, d=5→~12.2, d=10→~14.2, d≥20→17
+  });
+
+  // ---- canvas ----
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  const stage = document.getElementById('stage');
+
+  let scale = 1, panX = 0, panY = 0;
+  const WORLD_W = 2000, WORLD_H = 1300;
+
+  function rand(a,b){ return a + Math.random()*(b-a); }
+
+  function initLayout(){
+    const N = nodeList.length;
+    nodeList.forEach((n,i)=>{
+      const ang = (i/N)*Math.PI*2;
+      const rad = 260 + (i%5)*130;
+      n.x = WORLD_W/2 + Math.cos(ang)*rad;
+      n.y = WORLD_H/2 + Math.sin(ang)*rad*0.92;
+      n.vx = 0; n.vy = 0;
+    });
+  }
+
+  // ---- 力学模拟 ----
+  const REPULSION = 3800, REP_CUT2 = 250*250;
+  const EDGE_K = 0.022, DAMP = 0.86, MAXV = 22;
+  function restLen(e){
+    const a=byNode[e.s], b=byNode[e.t];
+    return (a.r + b.r) + 78;
+  }
+  function step(){
+    const N = nodeList.length;
+    for(let i=0;i<N;i++){
+      const a = nodeList[i];
+      for(let j=i+1;j<N;j++){
+        const b = nodeList[j];
+        let dx = a.x-b.x, dy = a.y-b.y;
+        let d2 = dx*dx+dy*dy;
+        if(d2 < 1) { d2 = 1; dx = rand(-1,1); dy = rand(-1,1); }
+        if(d2 < REP_CUT2){
+          const d = Math.sqrt(d2);
+          const f = REPULSION / d2;
+          const fx = dx/d*f, fy = dy/d*f;
+          a.vx += fx; a.vy += fy; b.vx -= fx; b.vy -= fy;
+        }
+      }
+    }
+    for(const e of edges){
+      const a=byNode[e.s], b=byNode[e.t];
+      if(!a||!b) continue;
+      const dx=b.x-a.x, dy=b.y-a.y;
+      const d=Math.sqrt(dx*dx+dy*dy)||1;
+      const f = EDGE_K*(d-restLen(e));
+      const fx=dx/d*f, fy=dy/d*f;
+      a.vx+=fx; a.vy+=fy; b.vx-=fx; b.vy-=fy;
+    }
+    for(const n of nodeList){
+      n.vx += (WORLD_W/2 - n.x)*0.0007;
+      n.vy += (WORLD_H/2 - n.y)*0.0007;
+    }
+    for(const n of nodeList){
+      if(dragging(n)) continue;
+      n.vx*=DAMP; n.vy*=DAMP;
+      let sp=Math.hypot(n.vx,n.vy); if(sp>MAXV){ n.vx*=MAXV/sp; n.vy*=MAXV/sp; }
+      n.x+=n.vx; n.y+=n.vy;
+      if(n.x<40){n.x=40; n.vx*=-0.3;} if(n.x>WORLD_W-40){n.x=WORLD_W-40; n.vx*=-0.3;}
+      if(n.y<40){n.y=40; n.vy*=-0.3;} if(n.y>WORLD_H-40){n.y=WORLD_H-40; n.vy*=-0.3;}
+    }
+  }
+
+  // ---- 交互状态 ----
+  let hoverId=null, selectedId=null, focusPaperId=null;
+  const hiddenCats = new Set();
+  let facFilter = 'photon';
+  let viewMode = 'science';   // science=知识主图（隐藏装置层） | device=装置聚簇 | all=全部
+  let showEdgeLabels=false, showNodeText=true;
+  function dragging(n){ return dragNode===n; }
+  let dragNode=null, panning=false;
+  let downX=0, downY=0, moved=false;
+
+  function toWorld(sx,sy){ return {x:(sx-panX)/scale, y:(sy-panY)/scale}; }
+  function toScreen(wx,wy){ return {x:wx*scale+panX, y:wy*scale+panY}; }
+
+  function resize(){
+    const dpr = window.devicePixelRatio||1;
+    const w = stage.clientWidth, h = stage.clientHeight;
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return {w,h};
+  }
+  let viewW=0, viewH=0;
+
+  // ---- 板块筛选 ----
+  function facVisible(n){
+    if(facFilter==='all') return true;
+    return n.fac===facFilter || n.fac==='common';
+  }
+  // ---- 视图筛选（知识主图 / 装置聚簇 / 全部）----
+  // 与装置层节点直接相连的主图层节点（=装置所用到的原理），在装置聚簇视图中一并显示
+  const deviceAdjacent = new Set();
+  edges.forEach(e=>{
+    const a=byNode[e.s], b=byNode[e.t];
+    if(a.layer==='device' && b.layer!=='device') deviceAdjacent.add(b.id);
+    if(b.layer==='device' && a.layer!=='device') deviceAdjacent.add(a.id);
+  });
+  function viewVisible(n){
+    if(viewMode==='science') return n.layer!=='device';
+    if(viewMode==='device') return n.layer==='device' || deviceAdjacent.has(n.id);
+    return true;
+  }
+  function visible(n){ return !hiddenCats.has(n.cat) && facVisible(n) && viewVisible(n); }
+  function activeNodes(){ return nodeList.filter(n=>!hiddenCats.has(n.cat) && facVisible(n) && viewVisible(n)); }
+  const emptyfac = document.getElementById('emptyfac');
+  function updateEmptyHint(){
+    const anyVisible = activeNodes().length>0;
+    emptyfac.style.display = anyVisible ? 'none' : 'flex';
+  }
+
+  function fitView(){
+    const ns = activeNodes();
+    if(!ns.length){ scale=1; panX=viewW/2-WORLD_W/2; panY=viewH/2-WORLD_H/2; return; }
+    let minX=1e9,maxX=-1e9,minY=1e9,maxY=-1e9;
+    ns.forEach(n=>{ if(n.x<minX)minX=n.x; if(n.x>maxX)maxX=n.x; if(n.y<minY)minY=n.y; if(n.y>maxY)maxY=n.y; });
+    const pad=90;
+    const w=(maxX-minX)+pad*2, h=(maxY-minY)+pad*2;
+    scale = Math.min(viewW/w, viewH/h);
+    scale = Math.max(0.25, Math.min(scale, 1.7));
+    panX = (viewW - (minX+maxX)*scale)/2;
+    panY = (viewH - (minY+maxY)*scale)/2;
+  }
+
+  const neighborsCache = {};
+  function neighborsOf(id){
+    if(neighborsCache[id]) return neighborsCache[id];
+    const map = {};
+    edges.forEach(e=>{
+      if(e.s===id) map[e.t] = {dir:'out', label:e.r};
+      else if(e.t===id) map[e.s] = {dir:'in', label:e.r};
+    });
+    neighborsCache[id]=map;
+    return map;
+  }
+
+  // ---- 渲染 ----
+  function render(){
+    ctx.clearRect(0,0,viewW,viewH);
+    ctx.save();
+    ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+    ctx.translate(panX, panY);
+    ctx.scale(scale, scale);
+
+    const nodeFocus = hoverId || selectedId;
+    let hlSet = null;
+    if(nodeFocus){
+      hlSet = {[nodeFocus]:1};
+      Object.keys(neighborsOf(nodeFocus)).forEach(k=>hlSet[k]=1);
+    } else if(focusPaperId){
+      hlSet = {};
+      nodeList.forEach(n=>{ if(n.papers.indexOf(focusPaperId)>=0) hlSet[n.id]=1; });
+    }
+
+    // 边
+    for(const e of edges){
+      const a=byNode[e.s], b=byNode[e.t];
+      if(!a||!b) continue;
+      if(!visible(a)||!visible(b)) continue;
+      const isHL = nodeFocus && (e.s===nodeFocus || e.t===nodeFocus);
+      const edgeDim = hlSet ? (nodeFocus ? !isHL : true) : false;
+      const alpha = edgeDim ? 0.05 : (isHL ? 0.95 : 0.18);
+      ctx.beginPath();
+      ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
+      ctx.strokeStyle = catByKey[a.cat] ? hexA(catByKey[a.cat].color, alpha) : 'rgba(150,150,200,'+alpha+')';
+      ctx.lineWidth = isHL ? 2.4 : 0.8;
+      ctx.stroke();
+      if(isHL){ drawArrow(a,b); }
+    }
+
+    // 节点
+    for(const n of nodeList){
+      if(!visible(n)) continue;
+      const dim = hlSet && !hlSet[n.id];
+      const alpha = dim ? 0.14 : 1;
+      const cat = catByKey[n.cat];
+      ctx.globalAlpha = alpha;
+      if(n.id===selectedId || n.id===hoverId || (hlSet && hlSet[n.id] && focusPaperId)){
+        ctx.beginPath(); ctx.arc(n.x,n.y,n.r+7,0,Math.PI*2);
+        ctx.fillStyle='rgba(0,180,255,0.16)'; ctx.fill();
+      }
+      ctx.fillStyle = cat.color;
+      ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle='rgba(10,12,28,0.6)'; ctx.lineWidth=1.4; ctx.stroke();
+      ctx.globalAlpha=1;
+    }
+
+    // 边标签（屏幕空间）
+    ctx.restore();
+    ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+    if(nodeFocus || showEdgeLabels){
+      ctx.font = '11px "Microsoft YaHei",sans-serif';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      for(const e of edges){
+        const a=byNode[e.s], b=byNode[e.t];
+        if(!a||!b||!visible(a)||!visible(b)) continue;
+        const isHL = nodeFocus && (e.s===nodeFocus || e.t===nodeFocus);
+        if(!(showEdgeLabels || isHL)) continue;
+        const sa=toScreen(a.x,a.y), sb=toScreen(b.x,b.y);
+        const mx=(sa.x+sb.x)/2, my=(sa.y+sb.y)/2;
+        const tw = ctx.measureText(e.r).width;
+        ctx.fillStyle = isHL ? 'rgba(10,12,28,0.92)' : 'rgba(10,12,28,0.75)';
+        ctx.fillRect(mx-tw/2-4, my-9, tw+8, 18);
+        ctx.fillStyle = isHL ? '#fbbf24' : '#9aa0c0';
+        ctx.fillText(e.r, mx, my+1);
+      }
+    }
+    // 节点标签（屏幕空间）
+    for(const n of nodeList){
+      if(!visible(n)) continue;
+      const dim = hlSet && !hlSet[n.id];
+      if(dim) continue;
+      if(!showNodeText) continue;
+      const cat=catByKey[n.cat];
+      const show = cat.key==='facility' || cat.key==='material' || scale>=0.6 || n.id===selectedId || n.id===hoverId || (hlSet && hlSet[n.id]);
+      if(!show) continue;
+      const s = toScreen(n.x, n.y);
+      const fs = FONT[n.cat]||10;
+      ctx.font = (n.id===selectedId||n.id===hoverId?'700 ':'') + fs + 'px "Microsoft YaHei",sans-serif';
+      ctx.textAlign='center'; ctx.textBaseline='top';
+      const y = s.y + n.r+4;
+      ctx.lineWidth=3; ctx.strokeStyle='rgba(10,12,28,0.85)';
+      ctx.strokeText(n.name, s.x, y);
+      ctx.fillStyle = n.id===selectedId||n.id===hoverId ? '#ffffff' : cat.color;
+      ctx.fillText(n.name, s.x, y);
+    }
+  }
+
+  function drawArrow(a,b){
+    const ang = Math.atan2(b.y-a.y, b.x-a.x);
+    const tipX = b.x - Math.cos(ang)*(b.r+3);
+    const tipY = b.y - Math.sin(ang)*(b.r+3);
+    const len = 7/Math.max(scale,0.2);
+    ctx.save();
+    ctx.translate(tipX,tipY); ctx.rotate(ang);
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-len,-len*0.55); ctx.lineTo(-len,len*0.55); ctx.closePath();
+    ctx.fillStyle='#fbbf24'; ctx.fill();
+    ctx.restore();
+  }
+
+  function hexA(hex,a){
+    const h=hex.replace('#',''); const r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);
+    return `rgba(${r},${g},${b},${a})`;
+  }
+
+  // ---- 详情面板 ----
+  const panel = document.getElementById('panel');
+  const FAC_NAME = {photon:'光子源', neutron:'中子源', ion:'离子源', common:'通用'};
+  function ensureViewFor(id){
+    if(!id) return;
+    const n = byNode[id]; if(!n) return;
+    if(!visible(n)) setView('all');   // 选中对象不在当前视图时自动切到「全部」
+  }
+  function select(id){
+    selectedId = id; hoverId=null; focusPaperId=null;
+    if(id) ensureViewFor(id);
+    renderDetail();
+    render();
+  }
+  function openPaper(pid){
+    const p = paperById[pid]; if(!p) return;
+    selectedId=null; hoverId=null; focusPaperId=pid;
+    const citing = nodeList.filter(n => n.papers.indexOf(pid)>=0);
+    let html = `<div class="node-title"><h2>${p.name}</h2><span class="badge" style="background:#fbbf24">论文</span></div>`;
+    html += `<div class="stat">${p.year} · ${p.layer}</div>`;
+    if(p.doi) html += `<div class="stat" style="word-break:break-all;color:#7dd3fc">DOI: ${p.doi}</div>`;
+    html += `<div><div class="sec-title">结论摘要</div><div class="def">${p.conclusion||'（暂无）'}</div></div>`;
+    html += `<div><div class="sec-title">引用此论文的对象（${citing.length}）</div><div class="rel">`+
+      citing.map(n=>{
+        const c=catByKey[n.cat];
+        return `<div class="rel-row" data-go="${n.id}"><span class="dir">●</span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${c.color}"></span><span class="name">${n.name}</span><span class="cat">${c.name}</span></div>`;
+      }).join('')+`</div></div>`;
+    if(!citing.length) html += `<div class="stat">（暂无对象标注此论文为来源）</div>`;
+    panel.innerHTML = html;
+    panel.querySelectorAll('[data-go]').forEach(el=>{
+      el.addEventListener('click',(ev)=>{ ev.stopPropagation(); select(el.dataset.go); });
+    });
+    render();
+  }
+  function renderDetail(){
+    if(!selectedId){
+      panel.innerHTML = `<div class="empty"><b>使用说明</b><br>· 点击图中任一<b>节点</b>，右侧显示其【定义】与【通俗】解释、<b>来源论文</b>与全部关系连线。<br>· 点击关系行中的节点名可跳转到该邻居节点。<br>· 顶部搜索框支持<b>反向检索</b>：输入论文名（如 Seddon、Wehrenberg）可查看该论文结论及引用它的所有对象。<br>· 顶部可切换<b>光子源 / 中子源 / 离子源</b>板块（后续扩充）；红色节点为与 <b>BCC 孪晶本体联用</b>的跨域对象。<br>· 图例可点击隐藏/显示某一类节点；数据在 <b>graph-data.js</b> 中编辑。</div>`;
+      return;
+    }
+    const n = byNode[selectedId]; if(!n) return;
+    const cat = catByKey[n.cat];
+    const nb = neighborsOf(selectedId);
+    const out = [], inc = [];
+    Object.entries(nb).forEach(([oid,v])=>{
+      const o=byNode[oid];
+      (v.dir==='out'?out:inc).push({oid, o, label:v.label});
+    });
+
+    let html = '';
+    html += `<div class="node-title"><h2>${n.name}</h2><span class="badge" style="background:${cat.color}">${cat.name}</span><span class="badge fac">${FAC_NAME[n.fac]||n.fac}</span></div>`;
+    html += `<div class="stat">连接数：${out.length+inc.length} 条关系</div>`;
+    html += `<div><div class="sec-title">定义 / 内容</div><div class="def">${n.def||'（暂无描述）'}</div></div>`;
+    if(n.papers && n.papers.length){
+      html += `<div><div class="sec-title">来源论文（${n.papers.length}）· 点击查看结论与反向引用</div><div class="papers">`+
+        n.papers.map(pid=>{
+          const p = paperById[pid];
+          if(!p) return '';
+          const doi = p.doi ? `<span class="doi">${p.doi}</span>` : '';
+          return `<div class="paper-row" data-paper="${pid}"><span class="nm">${p.name}</span><span class="ly">${p.layer}</span>${doi}<span class="concl">${p.conclusion||''}</span></div>`;
+        }).join('')+`</div></div>`;
+    } else {
+      html += `<div><div class="sec-title">来源论文</div><div class="stat">（未标注直接来源论文）</div></div>`;
+    }
+    const relHtml = (list, dirLabel)=>{
+      if(!list.length) return '';
+      return `<div><div class="sec-title">${dirLabel}（${list.length}）</div><div class="rel">`+
+        list.map(r=>{
+          const oName = r.o ? r.o.name : r.oid;
+          const c = r.o ? catByKey[r.o.cat] : null;
+          const dot = c?`<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${c.color}"></span>`:'';
+          return `<div class="rel-row" data-go="${r.oid}"><span class="dir">${dirLabel==='指向'?'→':'←'}</span><span class="lab">${r.label}</span>${dot}<span class="name">${oName}</span></div>`;
+        }).join('')+`</div></div>`;
+    };
+    html += relHtml(out, '指向');
+    html += relHtml(inc, '来自');
+    panel.innerHTML = html;
+    panel.querySelectorAll('[data-go]').forEach(el=>{
+      el.addEventListener('click',(ev)=>{ ev.stopPropagation(); select(el.dataset.go); });
+    });
+    panel.querySelectorAll('[data-paper]').forEach(el=>{
+      el.addEventListener('click',(ev)=>{ ev.stopPropagation(); openPaper(el.dataset.paper); });
+    });
+  }
+
+  // ---- 搜索（含论文反向检索）----
+  const qIn = document.getElementById('q');
+  const dd = document.getElementById('dd');
+  qIn.addEventListener('input', ()=>{
+    const q = qIn.value.trim().toLowerCase();
+    if(!q){ dd.style.display='none'; return; }
+    const nodeHits = nodeList.filter(n => (n.name+n.def).toLowerCase().includes(q));
+    const paperHits = Object.entries(paperById).filter(([id,p]) =>
+      (p.name+' '+p.year+' '+p.layer+' '+(p.conclusion||'')+' '+(p.doi||'')).toLowerCase().includes(q));
+    const items = [];
+    nodeHits.slice(0,12).forEach(n => items.push({type:'node', id:n.id, label:n.name, sub:catByKey[n.cat].name}));
+    paperHits.slice(0,8).forEach(([id,p]) => items.push({type:'paper', id:id, label:p.name, sub:'论文'}));
+    if(!items.length){ dd.style.display='none'; return; }
+    dd.innerHTML = items.map(it=>{
+      const tag = it.type==='paper' ? '<span class="pt">论文</span>' : '';
+      return `<div class="item" data-type="${it.type}" data-go="${it.id}"><span class="t">${it.label}</span>${tag}<span class="c">${it.sub}</span></div>`;
+    }).join('');
+    dd.style.display='block';
+  });
+  dd.addEventListener('click',(ev)=>{
+    const el = ev.target.closest('[data-go]'); if(!el) return;
+    const type = el.dataset.type, id = el.dataset.go;
+    dd.style.display='none'; qIn.value='';
+    if(type==='paper') openPaper(id);
+    else { select(id); focusNode(id); }
+  });
+  document.addEventListener('click',(ev)=>{ if(!ev.target.closest('.search')) dd.style.display='none'; });
+
+  function focusNode(id){
+    const n=byNode[id]; if(!n) return;
+    panX = viewW/2 - n.x*scale; panY = viewH/2 - n.y*scale;
+    render();
+  }
+
+  // ---- 图例 ----
+  const legend = document.getElementById('legend');
+  DATA.categories.forEach(c=>{
+    const d=document.createElement('div'); d.className='lg';
+    d.innerHTML=`<span class="dot" style="background:${c.color}"></span>${c.name}`;
+    d.addEventListener('click',()=>{
+      if(hiddenCats.has(c.key)) hiddenCats.delete(c.key); else hiddenCats.add(c.key);
+      d.classList.toggle('off', hiddenCats.has(c.key));
+      render();
+    });
+    legend.appendChild(d);
+  });
+
+  // ---- 板块按钮 ----
+  const facBtns = document.getElementById('facs');
+  facBtns.addEventListener('click',(ev)=>{
+    const b = ev.target.closest('.fb'); if(!b) return;
+    facFilter = b.dataset.fac;
+    facBtns.querySelectorAll('.fb').forEach(x=>x.classList.toggle('active', x===b));
+    if(selectedId && !visible(byNode[selectedId])) select(null);
+    updateEmptyHint();
+    fitView();
+    render();
+  });
+
+  // ---- 视图按钮（知识主图 / 装置聚簇 / 全部）----
+  const viewBtns = document.getElementById('views');
+  function setView(mode){
+    viewMode = mode;
+    viewBtns.querySelectorAll('.fb').forEach(x=>x.classList.toggle('active', x.dataset.view===mode));
+  }
+  viewBtns.addEventListener('click',(ev)=>{
+    const b = ev.target.closest('.fb'); if(!b) return;
+    setView(b.dataset.view);
+    if(selectedId && !visible(byNode[selectedId])) select(null);
+    updateEmptyHint();
+    fitView();
+    render();
+  });
+
+  // ---- 按钮 ----
+  const btnLabels=document.getElementById('btnLabels');
+  const btnText=document.getElementById('btnText');
+  btnLabels.addEventListener('click',()=>{ showEdgeLabels=!showEdgeLabels; btnLabels.classList.toggle('active',showEdgeLabels); render(); });
+  btnText.addEventListener('click',()=>{ showNodeText=!showNodeText; btnText.classList.toggle('active',showNodeText); render(); });
+  document.getElementById('btnReLayout').addEventListener('click',()=>{ initLayout(); render(); });
+  document.getElementById('btnFit').addEventListener('click',()=>{ fitView(); render(); });
+
+  // ---- 鼠标交互 ----
+  function pickNode(sx,sy){
+    const w = toWorld(sx,sy);
+    for(let i=nodeList.length-1;i>=0;i--){
+      const n=nodeList[i];
+      if(!visible(n)) continue;
+      const dx=w.x-n.x, dy=w.y-n.y;
+      if(dx*dx+dy*dy < (n.r+7)*(n.r+7)) return n;
+    }
+    return null;
+  }
+
+  // ---- 指针交互（鼠标 + 触屏统一：Pointer Events）----
+  let downPanX=0, downPanY=0;
+  const pointers = new Map();   // pointerId -> {x,y}（支持双指捏合）
+  let pinchStart = null;
+  function onPointerDown(ev){
+    canvas.setPointerCapture(ev.pointerId);
+    pointers.set(ev.pointerId, {x:ev.clientX, y:ev.clientY});
+    const rect = canvas.getBoundingClientRect();
+    if(pointers.size === 1){
+      downPanX = panX; downPanY = panY;
+      downX = ev.clientX-rect.left; downY = ev.clientY-rect.top; moved = false;
+      const n = pickNode(downX, downY);
+      if(n){ dragNode = n; } else { panning = true; }
+    } else if(pointers.size === 2){
+      dragNode = null; panning = false;
+      const [p1,p2] = [...pointers.values()];
+      pinchStart = { d: Math.hypot(p1.x-p2.x, p1.y-p2.y), scale, panX, panY,
+                     cx: (p1.x+p2.x)/2-rect.left, cy: (p1.y+p2.y)/2-rect.top };
+    }
+    canvas.classList.add('dragging');
+  }
+  function onPointerMove(ev){
+    if(!pointers.has(ev.pointerId)) return;
+    pointers.set(ev.pointerId, {x:ev.clientX, y:ev.clientY});
+    const rect = canvas.getBoundingClientRect();
+    if(pointers.size === 2 && pinchStart){
+      const [p1,p2] = [...pointers.values()];
+      const d = Math.hypot(p1.x-p2.x, p1.y-p2.y);
+      const ns = Math.max(0.2, Math.min(pinchStart.scale * d/pinchStart.d, 4));
+      const cx = (p1.x+p2.x)/2-rect.left, cy = (p1.y+p2.y)/2-rect.top;
+      panX = cx - (cx - pinchStart.panX) * (ns/pinchStart.scale);
+      panY = cy - (cy - pinchStart.panY) * (ns/pinchStart.scale);
+      scale = ns;
+      render();
+      return;
+    }
+    if(pointers.size > 1) return;
+    const sx = ev.clientX-rect.left, sy = ev.clientY-rect.top;
+    if(dragNode){
+      const dx = sx-downX, dy = sy-downY;
+      if(Math.hypot(dx,dy)>4) moved = true;
+      if(moved){
+        const w = toWorld(sx,sy);
+        dragNode.x = w.x; dragNode.y = w.y; dragNode.vx = 0; dragNode.vy = 0;
+      }
+      render();
+      return;
+    }
+    if(panning){
+      const dx = sx-downX, dy = sy-downY;
+      if(Math.hypot(dx,dy)>4) moved = true;
+      panX = downPanX + dx; panY = downPanY + dy;
+      render();
+      return;
+    }
+    const n = pickNode(sx,sy);
+    const id = n ? n.id : null;
+    if(id !== hoverId){ hoverId = id; if(!('ontouchstart' in window)) canvas.style.cursor = n ? 'pointer' : 'grab'; render(); }
+  }
+  function onPointerUp(ev){
+    if(pointers.has(ev.pointerId)) pointers.delete(ev.pointerId);
+    if(pointers.size < 2) pinchStart = null;
+    if(dragNode){
+      if(!moved){ select(dragNode.id); }
+      dragNode = null;
+    } else if(panning){
+      if(!moved){ select(null); }
+      panning = false;
+    }
+    if(pointers.size === 0) canvas.classList.remove('dragging');
+  }
+  canvas.addEventListener('pointerdown', onPointerDown);
+  window.addEventListener('pointermove', onPointerMove);
+  window.addEventListener('pointerup', onPointerUp);
+  window.addEventListener('pointercancel', onPointerUp);
+  canvas.addEventListener('wheel',(ev)=>{
+    ev.preventDefault();
+    const rect=canvas.getBoundingClientRect();
+    const sx=ev.clientX-rect.left, sy=ev.clientY-rect.top;
+    const w = toWorld(sx,sy);
+    const factor = ev.deltaY<0 ? 1.12 : 1/1.12;
+    const ns = Math.max(0.2, Math.min(scale*factor, 4));
+    panX = sx - w.x*ns; panY = sy - w.y*ns;
+    scale = ns;
+    render();
+  }, {passive:false});
+
+  window.addEventListener('keydown',(ev)=>{ if(ev.key==='Escape'){ select(null); } });
+
+  // ---- 主循环 ----
+  function loop(){
+    step();
+    render();
+    requestAnimationFrame(loop);
+  }
+
+  // ---- 启动 ----
+  function boot(){
+    const s = resize();
+    viewW=s.w; viewH=s.h;
+    initLayout();
+    updateEmptyHint();
+    fitView();
+    document.getElementById('nCount').textContent = nodeList.length;
+    document.getElementById('eCount').textContent = edges.length;
+    document.getElementById('fCount').textContent = activeNodes().length;
+    btnText.classList.add('active');
+    render();
+    requestAnimationFrame(loop);
+  }
+  window.addEventListener('resize', ()=>{ const s=resize(); viewW=s.w; viewH=s.h; render(); });
+  boot();
+})();
+</script>
+</body>
+</html>
