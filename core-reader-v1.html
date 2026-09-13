@@ -1,0 +1,1072 @@
+﻿<!DOCTYPE html>
+<html lang="zh"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BCC 孪晶 · 论文核心文档阅读器</title>
+<style>
+:root{--bg:#0f1220;--panel:#161a2c;--text:#e6e8f2;--dim:#9aa3bd;--acc:#5aa2ff;--line:#2a3050}
+*{box-sizing:border-box} body{margin:0;font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:hidden}
+#toc{width:300px;min-width:300px;background:var(--panel);border-right:1px solid var(--line);overflow-y:auto;padding:14px}
+#toc h3{font-size:15px;margin:8px 0;color:var(--acc)}
+#toc ul{list-style:none;padding:0;margin:0}
+#toc li{margin:3px 0;font-size:13px;line-height:1.5}
+#toc li.grp{margin-top:14px;font-weight:700;color:var(--acc);font-size:14px}
+#toc a{color:var(--text);text-decoration:none} #toc a:hover{color:var(--acc)}
+#toc ul.sub{padding-left:12px} #toc ul.sub li{font-size:12px;color:var(--dim)} #toc ul.sub a{color:var(--dim)} #toc ul.sub a:hover{color:var(--acc)}
+#main{flex:1;overflow-y:auto;padding:20px 32px 80px;position:relative}
+#searchbar{position:sticky;top:0;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);margin-bottom:16px;z-index:5}
+#searchbar input{width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--text);font-size:15px}
+section{margin-bottom:24px;border-bottom:1px dashed var(--line);padding-bottom:18px}
+.paper-head{display:flex;align-items:center;gap:10px;margin:6px 0 4px}
+.paper-head .pid{display:inline-block;background:var(--acc);color:#0f1220;border-radius:5px;padding:1px 8px;font-size:13px}
+h2{font-size:19px;margin:10px 0 8px;color:var(--acc)}
+h3{font-size:16.5px;margin:12px 0 8px;color:#d7dcef;border-left:3px solid var(--acc);padding-left:8px}
+h4{font-size:15px;margin:10px 0 6px;color:#c9d0e6}
+p{font-size:14.5px;line-height:1.85;margin:8px 0}
+li{font-size:14.5px;line-height:1.8}
+table{border-collapse:collapse;margin:10px 0;font-size:13.5px;display:block;overflow-x:auto}
+td{border:1px solid var(--line);padding:5px 9px;line-height:1.6;min-width:60px}
+blockquote{border-left:3px solid var(--acc);margin:10px 0;padding:6px 14px;background:var(--panel);color:var(--dim);border-radius:0 8px 8px 0}
+code{background:var(--panel);padding:1px 5px;border-radius:4px;font-size:13px;color:#ffd479}
+pre{background:var(--panel);padding:12px 14px;border-radius:8px;overflow-x:auto;font-size:13px;line-height:1.6}
+.obj{color:#ffd479;border-bottom:1px dashed #ffd479;cursor:pointer}
+.obj:hover{background:#3a2f1d}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;white-space:nowrap}
+#side{width:340px;min-width:340px;background:var(--panel);border-left:1px solid var(--line);overflow-y:auto;padding:16px;display:none}
+#side h3{color:var(--acc);font-size:16px;margin:4px 0 8px;border:none;padding:0}
+#side .cat{color:var(--dim);font-size:12px;margin-bottom:10px}
+#side .def{font-size:14px;line-height:1.8;color:var(--text)}
+#side .close{float:right;cursor:pointer;color:var(--dim);font-size:14px;border:none;background:none}
+.nohit{color:var(--dim);padding:20px;font-size:14px}
+mark{background:#5a3d10;color:#ffe9a8;padding:0 2px;border-radius:3px}
+@media (max-width:900px){#toc{display:none}#side{position:fixed;right:0;top:0;bottom:0;z-index:9}}
+</style></head><body>
+<nav id="toc"><h3>📚 论文核心文档</h3><ul><li class="grp">一·经典奠基</li><li><a href="#p01">01 · Sleeswyk 1963（螺位错与 {112}⟨111⟩ 孪晶形核）</a><ul class="sub"><li><a href="#p01-s1">一 · 论文在解决什么问题</a></li><li><a href="#p01-s2">二 · 引言中的基础概念/名词（逐条）</a></li><li><a href="#p01-s3">三 · 核心：怎么做的（构型序列推理，五步）</a></li><li><a href="#p01-s4">四 · 结论与关键数值</a></li><li><a href="#p01-s5">五 · 与知识库衔接</a></li></ul></li><li><a href="#p02">02 · Sleeswyk 1962（发射位错）</a><ul class="sub"><li><a href="#p02-s1">一 · 论文在解决什么问题</a></li><li><a href="#p02-s2">二 · 引言中的基础概念/名词</a></li><li><a href="#p02-s3">三 · 核心：怎么做的</a></li><li><a href="#p02-s4">四 · 结论与关键数值</a></li><li><a href="#p02-s5">五 · 与知识库衔接</a></li></ul></li><li><a href="#p03">03 · Ogawa &amp; Maddin 1964（Mo-Re 孪晶 TEM）</a><ul class="sub"><li><a href="#p03-s1">一 · 论文在解决什么问题</a></li><li><a href="#p03-s2">二 · 引言中的基础概念/名词（逐条）</a></li><li><a href="#p03-s3">三 · 核心：怎么做的（观察→反应识别→机制裁决，四步）</a></li><li><a href="#p03-s4">四 · 结论与关键数值</a></li><li><a href="#p03-s5">五 · 与知识库衔接</a></li></ul></li><li><a href="#p04">04 · Mahajan 1972（孪晶形核与生长）</a><ul class="sub"><li><a href="#p04-s1">一 · 论文在解决什么问题</a></li><li><a href="#p04-s2">二 · 引言中的基础概念/名词（逐条）</a></li><li><a href="#p04-s3">三 · 核心：怎么做的（观察裁决法，四步）</a></li><li><a href="#p04-s4">四 · 结论与关键数值</a></li><li><a href="#p04-s5">五 · 与知识库衔接</a></li></ul></li><li><a href="#p05">05 · Mahajan 1975（碎片化孪晶晶体学）</a><ul class="sub"><li><a href="#p05-s1">一 · 论文在解决什么问题</a></li><li><a href="#p05-s2">二 · 引言中的基础概念/名词（逐条）</a></li><li><a href="#p05-s3">三 · 核心：怎么做的（判据裁决法，四步）</a></li><li><a href="#p05-s4">四 · 结论与关键数值</a></li><li><a href="#p05-s5">五 · 与知识库衔接</a></li></ul></li><li class="grp">二·位错芯理论</li><li><a href="#p06">06 · Duesbery &amp; Vitek 1998（塑性各向异性）</a><ul class="sub"><li><a href="#p06-s1">一 · 论文在解决什么问题</a></li><li><a href="#p06-s2">二 · 引言中的基础概念/名词（逐条）</a></li><li><a href="#p06-s3">三 · 核心：怎么做的——每一步都回答"为什么"</a></li><li><a href="#p06-s4">四 · 结论与关键数值</a></li><li><a href="#p06-s5">五 · 与知识库衔接</a></li></ul></li><li><a href="#p07">07 · Lagerlöf 1993（zonal 孪生）</a><ul class="sub"><li><a href="#p07-s1">一 · 论文在解决什么问题</a></li><li><a href="#p07-s2">二 · 引言中的基础概念/名词（逐条）</a></li><li><a href="#p07-s3">三 · 核心：怎么做的（推理路径五步）</a></li><li><a href="#p07-s4">四 · 结论与关键数值</a></li><li><a href="#p07-s5">五 · 与知识库衔接</a></li></ul></li><li><a href="#p08">08 · Vitek 2004（螺位错芯结构）</a><ul class="sub"><li><a href="#p08-s1">一 · 论文在解决什么问题</a></li><li><a href="#p08-s2">二 · 引言中的基础概念/名词（逐条）</a></li><li><a href="#p08-s3">三 · 核心：怎么做的（对照实验法，四步）</a></li><li><a href="#p08-s4">四 · 结论与关键数值</a></li><li><a href="#p08-s5">五 · 与知识库衔接</a></li></ul></li><li><a href="#p09">09 · Cai 2004（BCC 螺位错迁移率）</a><ul class="sub"><li><a href="#p09-s1">一 · 论文在解决什么问题</a></li><li><a href="#p09-s2">二 · 引言中的基础概念/名词（逐条）</a></li><li><a href="#p09-s3">三 · 核心：怎么做的（BCC 部分的推理骨架）</a></li><li><a href="#p09-s4">四 · 结论与关键数值</a></li><li><a href="#p09-s5">五 · 与知识库衔接</a></li></ul></li><li><a href="#p10">10 · Marian 2004（光滑→粗糙→孪生转变）</a><ul class="sub"><li><a href="#p10-s1">一 · 论文在解决什么问题</a></li><li><a href="#p10-s2">二 · 引言中的基础概念/名词（逐条）</a></li><li><a href="#p10-s3">三 · 核心：怎么做的（MD 动态观察法，三模式+参数扫描）</a></li><li><a href="#p10-s4">四 · 结论与关键数值</a></li><li><a href="#p10-s5">五 · 与知识库衔接</a></li></ul></li><li class="grp">三·原位/模拟</li><li><a href="#p11">11 · Zhang 2011（冲击孪晶与势函数）</a><ul class="sub"><li><a href="#p11-s1">一 · 论文在解决什么问题</a></li><li><a href="#p11-s2">二 · 引言中的基础概念/名词（逐条）</a></li><li><a href="#p11-s3">三 · 核心：怎么做的（基准-对照-判源，三步）</a></li><li><a href="#p11-s4">四 · 结论与关键数值</a></li><li><a href="#p11-s5">五 · 与知识库衔接</a></li></ul></li><li><a href="#p12">12 · Ojha 2014（孪生应力预测）</a><ul class="sub"><li><a href="#p12-s1">一 · 论文在解决什么问题</a></li><li><a href="#p12-s2">二 · 引言中的基础概念/名词（逐条）</a></li><li><a href="#p12-s3">三 · 核心：怎么做的（模型改造法，四步）</a></li><li><a href="#p12-s4">四 · 结论与关键数值</a></li><li><a href="#p12-s5">五 · 与知识库衔接</a></li></ul></li><li><a href="#p13">13 · Wang 2015（W 纳米线原位孪晶）</a><ul class="sub"><li><a href="#p13-s1">一 · 论文在解决什么问题</a></li><li><a href="#p13-s2">二 · 引言中的基础概念/名词（逐条）</a></li><li><a href="#p13-s3">三 · 核心：怎么做的（实验+MD 互证，五步）</a></li><li><a href="#p13-s4">四 · 结论与关键数值</a></li><li><a href="#p13-s5">五 · 与知识库衔接</a></li></ul></li><li><a href="#p14">14 · Sainath 2015（Fe 纳米线取向依赖）</a><ul class="sub"><li><a href="#p14-s1">一 · 论文在解决什么问题</a></li><li><a href="#p14-s2">二 · 引言中的基础概念/名词（逐条）</a></li><li><a href="#p14-s3">三 · 核心：怎么做的（系统扫描法，四步）</a></li><li><a href="#p14-s4">四 · 结论与关键数值</a></li><li><a href="#p14-s5">五 · 与知识库衔接</a></li></ul></li><li><a href="#p15">15 · Shi &amp; Singh 2016（TB 构型竞争）</a><ul class="sub"><li><a href="#p15-s1">一 · 论文在解决什么问题</a></li><li><a href="#p15-s2">二 · 引言中的基础概念/名词（逐条）</a></li><li><a href="#p15-s3">三 · 核心：怎么做的（机制报道+能量判据，三步）</a></li><li><a href="#p15-s4">四 · 结论与关键数值</a></li><li><a href="#p15-s5">五 · 与知识库衔接</a></li></ul></li><li><a href="#p16">16 · Zepeda-Ruiz 2017（金属塑性极限）</a><ul class="sub"><li><a href="#p16-s1">一 · 论文在解决什么问题</a></li><li><a href="#p16-s2">二 · 引言中的基础概念/名词（逐条）</a></li><li><a href="#p16-s3">三 · 核心：怎么做的（状态空间扫描法，四步）</a></li><li><a href="#p16-s4">四 · 结论与关键数值</a></li><li><a href="#p16-s5">五 · 与知识库衔接</a></li></ul></li><li><a href="#p17">17 · Li 2024（形核/生长控制孪生）</a><ul class="sub"><li><a href="#p17-s1">一 · 论文在解决什么问题</a></li><li><a href="#p17-s2">二 · 引言中的基础概念/名词（逐条）</a></li><li><a href="#p17-s3">三 · 核心：怎么做的（两模式对照+MD 机制落位，四步）</a></li><li><a href="#p17-s4">四 · 结论与关键数值</a></li><li><a href="#p17-s5">五 · 与知识库衔接</a></li></ul></li><li class="grp">四·前沿机制</li><li><a href="#p18">18 · Wang 2020（W 纳米线反孪生）</a><ul class="sub"><li><a href="#p18-s1">一 · 论文在解决什么问题</a></li><li><a href="#p18-s2">二 · 引言中的基础概念/名词（逐条）</a></li><li><a href="#p18-s3">三 · 核心：怎么做的（实验+MD+DFT 三线互证，四步）</a></li><li><a href="#p18-s4">四 · 结论与关键数值</a></li><li><a href="#p18-s5">五 · 与知识库衔接</a></li></ul></li><li><a href="#p19">19 · Xiao 2023（RC 方法与 ΔE）</a><ul class="sub"><li><a href="#p19-s1">一 · 论文在解决什么问题</a></li><li><a href="#p19-s2">二 · 引言中的基础概念/名词（逐条）</a></li><li><a href="#p19-s3">三 · 核心：怎么做的（方法创新→家族扫描→统一标度→应用，四步）</a></li><li><a href="#p19-s4">四 · 结论与关键数值</a></li><li><a href="#p19-s5">五 · 与知识库衔接</a></li></ul></li><li><a href="#p20">20 · Wei 2024（disconnection 单元）</a><ul class="sub"><li><a href="#p20-s1">一 · 论文在解决什么问题</a></li><li><a href="#p20-s2">二 · 引言中的基础概念/名词（逐条）</a></li><li><a href="#p20-s3">三 · 核心：怎么做的（理论预言→MD 验证，四步）</a></li><li><a href="#p20-s4">四 · 结论与关键数值</a></li><li><a href="#p20-s5">五 · 与知识库衔接</a></li></ul></li><li><a href="#p21">21 · Xie 2024（反孪生 shuffling 路径）</a><ul class="sub"><li><a href="#p21-s1">一 · 论文在解决什么问题</a></li><li><a href="#p21-s2">二 · 引言中的基础概念/名词（逐条）</a></li><li><a href="#p21-s3">三 · 核心：怎么做的（新机制观察→路径拆解→能垒比较，三步）</a></li><li><a href="#p21-s4">四 · 结论与关键数值</a></li><li><a href="#p21-s5">五 · 与知识库衔接</a></li></ul></li><li><a href="#p22">22 · Hou 2025（氢与位错反应）</a><ul class="sub"><li><a href="#p22-s1">一 · 论文在解决什么问题</a></li><li><a href="#p22-s2">二 · 引言中的基础概念/名词（逐条）</a></li><li><a href="#p22-s3">三 · 核心：怎么做的（能量账法，四步——问答 08-02 展开）</a></li><li><a href="#p22-s4">四 · 结论与关键数值</a></li><li><a href="#p22-s5">五 · 与知识库衔接</a></li></ul></li><li class="grp">五·系统综述</li><li><a href="#p23">23 · Li 2023（BCC 孪晶综述）</a><ul class="sub"><li><a href="#p23-s1">一 · 论文在解决什么问题</a></li><li><a href="#p23-s2">二 · 引言中的基础概念/名词（逐条）</a></li><li><a href="#p23-s3">三 · 核心：怎么做的（综述的组织框架——即"知识地图"的分区）</a></li><li><a href="#p23-s4">四 · 结论与关键数值</a></li><li><a href="#p23-s5">五 · 与知识库衔接</a></li></ul></li></ul></nav>
+<main id="main">
+<div id="searchbar"><input id="q" placeholder="搜索论文/概念/方法关键词…（回车跳转第一个命中）"></div>
+<div id="content">
+<section id="p01"><div class="paper-head"><span class="pid">01</span><h2>Sleeswyk 1963 — ½⟨111⟩ 螺位错与 {112}⟨111⟩ 孪晶形核（论文核心）</h2></div>
+<blockquote>引用：A. W. Sleeswyk, "½⟨111⟩ screw dislocations and the nucleation of {112}⟨111⟩ twins in the b.c.c. lattice", *Philosophical Magazine* 8:93 (1963) 1467–1486。DOI: 10.1080/14786436308207311。</blockquote>
+<blockquote>图谱 p-id：p01。层：第一层·经典奠基。extract：<code>_文献核验\extracts\12_Screw_Dislocations_and_the_Nucleation_of_112_111_Twins_in_the_BCC_Lattice_1963_AW.txt</code>（行号引用即此文件）。</blockquote>
+</section>
+<section id="p01-s1"><h3>§一 论文在解决什么问题</h3>
+<p>孪晶生长的<span class="obj" data-obj="极轴机制" title="极轴机制">极轴机制</span>（Frank-Read 型）不难构造，真正的困难在<b>初始条件：增长的层错怎么形核</b>（原文 "The real difficulty is in the initial condition: how is a growing stacking fault nucleated?"，extract 82–83）。Cottrell–Bilby 1951 的答案是先分解一个 sessile 位错——但这需要一种不常见的初始位错构型。本文换一个问题：<b>能不能用最普通的可滑移 ½⟨111⟩ <span class="obj" data-obj="螺位错" title="螺位错">螺位错</span>当形核核心</b>？论证思路：⟨111⟩ 方向有三个 {112} 面穿过，且 {112} <span class="obj" data-obj="层错能" title="层错能 SFE">层错能</span>低 → 螺位错"几乎必然"分解成三个 ⅙⟨111⟩ <span class="obj" data-obj="偏位错" title="不<span class="obj" data-obj="全位错" title="全位错">全位错</span>">偏位错</span>（三重分解）→ 逐步追踪这个三偏位错构型在应力下的演化，直到它变成三层孪晶。</p>
+</section>
+<section id="p01-s2"><h3>§二 引言中的基础概念/名词（逐条）</h3>
+<blockquote>F=事实；T=推理（附链条）。</blockquote>
+<table>
+<tr><td>术语</td><td>定义与解释</td><td>类别</td><td>出处</td></tr>
+<tr><td><span class="obj" data-obj="极轴机制" title="极轴机制">极轴机制</span>（Frank-Read pole mechanism / Cottrell–Bilby）</td><td>把 Frank-Read 位错增殖机制改造用于孪晶生长：sessile 位错分解，其一（极轴）垂直于孪晶面、不动；另一<span class="obj" data-obj="不<span class="obj" data-obj="全位错" title="全位错">全位错</span>" title="不全位错">不全位错</span>绕极轴螺旋扫动、每圈沿法线前进一个面间距铺一层</td><td>F</td><td>77–94</td></tr>
+<tr><td><span class="obj" data-obj="孪生位错" title="孪生位错">孪生位错</span>（twinning dislocation，主<span class="obj" data-obj="偏位错" title="不全位错">偏位错</span>）</td><td><span class="obj" data-obj="Burgers 矢量" title="Burgers 矢量">Burgers 矢量</span> ⅙⟨111⟩ 的不全位错——相邻 (112) 面相对滑移 ⅙⟨111⟩ 即得到镜像堆垛，是最简单的孪晶产生方式；引入的<span class="obj" data-obj="层错能" title="层错能 SFE">层错能</span>量最低</td><td>F</td><td>115–120</td></tr>
+<tr><td>反常层错（anomalous fault，Barrett 1949）</td><td>沿相反方向滑同样距离 ⅙⟨111⟩ 造成的层错——晶格扰动大、能量过高，实际上不发生；反向滑两倍距离 ⅓⟨111⟩ 才回到原层错</td><td>F</td><td>121–126</td></tr>
+<tr><td>互补<span class="obj" data-obj="孪生偏位错" title="孪生位错">孪生偏位错</span>（complementary twinning partial ⅓⟨111⟩，Frank–Nicholas 1953）</td><td><span class="obj" data-obj="刃位错" title="刃位错">刃位错</span>在 (112) 面只能<b>不对称分解</b>：½⟨111⟩→⅓⟨111⟩+⅙⟨111⟩（式 1 上方），互补偏位错与主偏位错之间由层错连接</td><td>F</td><td>127–134</td></tr>
+<tr><td>层错能/背力（back force）</td><td>运动偏位错扫出的层错有单位面积能量，对位错施加单位长度背力 F；假设 F 为常数，仅在两个层错面交线附近线性衰减到零（0≤F′≤F，式 (2)）——这一假设让"宽度不计"的位错能在交线附近取平衡位置</td><td>T（近似假设，作者自述"entirely plausible"）</td><td>174–185</td></tr>
+<tr><td>一层孪晶=两个共格界</td><td>层错视为一层孪晶、带两个互不作用的共格界 → <b><span class="obj" data-obj="共格<span class="obj" data-obj="孪晶界" title="孪晶界">孪晶界</span>" title="共格孪晶界">共格孪晶界</span>能=层错能的一半</b>；在已有层错相邻面上滑动的位错不产生新界面能 → 无背力（本文的核心简化假设，作者明言是近似）</td><td>T（近似假设）</td><td>186–197</td></tr>
+<tr><td>三重分解（式 (3)）</td><td>½⟨111⟩→⅙⟨111⟩+⅙⟨111⟩+⅙⟨111⟩，三个偏位错各在一个穿过 ⟨111⟩ 的 {112} 面上（三重对称构型由 Hirsch 在 1960 剑桥会议上先提出，但稳定性未研究）</td><td>F（脚注）</td><td>198–206、136–143</td></tr>
+<tr><td>60°/120° 交叉滑移规则</td><td>同属一个 ⟨111⟩ 晶带的不同 {112} 面上的孪晶/层错可沿带轴相接（Sleeswyk &amp; Helle 1961）：偏位错从一面交滑移到另一面，两面都留层错时夹角必须 60°；一面留、一面消时 120°</td><td>F（前期工作）</td><td>207–216</td></tr>
+<tr><td>{110} 分解为何被排除</td><td>Crussard/Cohen 提出的 {110} 分解 ½⟨111⟩→⅙⟨011⟩+⅙⟨2̄11⟩+⅙⟨011̄⟩（式 (4)）：其产物位错弹性能是 {112} 三重分解的 <b>7/4 倍</b>，且 {110} 层错能至少约等于 {112} → 优先在 {112} 分解（本文此后只讨论式 (3) 模式）</td><td>T（能量比论证）</td><td>228–247</td></tr>
+</table>
+</section>
+<section id="p01-s3"><h3>§三 核心：怎么做的（构型序列推理，五步）</h3>
+<p><b>1. 立假设工具箱（§2）</b>：背力 F 常数+交线附近衰减（式 (2)）；一层孪晶=两共格界、CTB 能=SFE/2 → 贴着已有层错滑的位错无背力。这两条是后面所有平衡构型计算的输入。</p>
+<p><b>2. 建立三重分解的平衡方程</b>：每根<span class="obj" data-obj="偏位错" title="不<span class="obj" data-obj="全位错" title="全位错">全位错</span>">偏位错</span>的平衡位置由"另两根的排斥力=层错背力 F"决定；对称解（三根离原点等距）是三岔对称构型。<b>但计算表明该三重对称平衡构型不稳定</b>（摘要 53–54）。</p>
+<p><b>3. 零应力稳定构型：二重对称</b>。稳定平衡构型具有二重对称：一根偏位错在三个 {112} 面的交线处，另两根在不同 {112} 面上、与它等距（摘要 56–59）。逻辑：三岔对称在扰动下偏位错沿 60° 规则交滑移重组，落入二重对称势阱。</p>
+<p><b>4. 临界应力下的第二次转变</b>：加应力后构型变成另一个零应力也稳定的构型——仍是一根在交线处，另两根在<b>不同的</b>相邻 {112} 面上、距离不等（摘要 60–64）。含义：应力把偏位错推成"两层平行层错"的雏形。</p>
+<p><b>5. 三层孪晶与极轴生长</b>：应力升到约 <b>2 倍构型转变应力</b>时，第二稳定构型发展成<b>三层孪晶</b>，三个 ⅙⟨111⟩ 偏位错在其尖端（摘要 65–67）。若生长中的孪晶遇到一根横穿的 ½⟨111⟩ <span class="obj" data-obj="螺位错" title="螺位错">螺位错</span>，则转入<span class="obj" data-obj="极轴机制" title="极轴机制">极轴机制</span>，产生多层<span class="obj" data-obj="孪晶片" title="孪晶片">孪晶片</span>（摘要 68–70）。</p>
+<p><b>收口（两类 {112} 滑移位错的预言）</b>：主偏位错领先的构型可轻易交滑移（60°/120° 规则）；互补偏位错领先者只能在临界孪生应力下<b>以三层孪晶形式</b>换面——厚孪晶片产生的<span class="obj" data-obj="发射位错" title="位错发射">发射位错</span>（emissary）属前一类（摘要 70–75）。这一步把"分解产物如何动"与"孪晶如何长"接了起来。</p>
+</section>
+<section id="p01-s4"><h3>§四 结论与关键数值</h3>
+<ul>
+<li>½⟨111⟩ <span class="obj" data-obj="螺位错" title="螺位错">螺位错</span>优先在 {112} 面三重分解（弹性能比 {110} 分解省 4/7）。</li>
+<li>构型序列：三重对称（不稳）→ 二重对称（零应力稳定）→ 第二稳定构型（临界应力）→ 三层孪晶（≈2 倍转变应力）→ 遇横穿螺位错经<span class="obj" data-obj="极轴机制" title="极轴机制">极轴机制</span>多层生长。</li>
+<li>两个易混口径（图谱已标）："三层=最小单元"是 zonal 概念口径（Lagerlöf 1993），Sleeswyk 原文称三层孪晶为"孪晶形核元素（element of twin nucleation）"；RC 路径口径的最小单元是 2 层（Xiao 2023）——引用时注明口径。</li>
+</ul>
+</section>
+<section id="p01-s5"><h3>§五 与知识库衔接</h3>
+<ul>
+<li>图谱节点：c-nucleation（五模型②=<span class="obj" data-obj="位错芯" title="位错芯结构">位错芯</span>分解机制）、c-sleeswyk-sequence（构型序列）、c-dissociation、e-twinning-disl、e-third-partial（互补<span class="obj" data-obj="偏位错" title="不<span class="obj" data-obj="全位错" title="全位错">全位错</span>">偏位错</span>）、e-zonal（后期 zonal 概念）、c-pole-mechanism、e-emissary。</li>
+<li>问答库：04-01（三层最小单元）、04-04/04-05（zonal 弓出/极轴否定）、09-02（Shockley/Frank 对照）、02-03（⅙⟨111⟩ 模长关系）。</li>
+<li>相关原文核验：Li 2023 综述 §twin nucleation（五模型之 (II) 的正式名称 dislocation core dissociation mechanism）。</li>
+</ul>
+</section>
+<section id="p02"><div class="paper-head"><span class="pid">02</span><h2>Sleeswyk 1962 — 发射位错（论文核心）</h2></div>
+<blockquote>引用：A. W. Sleeswyk, "Emissary dislocations: Theory and experiments on the propagation of deformation twins in α-iron", *Acta Metallurgica* 10 (1962)。PII: 0001-6160(62)90040-8。</blockquote>
+<blockquote>图谱 p-id：p22。层：第一层·经典奠基。</blockquote>
+<blockquote><b>核验状态：【待核验】——库内无全文（未纳入 2026-08-26 英文原文核验），本文件仅按题名、PII 书目记录与 Sleeswyk 1963 / Ogawa-Maddin 1964 中对它的引用用法整理，正文细节一律标待核验，不编造。</b></blockquote>
+</section>
+<section id="p02-s1"><h3>§一 论文在解决什么问题</h3>
+<p>研究变形孪晶在 α-Fe 中<b>传播</b>时，孪晶与基体的交界（<span class="obj" data-obj="孪晶尖端" title="孪晶尖端">孪晶尖端</span>）如何与基体位错相互作用——提出"<span class="obj" data-obj="发射位错" title="位错发射">发射位错</span>（emissary dislocation）"概念：变形孪晶传播时从孪晶尖端发射进基体的位错，用于解释 α-Fe 中孪晶前方观察到的发射滑移线（题名与 PII 经 ScienceDirect/Semantic Scholar 核实；文献库 paper-056）。【待核验：理论推导细节与实验内容】</p>
+</section>
+<section id="p02-s2"><h3>§二 引言中的基础概念/名词</h3>
+<table>
+<tr><td>术语</td><td>定义与解释</td><td>类别</td><td>出处</td></tr>
+<tr><td><span class="obj" data-obj="发射位错" title="位错发射">发射位错</span>（emissary dislocation）</td><td>变形孪晶传播时从<span class="obj" data-obj="孪晶尖端" title="孪晶尖端">孪晶尖端</span>发射进基体的位错，解释孪晶前方发射滑移线；是"位错发射"的上位概念（e-disl-emission）在孪晶语境的第一个实例</td><td>F（术语定义，出处=本论文）</td><td>题名；paper-056</td></tr>
+<tr><td>孪晶尖端</td><td><span class="obj" data-obj="孪晶片" title="孪晶片">孪晶片</span>与基体的前沿界面（本论文用法=发射位错的源）</td><td>F</td><td>Sleeswyk 1963 摘要 73–75 转用；node=e-twin-front</td></tr>
+</table>
+<blockquote>全文概念细节【待核验】——无 extract，不补写。</blockquote>
+</section>
+<section id="p02-s3"><h3>§三 核心：怎么做的</h3>
+<p>【待核验】无全文，不能复述其推导。可确认的只有两点位置信息：</p>
+<ol>
+<li>该文把"孪晶传播"与"基体位错"联系起来——在 Sleeswyk 1963 中，<span class="obj" data-obj="发射位错" title="位错发射">发射位错</span>被归为"主<span class="obj" data-obj="偏位错" title="不<span class="obj" data-obj="全位错" title="全位错">全位错</span>">偏位错</span>领先、可轻易交滑移"的那类 {112} 滑移位错（extract 12_...1963_AW 行 73–75），是厚<span class="obj" data-obj="孪晶片" title="孪晶片">孪晶片</span>与基体滑移交互的产物。</li>
+<li>Ogawa &amp; Maddin 1964 观察到的"发射型<span class="obj" data-obj="非<span class="obj" data-obj="共格<span class="obj" data-obj="孪晶界" title="孪晶界">孪晶界</span>" title="共格孪晶界">共格孪晶界</span>" title="非共格孪晶界">非共格孪晶界</span>"直接沿用此概念（译文摘要：emissary type non-coherent twin boundary）。</li>
+</ul>
+<p>若需要这篇的完整推导，需先获取原文 PDF（Acta Metallurgica 10, 1962）再补。</p>
+</section>
+<section id="p02-s4"><h3>§四 结论与关键数值</h3>
+<ul>
+<li>概念级结论：孪晶传播伴随位错发射——这一图像后来发展为"<span class="obj" data-obj="孪晶尖端" title="孪晶尖端">孪晶尖端</span>/界面作为位错源、按 Burgers 守恒发射"（e-disl-emission）。</li>
+<li>数值：无（待核验）。</li>
+</ul>
+</section>
+<section id="p02-s5"><h3>§五 与知识库衔接</h3>
+<ul>
+<li>图谱节点：e-emissary（本论文为其术语出处）、e-disl-emission（上位概念）、e-twin-front。</li>
+<li>问答库：04-05（极轴否定论据链）、04-09（<span class="obj" data-obj="孪晶尖端" title="孪晶尖端">孪晶尖端</span>=<span class="obj" data-obj="位错芯" title="位错芯结构">位错芯</span>吗——尖端其他活动：<span class="obj" data-obj="发射位错" title="位错发射">发射位错</span>）。</li>
+<li>文献库：paper-056（书目级条目，标"内容待与原文核验"）。</li>
+</ul>
+</section>
+<section id="p03"><div class="paper-head"><span class="pid">03</span><h2>Ogawa &amp; Maddin 1964 — Mo-Re 合金孪晶的 TEM 研究（论文核心）</h2></div>
+<blockquote>引用：K. Ogawa &amp; R. Maddin, "Transmission electron-microscopic studies of twinning in Mo-Re alloys", *Acta Metallurgica* 12 (1964)。（2026-08-26 经原文首页核实：合金为 Mo-3.5 at.% Re 室温与 Mo-18 at.% Re 液氮；旧记 Mo-18/35 有误。）</blockquote>
+<blockquote>图谱 p-id：p02。层：第一层·经典奠基。extract：<code>_文献核验\extracts\Transmission_Electron_Microscopic_Studies_of_Deformation_Twins_in_Mo-3.5_at.%_Re_Alloys_19.txt</code>（行号引用即此文件）；译文：<code>_译文\OgawaMaddin_1964_中文翻译_重译.md</code>（译文行号注明"译文"）。</blockquote>
+</section>
+<section id="p03-s1"><h3>§一 论文在解决什么问题</h3>
+<p>Mo-Re 合金以"易孪生"闻名，但孪晶到底怎么形核、怎么生长，当时只有模型没有直接实验证据。本文用 TEM 系统观察 Mo-3.5 at.% Re（室温变形）与 Mo-18 at.% Re（液氮变形）的变形孪晶，回答三个问题：① 孪晶形核的关键阶段是什么（<span class="obj" data-obj="极轴机制" title="极轴机制">极轴机制</span>的启动，还是滑移位错的分解）；② <span class="obj" data-obj="非<span class="obj" data-obj="共格<span class="obj" data-obj="孪晶界" title="孪晶界">孪晶界</span>" title="共格孪晶界">共格孪晶界</span>" title="非共格孪晶界">非共格孪晶界</span>的条纹衬度是什么（Hull 解释为<span class="obj" data-obj="孪生位错" title="孪生位错">孪生位错</span>，本文用运动学衍射理论检验）；③ 孪晶与基体位错、自由表面如何相互作用。</p>
+</section>
+<section id="p03-s2"><h3>§二 引言中的基础概念/名词（逐条）</h3>
+<blockquote>F=事实；T=推理。</blockquote>
+<table>
+<tr><td>术语</td><td>定义与解释</td><td>类别</td><td>出处</td></tr>
+<tr><td><span class="obj" data-obj="层错能" title="层错能 SFE">层错能</span>降低促孪晶（Re 效应）</td><td>"Mo-35 at.% Re 强大的机械孪生能力源于加铼降低了钼的层错能"——注意原文是 "some have suggested" 的<b>转述他人观点</b>口吻（p.713），非本文实验结论</td><td>F（转述）</td><td>译文 18；c-rhenium-effect 节点按此标注</td></tr>
+<tr><td><span class="obj" data-obj="非<span class="obj" data-obj="共格<span class="obj" data-obj="孪晶界" title="孪晶界">孪晶界</span>" title="共格孪晶界">共格孪晶界</span>" title="非共格孪晶界">非共格孪晶界</span>（ITB）</td><td>偏离孪晶面的孪晶界面，由<span class="obj" data-obj="孪生位错" title="孪生位错">孪生位错</span>列/台阶构成（定义见 05-10）</td><td>F</td><td>extract 35–37、译文 12</td></tr>
+<tr><td>孪生位错</td><td>b=⅙⟨111⟩ 的<span class="obj" data-obj="不<span class="obj" data-obj="全位错" title="全位错">全位错</span>" title="不全位错">不全位错</span>，在孪晶界上滑移使孪晶增厚</td><td>F</td><td>extract 25、译文 12</td></tr>
+<tr><td>扩展位错/扩展结点</td><td>FCC 式全位错分解成两根<span class="obj" data-obj="偏位错" title="不全位错">偏位错</span>夹层错的构型——本文在 BCC Mo-Re 中<b>未观察到</b></td><td>F（负结果）</td><td>extract 17–20、译文 12</td></tr>
+<tr><td>条纹衬度（fringe contrast）</td><td>层错在 TEM 中的特征明暗相间条纹；Hull 将其解释为孪生位错的衬度</td><td>F</td><td>译文 18</td></tr>
+<tr><td>运动学衍射理论（kinematical theory）</td><td>忽略多次散射的电子衍射近似，用于层错条纹衬度计算</td><td>F</td><td>extract 40–41、译文 12</td></tr>
+<tr><td>发射（emissary）型非共格孪晶界</td><td>孪晶与基体的倾斜边界，其上孪生位错与关联滑移位错满足 Burgers 守恒（Sleeswyk 1962 概念的实验对应物）</td><td>T（守恒论证见 §3 第 4 步）</td><td>extract 35–37</td></tr>
+<tr><td>super-pole</td><td>4 组共 12 根孪生位错的极轴构型——本文作为<span class="obj" data-obj="极轴机制" title="极轴机制">极轴机制</span>运转的直接证据</td><td>F</td><td>译文 12、p02 conclusion</td></tr>
+</table>
+</section>
+<section id="p03-s3"><h3>§三 核心：怎么做的（观察→反应识别→机制裁决，四步）</h3>
+<p><b>1. 实验方法</b>：区熔 Mo-18/35Re 棒冷轧至 0.005 英寸 → 电子束区熔退火（真空 10⁻⁵–10⁻⁶ mmHg）→ Instron 拉伸（1.6×10⁻⁴ s⁻¹，室温/液氮）→ 硫酸电解减薄 → TEM 观察。（译文 24）</p>
+<p><b>2. 观察现象清单</b>（译文 28–37）：Mo-18Re 室温滑移、液氮孪生；Mo-35Re 室温即孪生，伴随载荷突降与咔哒声；<span class="obj" data-obj="孪晶片" title="孪晶片">孪晶片</span>特征：ITB 条纹、条纹终止处关联滑移位错、条纹跨线镜面对称、条纹向尖端堆积、三种强度条纹、表面附近条纹减弱并朝表面取向（自由表面影响深达数百 Å）。</p>
+<p><b>3. 位错反应识别（Burgers 守恒推理）</b>：常观察到"一条滑移位错 + 三根<span class="obj" data-obj="孪生位错" title="孪生位错">孪生位错</span>"的反应——把 <span class="obj" data-obj="Burgers 矢量" title="Burgers 矢量">Burgers 矢量</span>守恒律应用到每个结点，可推出面 ABC 上自动存在一组位错（发射组 emissary set），净 b 为零、无长程应力场、TEM 不可见。<b>推理链</b>：守恒律（输入）→ 结点处各支 b 求和 → 必须补一组 b 才能配平 → 该组即<span class="obj" data-obj="发射位错" title="位错发射">发射位错</span>。（译文 72）</p>
+<p><b>4. 机制裁决</b>：① 孪生的<b>关键阶段是滑移位错在 {112} 面分解为三根孪生位错</b>，不是<span class="obj" data-obj="极轴机制" title="极轴机制">极轴机制</span>的启动（译文 12、113）；② super-pole 构型（4 组 12 根）是极轴机制在生长阶段运转的直接证据（extract 27–28、译文 12）；③ <span class="obj" data-obj="非<span class="obj" data-obj="共格<span class="obj" data-obj="孪晶界" title="孪晶界">孪晶界</span>" title="共格孪晶界">共格孪晶界</span>" title="非共格孪晶界">非共格孪晶界</span>条纹用层错衍射衬度运动学理论成功解释（译文 115）；④ 新效应：吸收显著区域 ITB 衍射强度振荡（译文 116）。</p>
+</section>
+<section id="p03-s4"><h3>§四 结论与关键数值</h3>
+<ul>
+<li>无扩展位错/扩展结点（与"Re 利于扩展"的流行观点相反）；未观察到单层孪晶。</li>
+<li>每个滑移位错关联三根<span class="obj" data-obj="孪生位错" title="孪生位错">孪生位错</span>（三个相邻 {112} 层）；发射型<span class="obj" data-obj="非<span class="obj" data-obj="共格<span class="obj" data-obj="孪晶界" title="孪晶界">孪晶界</span>" title="共格孪晶界">共格孪晶界</span>" title="非共格孪晶界">非共格孪晶界</span>直接证据。</li>
+<li>Mo-3.5Re 室温孪生、Mo-18Re 液氮孪生；自由表面对位错排列影响深达数百 Å。</li>
+<li>层错条纹衬度运动学解释 + 吸收区强度振荡新效应。</li>
+</ul>
+</section>
+<section id="p03-s5"><h3>§五 与知识库衔接</h3>
+<ul>
+<li>图谱节点：c-nucleation（五模型③<span class="obj" data-obj="刃位错" title="刃位错">刃位错</span>分解——注意 Ogawa 1965 是刃位错版本，本文是 TEM 证据）、c-pole-mechanism、e-emissary、e-pseudo-coherent-tb（本文"发射型 ITB"为其姊妹概念）、c-rhenium-effect、c-fragmented-twin（Mo-35Re 同族材料）。</li>
+<li>问答库：04-05（<span class="obj" data-obj="极轴机制" title="极轴机制">极轴机制</span>否定论据链——本文 super-pole 是正面证据、Mahajan 1972 是反面证据，两者分层使用）、05-10（<span class="obj" data-obj="非<span class="obj" data-obj="共格<span class="obj" data-obj="孪晶界" title="孪晶界">孪晶界</span>" title="共格孪晶界">共格孪晶界</span>" title="非共格孪晶界">非共格孪晶界</span>）。</li>
+<li>译文：<code>_译文\OgawaMaddin_1964_中文翻译_重译.md</code>。</li>
+</ul>
+</section>
+<section id="p04"><div class="paper-head"><span class="pid">04</span><h2>Mahajan 1972 — Mo-35Re 孪晶形核与生长（论文核心）</h2></div>
+<blockquote>引用：S. Mahajan, "Nucleation and growth of deformation twins in Mo-35 at. % Re alloy", *Philosophical Magazine* 26:1 (1972) 161–171。DOI: 10.1080/14786437208221027。</blockquote>
+<blockquote>图谱 p-id：p03。层：第一层·经典奠基。extract：<code>_文献核验\extracts\Nucleation_and_growth_of_deformation_twins_in_Mo-35_at._%_Re_alloy_1972_S.txt</code>（行号引用即此文件）。</blockquote>
+</section>
+<section id="p04-s1"><h3>§一 论文在解决什么问题</h3>
+<p>BCC 孪晶的形核与生长二十年来未决。已有五类假说：Orowan 均匀形核（高应力集中区）、Cottrell–Bilby <span class="obj" data-obj="极轴机制" title="极轴机制">极轴机制</span>（½⟨111⟩→⅓⟨112⟩+⅙⟨111⟩ 分解+螺旋扫动）、Sleeswyk <span class="obj" data-obj="螺位错" title="螺位错">螺位错</span>三重分解（½⟨111⟩=3×⅙⟨111⟩）、Ogawa <span class="obj" data-obj="刃位错" title="刃位错">刃位错</span>分解、Priestner–Leslie 滑移带交互。本文的策略是<b>看早期阶段</b>（early stages）：TEM 观察 Mo-35 at.% Re（室温易孪生）变形初期局部滑移区内的层错与薄孪晶，用"谁在形核现场"来裁决假说。</p>
+</section>
+<section id="p04-s2"><h3>§二 引言中的基础概念/名词（逐条）</h3>
+<blockquote>F=事实；T=推理。</blockquote>
+<table>
+<tr><td>术语</td><td>定义与解释</td><td>类别</td><td>出处</td></tr>
+<tr><td>孪晶形成两阶段</td><td>形核（胚的形成）与生长（长成宏观可见孪晶）两阶段——全文框架</td><td>F</td><td>42–44</td></tr>
+<tr><td>均匀形核（Orowan 1954）</td><td><span class="obj" data-obj="孪晶胚" title="孪晶胚">孪晶胚</span>在高应力集中区（来源未指明）均匀形核</td><td>F</td><td>47–50</td></tr>
+<tr><td><span class="obj" data-obj="极轴机制" title="极轴机制">极轴机制</span>分解反应（CB 1951）</td><td>½⟨111⟩→⅓⟨112⟩+⅙⟨111⟩：sessile 极轴 ⅓⟨112⟩ + 可滑移<span class="obj" data-obj="孪生位错" title="孪生位错">孪生位错</span>，后者绕极轴螺旋扫动成宏观孪晶</td><td>F</td><td>54–57</td></tr>
+<tr><td><span class="obj" data-obj="螺位错" title="螺位错">螺位错</span>三重分解（Sleeswyk 1963）</td><td>½⟨111⟩ 螺位错等价于三根 ⅙⟨111⟩ <span class="obj" data-obj="孪生<span class="obj" data-obj="偏位错" title="不<span class="obj" data-obj="全位错" title="全位错">全位错</span>">偏位错</span>" title="孪生位错">孪生偏位错</span>，各居三个对称交于 <span class="obj" data-obj="Burgers 矢量" title="Burgers 矢量">Burgers 矢量</span>方向的 {112} 面之一；应力下对称构型不稳、可发展成三层孪晶</td><td>F</td><td>58–71</td></tr>
+<tr><td><span class="obj" data-obj="刃位错" title="刃位错">刃位错</span>分解（Ogawa 1965）</td><td>与 Sleeswyk 类似，但载体是 ½⟨111⟩ <b>刃</b>位错</td><td>F</td><td>72–74</td></tr>
+<tr><td>滑移带交互模型（Priestner &amp; Leslie 1965）</td><td>{110}/{112} 滑移带交截处三层孪晶形核；作者自注：从变形后静态碎片不能确证"孪晶由滑移带产生还是相反"</td><td>F（含方法学自省）</td><td>75–81</td></tr>
+<tr><td>滑移先于孪生（slip must precede twinning）</td><td>本文结论之一：局部滑移是孪晶形核的前提</td><td>T（观察归纳）</td><td>88–89</td></tr>
+<tr><td>近螺取向位错段</td><td>滑移位错中接近螺取向的线段——观察表明只有这些段参与形成层错</td><td>F</td><td>29–30</td></tr>
+</table>
+</section>
+<section id="p04-s3"><h3>§三 核心：怎么做的（观察裁决法，四步）</h3>
+<p><b>1. 选材与实验</b>：Mo-35Re 区熔单晶冷轧→真空退火（2173 K、6 h、10⁻⁵ torr）→77 K 拉伸→火花切割/双面凹坑→喷射抛光+电解抛光→Philips 300 TEM（100 kV），用菊池线自洽定取向。（93–106）</p>
+<p><b>2. 现场观察（关键证据采集）</b>：在局域滑移区内观察到滑移位错（以螺型为主）与层错、薄孪晶（以螺型<span class="obj" data-obj="偏位错" title="不<span class="obj" data-obj="全位错" title="全位错">全位错</span>">偏位错</span>为界）交错分布；<b>只有螺取向的位错段参与形成层错</b>；组成滑移区的滑移位错 b 总平行于界定层错/孪晶区的偏位错 b。（26–33）</p>
+<p><b>3. 对照裁决</b>：CB 分解反应要求母位错有垂直于孪晶面的分量作极轴；观测到的是<b>平行</b>——b_滑移∥b_偏位错、无垂直分量 → "与 Cottrell–Bilby 提出的形核反应不符"（not in accord）。而"螺取向段→三层孪晶"的观测与 Sleeswyk 假说一致。（33–38）</p>
+<p><b>4. 生长途径</b>：宏观孪晶=滑移带内分布的微孪晶（三层孪晶）<b>彼此长到一起</b>（grow into each other）形成——给出"三层胚→微孪晶→宏观孪晶"的生长路线。（39–40、90–92）</p>
+</section>
+<section id="p04-s4"><h3>§四 结论与关键数值</h3>
+<ul>
+<li>三条结论：① slip must precede twinning；② 孪晶很可能由 ½⟨111⟩ <span class="obj" data-obj="螺位错" title="螺位错">螺位错</span>按 Sleeswyk 机制分解形核（三层孪晶）；③ 宏观孪晶由滑移带内微孪晶相互生长融合而成。</li>
+<li>割阶促进增厚（jogs may play a significant role）；"clear 层错=3n 层厚孪晶"（即 04-01 用的"3n 层"实验支撑）。</li>
+<li>材料与条件：Mo-35 at.% Re、77 K 拉伸、Phil Mag 26:161–171。</li>
+</ul>
+</section>
+<section id="p04-s5"><h3>§五 与知识库衔接</h3>
+<ul>
+<li>图谱节点：c-nucleation（五模型②的支持证据、模型①的否定证据）、c-sleeswyk-sequence、e-3layer、p-critical-embryo-size。</li>
+<li>问答库：04-01（3n 层实验支撑）、04-05（"Mahajan 1972 实验矛盾"是极轴否定的更根本理由）、04-08（slip must precede twinning 出处）。</li>
+<li>文献库：paper-011（已按原文核验重写）。</li>
+</ul>
+</section>
+<section id="p05"><div class="paper-head"><span class="pid">05</span><h2>Mahajan 1975 — Mo-35Re 碎片化孪晶晶体学（论文核心）</h2></div>
+<blockquote>引用：S. Mahajan, "Crystallographic features of fragmented twins and associated substructures in Mo-35 at.% Re alloy", *Acta Metallurgica* 23 (1975) 547–552。（作者 S. Mahajan，旧记 Vesely 有误——2026-08-26 核验更正。）</blockquote>
+<blockquote>图谱 p-id：p23。层：第一层·经典奠基。extract：<code>_文献核验\extracts\Crystallographic_Features_of_Fragmented_Twins_and_Associated_Substructures_in_Mo-35_at.%_R.txt</code>（行号引用即此文件）。</blockquote>
+</section>
+<section id="p05-s1"><h3>§一 论文在解决什么问题</h3>
+<p>BCC 晶体中常观察到"碎片化孪晶"（fragmented twins）——含未孪晶区岛屿的孪晶，其形成机制有两说：Sleeswyk 的<b>障碍诱导碎片化（OIF）</b>（传播孪晶遇不能包围的障碍，<span class="obj" data-obj="发射位错" title="位错发射">发射位错</span>绕障碍成环、留下剪切环）与 Sleeswyk–Verbraak 的<b>滑移诱导碎片化（SIF）</b>（逼近滑移位错使孪晶<span class="obj" data-obj="去孪生" title="退孪晶">去孪生</span>）。本文用 TEM 衍射晶体学把碎片段之间的<b>横向位移</b>量出来，用"有无横向位移"作判据裁决四个实例，并识别障碍及其起源。</p>
+</section>
+<section id="p05-s2"><h3>§二 引言中的基础概念/名词（逐条）</h3>
+<blockquote>F=事实；T=推理。</blockquote>
+<table>
+<tr><td>术语</td><td>定义与解释</td><td>类别</td><td>出处</td></tr>
+<tr><td>碎片化孪晶（fragmented twins）</td><td>含未孪晶区岛屿（islands of untwinned regions）的孪晶</td><td>F（定义）</td><td>86–88</td></tr>
+<tr><td>OIF（障碍诱导碎片化）</td><td>传播孪晶遇无法包围的障碍时，<span class="obj" data-obj="发射位错" title="位错发射">发射位错</span>绕障碍成环绕过 → 障碍周围留下剪切环、两者相互作用 → 碎片化（Sleeswyk 提出；预应变 Fe 冲击孪晶按此解释）</td><td>F</td><td>92–103</td></tr>
+<tr><td>SIF（滑移诱导碎片化）</td><td>逼近滑移位错与孪晶反应、诱导<span class="obj" data-obj="去孪生" title="退孪晶">去孪生</span> → 碎片化；可行性由 Sleeswyk &amp; Verbraak 几何论证</td><td>F</td><td>112–132</td></tr>
+<tr><td>互补<span class="obj" data-obj="孪生<span class="obj" data-obj="偏位错" title="不<span class="obj" data-obj="全位错" title="全位错">全位错</span>">偏位错</span>" title="<span class="obj" data-obj="孪生位错" title="孪生位错">孪生位错</span>">孪生偏位错</span>与去孪生</td><td>孪晶-滑移交互后，<span class="obj" data-obj="共格<span class="obj" data-obj="孪晶界" title="孪晶界">孪晶界</span>" title="共格孪晶界">共格孪晶界</span>上可能留下 ⅙⟨111⟩ 孪生位错（滑离结点→孪晶增厚）或 ⅓⟨111⟩ 互补偏位错（b∥孪生矢量→去孪生）</td><td>F</td><td>121–136</td></tr>
+<tr><td>平行/非平行判据</td><td>逼近滑移位错 b ∥ 孪生矢量 → 孪晶只被剪切（kink 滑动只加宽、不碎片化）；非平行 → 演化出碎片段横向位移</td><td>T（几何分析）</td><td>137–160</td></tr>
+<tr><td>横向位移（lateral displacement）</td><td>碎片段之间沿观察方向的相对错动——SIF 的必要标志</td><td>F</td><td>9–11</td></tr>
+<tr><td>伪共格孪晶界（pseudocoherent）</td><td><span class="obj" data-obj="非共格孪晶界" title="非共格孪晶界">非共格孪晶界</span>含孪生矢量时，孪生矢量晶带内的 {110}/{112}/{123} 面跨界面匹配、界面伪共格、可能能量较低——本文对"孪晶沿 (IS) 面终止"的解释（术语出处即本文）</td><td>T（几何证明 "It can be shown"）</td><td>710–720</td></tr>
+</table>
+</section>
+<section id="p05-s3"><h3>§三 核心：怎么做的（判据裁决法，四步）</h3>
+<p><b>1. 立判据</b>：SIF 的几何标志是碎片段之间有横向位移（由逼近滑移位错 b 非平行孪生矢量造成）；OIF 不产生横向位移。所以量出"有无横向位移"即可裁决。（9–13、137–160）</p>
+<p><b>2. 四个实例逐个量</b>：四个碎片化孪晶实例中，3 例碎片段之间<b>无横向位移</b>；1 例有位移、且现场无非平行滑移位错（排除 SIF 的来源）。（9–13）</p>
+<p><b>3. 裁决</b>：多数情形（3/4）碎片化由孪晶生长路径上演化的滑移结构（微滑移/次级滑移/多滑移）<b>障碍诱导（OIF）</b>；仅 1 例与 SIF 假说一致——<b>OIF 为主、SIF 次要</b>。（12–13）</p>
+<p><b>4. 障碍识别与终止面解释</b>：少数实例中障碍可被识别，其起源被讨论；孪晶沿 (IS) 面终止的机制用伪共格论证解释——非共格界含孪生矢量时 {110}/{112}/{123} 面跨界面匹配，界面伪共格、能量低，因此倾斜终止面是低能构型。（710–720）</p>
+</section>
+<section id="p05-s4"><h3>§四 结论与关键数值</h3>
+<ul>
+<li>碎片化孪晶=含未孪晶区岛屿的孪晶，未孪晶区由<span class="obj" data-obj="发射位错" title="位错发射">发射位错</span>组成。</li>
+<li>OIF 为主（3/4 无横向位移）、SIF 次要（1/4 一致）。</li>
+<li>伪共格低能终止面：非共格界含孪生矢量 → {110}/{112}/{123} 匹配 → pseudocoherent → 能量较低。</li>
+<li>体系：Mo-35 at.% Re，Acta Metallurgica 23:547–552。</li>
+</ul>
+</section>
+<section id="p05-s5"><h3>§五 与知识库衔接</h3>
+<ul>
+<li>图谱节点：c-fragmented-twin（本文为其机制出处）、e-pseudo-coherent-tb（术语出处=本文）、e-emissary（OIF 的载体）、e-twin-lamella。</li>
+<li>问答库：05-10（伪共格引文，第 5 步）。</li>
+<li>文献库：paper-003（作者已更正为 Mahajan，旧记 Vesely 有误）。</li>
+</ul>
+</section>
+<section id="p06"><div class="paper-head"><span class="pid">06</span><h2>Duesbery &amp; Vitek 1998 — 塑性各向异性与螺位错芯（论文核心）</h2></div>
+<blockquote>引用：Duesbery, M. S. &amp; Vitek, V., "Plastic anisotropy in b.c.c. transition metals", *Acta materialia* 46(5) (1998) 1481–1492（Overview No. 128）。DOI: 10.1016/S1359-6454(97)00367-4。</blockquote>
+<blockquote>图谱 p-id：p05。层：第二层·<span class="obj" data-obj="位错芯" title="位错芯结构">位错芯</span>理论。extract：<code>_文献核验\extracts\bcc孪晶37.txt</code>；译文：<code>_译文\DuesberyVitek_1998_中文翻译_重译.md</code>（行号引用即此文件）。</blockquote>
+</section>
+<section id="p06-s1"><h3>§一 论文在解决什么问题</h3>
+<p>BCC 金属的屈服应力不服从 Schmid 定律（同取向单轴拉压的 CRSS 可差 3 倍以上、滑移习性随取向漂移）。作者把这一笼统现象按 Schmid 定律的<b>两条独立断言</b>拆成两个可分别攻击的问题：① 为什么 CRSS 随滑移面与滑移方向变化（本征效应）；② 为什么 CRSS 受"对位错不做功"的应力分量影响（外禀效应）。手段：用 Finnis–Sinclair 势对六种 VB/VIB 族金属做 <span class="obj" data-obj="γ 面" title="γ-surface 广义<span class="obj" data-obj="层错能" title="层错能 SFE">层错能</span>">γ 面</span>与 a/2⟨111⟩ 螺<span class="obj" data-obj="位错芯" title="位错芯结构">位错芯</span>的分子静力学计算，把两个问题都归到 γ 面上。发现：芯分简并（VIB，3×b/3）/非简并（VB，6×b/6）两类，由 γ 面判据 g(b/3) 与 2g(b/6) 的大小决定；本征不对称源于 {211} γ 面不对称，外禀效应源于芯中刃分量与非滑移应力的耦合；量级根源是 VIB 族 ⟨111⟩ 剪切模量约 VB 族 3 倍而内聚能相近。</p>
+</section>
+<section id="p06-s2"><h3>§二 引言中的基础概念/名词（逐条）</h3>
+<blockquote>标注：F=事实（论文直接陈述或教科书定义）；T=推理（需推导理解，附链条）。</blockquote>
+<h4>位错芯：DV98 原句与本体定义是同一对象的两种说法（先讲这个）</h4>
+<p>DV98 引言的原句（译文 19）："这一耦合起源于<b><span class="obj" data-obj="位错芯" title="位错芯结构">位错芯</span></b>：包围位错中心的狭窄区域，其中晶体结构是主导影响"（原文：the narrow non-linear region surrounding the dislocation center in which the crystal structure dominates）。本体定义（graph-data.js node=e-core）：位错芯=以位错线为中心轴、向四周扩展到最大畸变量一半的空间；芯内原子位移偏离弹性解、为非线弹性区，芯外储弹性能量。<b>两者是同一对象的两种说法，不冲突</b>：</p>
+<ul>
+<li>DV98 说的是<b>为什么有这个区域</b>：离位错中心近到一定程度，"晶体结构（原子离散地排在哪）说了算"——连续介质（弹性）方程失效。关键词"狭窄"=只有几个原子间距；"非线性"=应力-应变不再是直线关系；"晶体结构起主导作用"=能量由每个原子具体落在哪个位置决定，而不是由宏观应变决定。</li>
+<li>本体定义说的是<b>这个区域的边界与账本</b>：边界定在"最大畸变量一半"处（从完美晶格到位错芯的最大畸变的一半）；芯内能量单独记账（原子模拟/PN 模型）、芯外按弹性理论记账。</li>
+</ul>
+<p><b>为什么畸变到一半处弹性就失效（一次说透）</b>：<span class="obj" data-obj="螺位错" title="螺位错">螺位错</span>的工程剪应变 γ=b/(2πr)——离位错线 r 处"相邻原子被错开"的角变形量。r=b 时 γ=1/(2π)≈0.16（16%），r≈0.16b 时 γ=100%。而金属的弹性极限只有 ~0.1–1%：也就是说从 r≈几十个 b 以外弹性理论才准；再往里原子被错开得太狠，每个原子被挤到"不是正常晶格位置"的地方，此时"晶体结构"（谁挨着谁、谁顶着谁）直接决定能量——这就是 DV98 那句话的物理内容。所以：<b>位错芯=那圈窄到"原子排布说了算"的区域；DV98 给机理（晶体结构主导），本体定义给尺子（畸变量一半）+账本（芯内芯外分开记账）</b>。（定量发散账见问答 02-09）</p>
+<table>
+<tr><td>术语</td><td>定义与解释</td><td>类别</td><td>出处</td></tr>
+<tr><td>Schmid 定律（两条断言）</td><td>① 某一滑移系分切应力达到临界值 CRSS 时塑性开始，且该值与滑移系/方向无关；② CRSS 不受应力张量其他分量影响。BCC 违反的是这两条</td><td>F</td><td>译文 21</td></tr>
+<tr><td>CRSS（临界分切应力）</td><td>宏观应力投影到滑移面-滑移方向上的分切应力 τ=mσ（m=Schmid 因子）达到的临界值</td><td>F</td><td>译文 21</td></tr>
+<tr><td><span class="obj" data-obj="Peierls 应力" title="Peierls 应力">Peierls 应力</span></td><td>位错翻越晶格周期势垒（Peierls 谷）所需的临界切应力；BCC 4.2 K 约 5×10⁻³μ、FCC 约 10⁻⁵μ</td><td>F</td><td>译文 23</td></tr>
+<tr><td>非 Schmid 行为</td><td>CRSS 偏离 Schmid 定律的现象总称（=塑性各向异性的另一名字，两者不是因果关系）</td><td>F</td><td>译文 25、49</td></tr>
+<tr><td>孪生-<span class="obj" data-obj="反孪生" title="<span class="obj" data-obj="反孪晶" title="反孪晶">反孪晶</span>">反孪生</span>滑移不对称</td><td>沿 {211} 面正反两个 ⟨111⟩ 方向剪切的阻力不同。<b>为什么被允许</b>：BCC 点群没有把 +⟨111⟩ 与 −⟨111⟩ 关联起来的对称操作——{112} 面内只有"关于 [111] 轴的镜像"（镜面为 [1̄10] 的垂面 (1̄10)：自检 (112)·[1̄10]=1·(−1)+1·1+2·0=0 ✓、[1̄10]·[111]=−1+1+0=0 ✓），这个镜像不交换正反方向；唯一例外 {110}：含 [111] 的 (1̄10) 面（(1̄10)·[111]=−1+1+0=0 ✓）法线 [1̄10] 是 ⟨110⟩ 二重轴，绕它转 180° 把 [111] 映成反向 [1̄1̄1̄]、强制 γ(+f)=γ(−f)</td><td>T（对称性论证+点积自检）</td><td>译文 49；extract 270–275</td></tr>
+<tr><td>MRSS（最大分切应力面）</td><td>给定加载取向下分切应力最大的滑移面</td><td>F</td><td>译文 49</td></tr>
+<tr><td><span class="obj" data-obj="Neumann 原理" title="Neumann 原理">Neumann 原理</span></td><td>"材料晶体结构具有的任何对称性，其物理性质也必须具有"（原文引号内原句）</td><td>F（引理）</td><td>译文 49</td></tr>
+<tr><td>Escaig 效应</td><td>垂直于螺位错总 <span class="obj" data-obj="Burgers 矢量" title="Burgers 矢量">Burgers 矢量</span>的切应力改变分解<span class="obj" data-obj="偏位错" title="不<span class="obj" data-obj="全位错" title="全位错">全位错</span>">偏位错</span>的间距（FCC 交滑移语境首次提出）——"应力分量影响位错"的历史先例</td><td>F</td><td>译文 51</td></tr>
+<tr><td>广义<span class="obj" data-obj="层错能" title="层错能 SFE">层错能</span> <span class="obj" data-obj="γ 面" title="γ-surface 广义层错能">γ 面</span></td><td>沿某面切开晶体、两半相对滑移矢量 f、再接合，单位面积剩余能量 γ(f)。作用：跨切面的回复应力 F(f)=−∇γ(f)（式 (2)）——γ 面是"切开滑动的价目表"，位错分解/扩展的代价由它算</td><td>F</td><td>译文 37–41</td></tr>
+<tr><td>经典分解 vs <span class="obj" data-obj="分数位错" title="分数位错">分数位错</span></td><td>FCC/HCP 的 γ 面在非零 f_s 有亚稳极小 → 分裂为夹稳定层错的偏位错（经典）；BCC 无稳定极小 → 扩展出<b>分数位错</b>：Burgers 矢量<b>不必为有理矢量</b>、夹不稳定广义层错带，带内层错矢量沿宽度连续变化= Burgers 矢量密度连续分布</td><td>T（由"γ 面无亚稳极小"推出）</td><td>译文 43</td></tr>
+<tr><td>简并/<span class="obj" data-obj="非<span class="obj" data-obj="简并芯" title="简并/非简并芯">简并芯</span>" title="简并/非简并芯">非简并芯</span></td><td>按对称性分：简并芯（VIB）存在两个由 ⟨110⟩ 二重轴联系的对称等价变体；非简并芯（VB）对点群对称操作不变、构型唯一</td><td>F</td><td>译文 79</td></tr>
+<tr><td>分子静力学</td><td>0 K 只做能量最小化（逐步移动原子至每原子受力为零）、不做时间积分</td><td>F</td><td>译文 63</td></tr>
+<tr><td>微分位移法（DDM）</td><td>显示位错引起的相邻原子对相对位移（参照物=完美晶格；Vitek–Perrin–Bowen 1970）</td><td>F</td><td>译文 75</td></tr>
+<tr><td>Finnis–Sinclair 势</td><td>中心力多体势 E_i=(1/2)ΣV_ij(R_ij)−√(ΣF_ij(R_ij))（式 (3)），拟合平衡晶格、内聚能、弹性常数、空位形成能</td><td>F</td><td>译文 59–63</td></tr>
+<tr><td>⟨111⟩ 剪切模量</td><td>(c₁₁−c₁₂+c₄₄)/3（<b>校勘</b>：原文印刷 (c₁₁+c₁₂−c₄₄)/3 系笔误，与表 1 一致的是此式：W 159.5、Mo 137.4 GPa）</td><td>T（按表 1 数值验算）</td><td>译文 83 校勘注</td></tr>
+</table>
+</section>
+<section id="p06-s3"><h3>§三 核心：怎么做的——每一步都回答"为什么"</h3>
+<p><b>1. 把现象拆成两个问题（为什么拆？）</b></p>
+<p>"BCC 不服从 Schmid 定律"是一句模糊的总现象，没法直接算。但 Schmid 定律本身是两句话，逐句检查就能把现象分成两类：违反第一句=本征效应（晶格自己的阻力各向异性），违反第二句=外禀效应（别的应力分量插手）。<b>为什么值得拆</b>：两类效应机制不同、需要的工具不同（本征走对称性+<span class="obj" data-obj="γ 面" title="γ-surface 广义<span class="obj" data-obj="层错能" title="层错能 SFE">层错能</span>">γ 面</span>，外禀走应力分量+芯刃分量），拆开才各自可算。（译文 21、49）</p>
+<p><b>2. 本征支第一步：为什么先做对称性论证？</b></p>
+<p>物理性质不能拥有比晶体结构更高的对称性（<span class="obj" data-obj="Neumann 原理" title="Neumann 原理">Neumann 原理</span>）。要问"±⟨111⟩ 剪切的阻力能不能不同"，先查晶体有没有"把 +⟨111⟩ 变 −⟨111⟩"的对称操作：有→强制相等；没有→允许不等。对 (112) 面逐个查（见概念表）：只有关于 [111] 轴的镜像（镜面 (1̄10)），它把横向分量反演、<b>不动正反方向</b>→不强制。结论：不对称被允许。<b>这一步是"允许性证明"——证明阻力不同不违反任何对称律，把路打通</b>。（译文 49）</p>
+<p><b>3. 本征支第二步：为什么用 γ 面证实"是不是真的"？</b></p>
+<p>位错要分解/扩展，扫过的区域就是层错、要付能量——γ 面就是"沿某面滑多少、付多少"的价目表；且跨切面的回复应力 F=−∇γ（式 (2)），芯怎么摊开直接由 γ 面形状决定。所以"孪生方向便宜还是反方向便宜"这个问题翻译成"γ(f) 沿 +⟨111⟩ 涨得缓还是陡"。算出来：{211} γ 面不对称，孪生方向上升缓、反方向陡（Mo Δγ/γ≈6%、Ta≈1%，图 3）——本征不对称坐实，且拿到数值。（译文 37–41、69）</p>
+<p><b>4. 芯计算：为什么这套边界？（方法流水线）</b></p>
+<p>FS 势 → 圆柱原子块（直径 32a）→ 位错线 ⟨111⟩ 周期边界 → 内区 931 原子自由弛豫+外区按各向异性弹性位移场固定 → 分子静力学弛豫 → DDM 显示。<b>为什么沿位错线用周期、径向用自由表面+固定外层</b>：位错是"一条不能有端点的线、畸变延伸很远"——周期边界让线首尾相接（无端部像力）；径向自由表面避免周期镜像（无副本位错干扰），外层按弹性解固定=远场交给公式、内区只算芯附近。加应力时先叠加该应力的弹性位移场再弛豫。（译文 63；问答 07-01）</p>
+<p><b>5. 读出结果：为什么 VIB 拆三份、VB 拆六份？（能量账推导）</b></p>
+<p>先看账本两笔：<b>弹性能</b>∝b²——把一个 b=½⟨111⟩ 拆成 3 个 b/3，弹性能 ∝3×(b/3)²=b²/3；拆成 6 个 b/6，弹性能 ∝6×(b/6)²=b²/6——<b>拆得越碎弹性能越省（六份省一半）</b>；<b>层错能</b>——拆几份就要付几片层错的账：三份付 3g(b/3)、六份付 6g(b/6)。总账比较：3g(b/3) vs 6g(b/6)，两边除以 3 即判据 <b>g(b/3) vs 2g(b/6)</b>。Ta：0.89 vs 2×0.30=0.60 → 六份更便宜 → <span class="obj" data-obj="非<span class="obj" data-obj="简并芯" title="简并/非简并芯">简并芯</span>" title="简并/非简并芯">非简并芯</span>（6×b/6）；Mo：0.77 vs 2×0.46=0.92 → 三份更便宜 → 简并芯（3×b/3）。<b>这就是"为什么芯长这样"的完整推理：弹性能推着拆、层错能拦着拆，γ 面的两个数决定拆几份</b>。（译文 81；绝对 mJ/m² 值归 Vitek 2004，DV98 只给相对单位）</p>
+<p><b>6. 量级根源：为什么 VIB 有"肩部"？</b></p>
+<p>芯类型差异必源于势参数（函数形式相同）：⟨111⟩ 剪切模量 VIB≈3×VB、内聚能组间相近。<b>为什么模量管小 f、内聚能管峰值</b>：小剪切时原子还在近弹性范围，反抗来自弹性常数（⟨111⟩ 方向小剪切模量即 (c₁₁−c₁₂+c₄₄)/3）；剪到中段原子几乎处于最不利位置，能量上限由"把晶体撕开"的内聚能决定。VIB 的模量陡 3 倍→γ(f) 小 f 斜率陡 3 倍；峰值又和大家一样高→"陡起+封顶"的曲线只能在中段斜率骤降→<b>肩部</b>。肩部=VIB 简并芯与强不对称的能量根源。（译文 83）</p>
+<p><b>7. 外禀支：为什么经刃分量起作用？</b></p>
+<p>非滑移应力定义为对总位错不产生 Peach–Koehler 力的分量——它<b>对螺分量不做功、只对刃分量施力</b>。芯里<span class="obj" data-obj="分数位错" title="分数位错">分数位错</span>的刃分量（矢量和为零、无长程场）恰好就是它作用的对象：VB 芯刃分量小、等值线圆（加小刃矢量无能量收益）→几乎无响应；VIB 芯刃分量大、等值线各向异性（把层错矢量转离螺方向可降能）→显著重构、<span class="obj" data-obj="Peierls 应力" title="Peierls 应力">Peierls 应力</span>被抬高/压低。<b>为什么信</b>：控制变量证据——把芯的刃分量按住，Peierls 应力降约 4 倍（转引 Duesbery 1989），说明阻力相当一部分来自刃分量参与的构型。（译文 51、85、52–55）</p>
+<p><b>8. <span class="obj" data-obj="螺位错" title="螺位错">螺位错</span>怎么运动（步进机制）：为什么是"跳"不是"滑"？</b></p>
+<p>加载用 (1̄01) 面 [111] 方向<b>纯滑移</b>应力（自检 [111] 在面内：(1̄01)·[111]=−1+0+1=0 ✓）——<b>为什么选纯滑移</b>：它只驱动位错、不重构芯，把变量控制到只剩"滑移阻力"一个。<b>为什么运动是离散跳变</b>：晶格是周期排列的→位错在滑移方向上的能量是周期的（Peierls 势）→谷稳定、脊不稳定→0 K 位错只能待在谷底；应力把势场倾斜、谷变浅，到阈值时谷消失、位错失稳<b>跳</b>入相邻谷——这个阈值就是 Peierls 应力。步进组合：同一 {110} 面连续步进（每步 a/3⟨211⟩→滑移面 {110}）或 {110} 面间切换（每步 a⟨110⟩→宏观 {211}）→各步独立→宏观路径非晶体学（随机、被应力偏置）。金属差别：V 经 {211} 多层孪晶扩展、Nb/Ta 非平行 {211} 步进、Mo/W 严格 {110}、Cr {211}。（译文 87；问答 06-06、02-02）</p>
+<p><b>关于"孪晶形核中<span class="obj" data-obj="位错芯" title="位错芯结构">位错芯</span>如何一步步发展"的准确说法</b>：DV98 追踪的是<b>螺位错芯的分类与运动</b>，不直接算孪晶形核。它与孪晶的联系是两处：① 芯分解成 3×b/3 或 6×b/6 分数位错，与 Sleeswyk 1963"½⟨111⟩→3×⅙⟨111⟩ 孪晶形核分解"同构——DV98 的判据回答"芯何时取三份、何时取六份"；② 芯的 {211} 扩展不对称=<span class="obj" data-obj="孪生-<span class="obj" data-obj="反孪生" title="<span class="obj" data-obj="反孪晶" title="反孪晶">反孪晶</span>">反孪生</span>不对称" title="孪生-反孪生不对称">孪生-反孪生不对称</span>在芯上的体现。形核过程的"一步步发展"读 <code>01-Sleeswyk1963.md</code>（构型序列）与 <code>07-Lagerlof1993.md</code>（zonal）。</p>
+</section>
+<section id="p06-s4"><h3>§四 结论与关键数值</h3>
+<ul>
+<li>非 Schmid 行为=本征（<span class="obj" data-obj="孪生-<span class="obj" data-obj="反孪生" title="<span class="obj" data-obj="反孪晶" title="反孪晶">反孪晶</span>">反孪生</span>不对称" title="孪生-反孪生不对称">孪生-反孪生不对称</span>，源于 {211} <span class="obj" data-obj="γ 面" title="γ-surface 广义<span class="obj" data-obj="层错能" title="层错能 SFE">层错能</span>">γ 面</span>不对称）+外禀（非滑移应力经芯刃分量调制 <span class="obj" data-obj="Peierls 应力" title="Peierls 应力">Peierls 应力</span>）两类。</li>
+<li>芯类别判据 g(b/3) vs 2g(b/6)：Ta 0.89 vs 2×0.30（≈3 倍，非简并六份）；Mo 0.77 vs 2×0.46（简并三份）。相对单位口径，绝对 mJ/m² 值出自 Vitek 2004（FS 2133&lt;2508、BOP 3579&gt;3090）。</li>
+<li>Δγ/γ：Mo≈6%、Ta≈1%；Guiu 1969：Mo 77 K 反孪生/孪生 CRSS≈1.5；表 2：W ⟨110⟩/⟨100⟩ 屈服比≈2×、Mo≈3×、Ta/Nb≈1.4–1.5×。</li>
+<li>BCC CRSS 4.2 K≈5×10⁻³μ vs FCC≈10⁻⁵μ；抑制刃分量→Peierls 应力降约 4 倍。</li>
+<li>芯滑移习性：V 多层孪晶、Nb/Ta {211} 步进、Cr {211}、Mo/W 严格 {110}。</li>
+</ul>
+</section>
+<section id="p06-s5"><h3>§五 与知识库衔接</h3>
+<ul>
+<li>图谱节点：c-non-schmid、c-asymmetry、e-degenerate、e-fractional、e-core、e-core-symmetry、p-gamma-112-asymmetry、p-core-edge-component、p-peierls、l-neumann、m-ms。</li>
+<li>问答库：06-01（论证链五步）、06-02（"本征支/外禀支"生造词勘误）、06-03（芯计算四步）、06-04（因果链三层）、06-05（Peierls 决定链）、06-06（步进运动机制）；02-01/02-09/02-10（<span class="obj" data-obj="位错芯" title="位错芯结构">位错芯</span>）、03-01/03-03（<span class="obj" data-obj="γ 面" title="γ-surface 广义<span class="obj" data-obj="层错能" title="层错能 SFE">层错能</span>">γ 面</span>）、07-01（边界条件）。</li>
+<li>译文：<code>_译文\DuesberyVitek_1998_中文翻译_重译.md</code>；精读笔记：<code>_孪晶拆解提取\重要_Duesbery-Vitek1998_塑性各向异性与位错核结构_精读笔记.txt</code>。</li>
+</ul>
+</section>
+<section id="p07"><div class="paper-head"><span class="pid">07</span><h2>Lagerlöf 1993 — BCC 金属变形孪生（zonal 位错模型，论文核心）</h2></div>
+<blockquote>引用：K. P. D. Lagerlöf, "On deformation twinning in b.c.c. metals", *Acta metallurgica et materialia* 41(7) (1993) 2143–2151。DOI: 10.1016/0956-7151(93)90384-5。</blockquote>
+<blockquote>图谱 p-id：p04。层：第二层·<span class="obj" data-obj="位错芯" title="位错芯结构">位错芯</span>理论。译文：<code>_译文\Lagerlof_1993_中文翻译_重译.md</code>（行号引用即此文件）。</blockquote>
+</section>
+<section id="p07-s1"><h3>§一 论文在解决什么问题</h3>
+<p>BCC 孪生的旧模型都基于<span class="obj" data-obj="极轴机制" title="极轴机制">极轴机制</span>，需要"结点处复杂位错分解"才能造出螺旋扫动的<span class="obj" data-obj="偏位错" title="不<span class="obj" data-obj="全位错" title="全位错">全位错</span>">偏位错</span>——初始构型要求苛刻。本文换一个更经济的起点：BCC 最短晶格平移是 ½⟨111⟩（=可动位错的 b），孪生与滑移应紧密相关——所以<b>直接用 ½⟨111⟩ <span class="obj" data-obj="螺位错" title="螺位错">螺位错</span>本身当孪生源</b>：它在三个相邻 {112} 面分解成三个共线 ⅙⟨111⟩ 偏位错（"<span class="obj" data-obj="zonal 位错" title="zonal dislocation">zonal 位错</span>"），像 <span class="obj" data-obj="Frank-Read 源" title="Frank-Read 源">Frank-Read 源</span>一样弓出铺三层微孪晶，再靠双重交滑移反复弓出实现增厚与侧向扩展，全程不需要极轴。</p>
+</section>
+<section id="p07-s2"><h3>§二 引言中的基础概念/名词（逐条）</h3>
+<blockquote>F=事实；T=推理。</blockquote>
+<table>
+<tr><td>术语</td><td>定义与解释</td><td>类别</td><td>出处</td></tr>
+<tr><td>孪生要素与剪切</td><td>孪晶形成于 {112} 面、沿 ⟨111⟩ 方向、剪切 s=1/√2</td><td>F</td><td>19</td></tr>
+<tr><td>BCC 三滑移系</td><td>{110}⟨111⟩、{112}⟨111⟩、{123}⟨111⟩——½⟨111⟩ <span class="obj" data-obj="螺位错" title="螺位错">螺位错</span>可在这三类面上交滑移</td><td>F</td><td>21</td></tr>
+<tr><td>滑移不对称</td><td>单晶压缩与拉伸激活不同滑移系；同一位错正反方向运动所需切应力不同</td><td>F</td><td>21</td></tr>
+<tr><td>螺段控制低温变形</td><td>低温变形 BCC 的电镜观察显示长 ½⟨111⟩ 螺位错存在——螺<span class="obj" data-obj="位错芯" title="位错芯结构">位错芯</span>决定 BCC 塑性不对称</td><td>T（观察归纳）</td><td>21</td></tr>
+<tr><td>三重共线分解（式 (1)）</td><td>½⟨111⟩→⅙⟨111⟩+⅙⟨111⟩+⅙⟨111⟩：三个螺<span class="obj" data-obj="偏位错" title="不<span class="obj" data-obj="全位错" title="全位错">全位错</span>">偏位错</span>与未分解位错<b>共线</b>，各可在任一 {110}/{112}/{123} 面运动</td><td>F</td><td>25–29</td></tr>
+<tr><td>{112} 六层堆垛 ABCDEF</td><td>BCC {112} 面堆垛序（Hirth–Lothe）；⅙⟨111⟩ 偏位错滑移使 A→C、B→D…（反向运动 A→E、B→F…）</td><td>F</td><td>31</td></tr>
+<tr><td>γ₁ 低能层错 / γ₂ 高能层错</td><td>三重分解在 {112} 面产生两种不同层错——是 BCC（Im3̄m）沿 ⟨111⟩ 三重对称的直接后果；两者能量必然不同</td><td>T（对称性论证）</td><td>35–39</td></tr>
+<tr><td>"反向一个=同向两个"</td><td>一个 ⅙⟨111⟩ 反向运动的层错=两个 ⅙⟨111⟩（或一个 ⅓⟨111⟩）同向运动的层错（γ₂）→ 若 γ₂/γ₁ 足够高，{112} 上最可能分解是 ½⟨111⟩→⅓⟨111⟩+⅙⟨111⟩（式 (2)，Frank–Nicholas 非对称分解，只产生 γ₁）</td><td>T（堆垛序对比推）</td><td>43–47</td></tr>
+<tr><td><span class="obj" data-obj="zonal 位错" title="zonal dislocation">zonal 位错</span></td><td>三个共线 ⅙⟨111⟩ 偏位错位于三个<b>相邻</b> {112} 面的复合体（本文提出的术语）</td><td>F（新定义）</td><td>13、61</td></tr>
+<tr><td>双重交滑移（double cross-slip）</td><td>螺段从一个滑移面交滑移再回到一组平行面——按 Pirouz 为 Si 孪生所提模型移植到 BCC</td><td>F</td><td>13、75</td></tr>
+</table>
+</section>
+<section id="p07-s3"><h3>§三 核心：怎么做的（推理路径五步）</h3>
+<p><b>1. 从堆垛序推"最省能分解"（§2）</b>：把 {112} 六层堆垛写成 ABCDEF，逐个追踪<span class="obj" data-obj="偏位错" title="不<span class="obj" data-obj="全位错" title="全位错">全位错</span>">偏位错</span>滑移后的堆垛变化——单个 ⅙⟨111⟩ 滑移产生 …ABA…/…BAB… 孪晶构型（低能 γ₁）；同面两个同向偏位错产生 γ₂ 高能层错；且"一个反向偏位错=两个同向偏位错"（图 1(c) vs 图 1(b) 堆垛相同）。由此推出：{112} 面上最可能的分解是式 (2) 非对称分解，只产生低能层错。（31–47）</p>
+<p><b>2. 构造 <span class="obj" data-obj="zonal 位错" title="zonal dislocation">zonal 位错</span>（§3）</b>：式 (2) 的 ⅓⟨111⟩ 可再分解成两个 ⅙⟨111⟩（式 (3)），分解到其余 {112} 面——三个偏位错绕原<span class="obj" data-obj="螺位错" title="螺位错">螺位错</span>中心形成"三尖箭尾"。Vitek 等算过分宽度：{112} 上分离距离很小、量级 1–2b。（53–57）</p>
+<p><b>3. 三层微孪晶的几何（§4）</b>：要求三个偏位错位于三个<b>连续</b> {112} 面——其相关运动产生堆垛序 …ABCDCBABCD… 的<b>三层微孪晶</b>，该堆垛序稳定（能量足够低）；若第二个 zonal 位错在同一组三面跟随，产生高能堆垛（与反向运动等价）→ <b>第二个环不能生成</b>。（61–63）</p>
+<p><b>4. 滑移不对称的芯解释（§5）</b>：孪生方向滑移时，构成 ⅓⟨111⟩ 的两个外偏位错分离小（易重组/易短程扩散恢复）；<span class="obj" data-obj="反孪生" title="<span class="obj" data-obj="反孪晶" title="反孪晶">反孪晶</span>">反孪生</span>方向时中间偏位错与外偏位错分离增大（难重组）→ <b>反孪生方向滑移更难</b>，位错可能改走 {110}/{123} 次级面。这是与 DV98 的 <span class="obj" data-obj="γ 面" title="γ-surface 广义<span class="obj" data-obj="层错能" title="层错能 SFE">层错能</span>">γ 面</span>解释互补的芯机制口径。（65–69）</p>
+<p><b>5. 孪生机制主体（§6，全文核心）</b>：钉扎螺段 P–P′ 分解成 zonal 位错 → 切应力下像 <span class="obj" data-obj="Frank-Read 源" title="Frank-Read 源">Frank-Read 源</span>弓出（图 6(b–e)）→ 扫过区域=三层微孪晶 → 再生段第二次弓出会造高能层错 → 故改为<b>双重交滑移</b>到另一组平行 {112} 面再弓出（每偏位错跨三个 (112) 面）→ 扩展环重复形成+重复双重交滑移 = 横向生长（环扩展）+ 垂直增厚（换面叠加）。与 Si（Pirouz）模型不同，本模型<b>不假设偏位错迁移率差异</b>——三偏位错一起运动。（75–77）</p>
+<p><b>6. 定量自洽（§7）</b>：层错能 γ=μa/(8π√2)，代入得 Fe 680、Mo 1150、W 1340、Nb 345 mJ/m²；几何约束给分离宽度 w≈0.54b。注意口径：这是"由 zonal 几何反推所需层错能"的值，略高于理论计算预测（计算在无应力下做的）。（83–91）</p>
+<p><b>7. 极轴对比收口（§7）</b>：CB <span class="obj" data-obj="极轴机制" title="极轴机制">极轴机制</span>增厚约 50 原子层即停止（<b>转引 Sleeswyk 1974</b>，Phil. Mag. 29:407，非 Sleeswyk 1963）；本模型把孪生直接关联到位错滑移细节，无需极轴。（99–103）</p>
+</section>
+<section id="p07-s4"><h3>§四 结论与关键数值</h3>
+<ul>
+<li><span class="obj" data-obj="zonal 位错" title="zonal dislocation">zonal 位错</span>=三共线 ⅙⟨111⟩ 于三相邻 {112} 面；FR 式弓出铺三层微孪晶；双重交滑移+重复弓出=增厚与侧向生长。</li>
+<li>s=1/√2 由几何自洽（b_p=√3a/6 与 d₁₁₂=a/√6）；γ=μa/(8π√2)：Fe 680、Mo 1150、W 1340、Nb 345 mJ/m²；w≈0.54b。</li>
+<li>增厚只能单向（反向增厚需另一钉扎段作源）；<span class="obj" data-obj="反孪生" title="<span class="obj" data-obj="反孪晶" title="反孪晶">反孪晶</span>">反孪生</span>方向滑移更难（芯机制口径）。</li>
+</ul>
+</section>
+<section id="p07-s5"><h3>§五 与知识库衔接</h3>
+<ul>
+<li>图谱节点：e-zonal（出处）、c-nucleation（五模型⑤双交滑移机制=本文）、c-pole-mechanism（zonal 取代极轴）、c-asymmetry（zonal 芯解释口径）、p-gamma-ratio（γ₁/γ₂）、e-twinning-disl、p-twin-shear。</li>
+<li>问答库：04-01（三层最小单元的 zonal 口径）、04-04（zonal 重复弓出）、04-05（极轴否定：50 层停止转引 Sleeswyk 1974）。</li>
+<li>译文：<code>_译文\Lagerlof_1993_中文翻译_重译.md</code>（批注含"50 层停止转引年份=1974"的校勘）。</li>
+</ul>
+</section>
+<section id="p08"><div class="paper-head"><span class="pid">08</span><h2>Vitek 2004 — 螺位错芯结构：对称性与键合（论文核心）</h2></div>
+<blockquote>引用：V. Vitek, "Core structure of screw dislocations in body-centred cubic metals: relation to symmetry and interatomic bonding", *Philosophical Magazine* 84(3–5) (2004) 415–428。DOI: 10.1080/14786430310001611644。</blockquote>
+<blockquote>图谱 p-id：p07。层：第二层·<span class="obj" data-obj="位错芯" title="位错芯结构">位错芯</span>理论。extract：<code>_文献核验\extracts\Core_Structure_of_Screw_Dislocations_in_Body-Centred_Cubic_Metals_Relation_to_Symmetry_and.txt</code>（行号引用即此文件）。</blockquote>
+</section>
+<section id="p08-s1"><h3>§一 论文在解决什么问题</h3>
+<p>BCC 螺<span class="obj" data-obj="位错芯" title="位错芯结构">位错芯</span>"非平面扩展"是谁决定的——晶格对称性（普适）还是键合方式（材料专属）？方法：对 Mo 用两种势各算一遍芯——中心力多体势（FS 型）与含角度依赖的键级势（BOP）——比较芯结构，再用 {110} <span class="obj" data-obj="γ 面" title="γ-surface 广义<span class="obj" data-obj="层错能" title="层错能 SFE">层错能</span>">γ 面</span>给出芯类型判据；进一步论证：两种芯在受力后响应相似（应变晶体失去 ⟨101⟩ 二重轴、两类芯的区分消失）；最后推广到其他结构。</p>
+</section>
+<section id="p08-s2"><h3>§二 引言中的基础概念/名词（逐条）</h3>
+<blockquote>F=事实；T=推理。</blockquote>
+<table>
+<tr><td>术语</td><td>定义与解释</td><td>类别</td><td>出处</td></tr>
+<tr><td><span class="obj" data-obj="位错芯" title="位错芯结构">位错芯</span>效应</td><td>芯现象导致意外变形模式、流变应力对温度/应变率的强依赖、对加载取向的意外依赖——早期位错理论视芯为次要，随研究从密排金属转向开放结构而逆转</td><td>F</td><td>72–78</td></tr>
+<tr><td>非 Schmid 行为的历史起点</td><td>G. I. Taylor（1926/1928）研究 α-Fe 与 β-黄铜的屈服即注意到取向依赖与 Schmid 定律失效</td><td>F</td><td>93–97</td></tr>
+<tr><td><span class="obj" data-obj="Peierls 应力" title="Peierls 应力">Peierls 应力</span>=本征障碍</td><td>Basinski–Christian（1960）观察：Fe 流变应力对温度/应变率的敏感性不随应变系统变化 → 热激活克服的障碍密度不随变形增加（与 FCC 相反）→ 存在晶格摩擦这类<b>本征障碍</b></td><td>T（观察归纳）</td><td>97–106</td></tr>
+<tr><td><span class="obj" data-obj="螺位错" title="螺位错">螺位错</span>芯的多面扩展</td><td>Hirsch（1960）首先提出、40 年研究确立：½⟨111⟩ 螺位错芯可扩展进 ⟨111⟩ 晶带的几个面——高晶格摩擦与滑移几何/取向依赖的共同根源；这是 BCC 晶体学决定、<b>与键合细节无关</b>的普适特征</td><td>F</td><td>107–116</td></tr>
+<tr><td><span class="obj" data-obj="孪生-<span class="obj" data-obj="反孪生" title="<span class="obj" data-obj="反孪晶" title="反孪晶">反孪晶</span>">反孪生</span>不对称" title="孪生-反孪生不对称">孪生-反孪生不对称</span></td><td>屈服应力的取向依赖最突出表现（本征效应）</td><td>F</td><td>118–119</td></tr>
+<tr><td>中心力势（FS）</td><td>只依赖原子间距的多体势（无角度项）</td><td>F</td><td>56–58</td></tr>
+<tr><td>键级势（BOP）</td><td>显式含键角依赖（方向性键合）的紧束缚展开势</td><td>F</td><td>58–60</td></tr>
+<tr><td>⟨101⟩ 型二重轴</td><td>BCC 晶格的对称操作——芯分类的分水岭</td><td>F</td><td>60–62</td></tr>
+<tr><td><span class="obj" data-obj="γ 面" title="γ-surface 广义<span class="obj" data-obj="层错能" title="层错能 SFE">层错能</span>">γ 面</span>判据</td><td>{110} γ 面可用于预测芯扩展类型</td><td>F</td><td>63–64</td></tr>
+</table>
+</section>
+<section id="p08-s3"><h3>§三 核心：怎么做的（对照实验法，四步）</h3>
+<p><b>1. 双势对照算同一种金属的芯</b>：Mo 用 FS 势与 BOP 势各算一次 ½⟨111⟩ 螺<span class="obj" data-obj="位错芯" title="位错芯结构">位错芯</span>——控制变量=键合（中心力 vs 方向性），其余相同。（56–60）</p>
+<p><b>2. 读出结果</b>：两种势下芯都扩展进 [111] 晶带的三个 {110} 面；差别在对称性——FS：芯唯一、对 ⟨101⟩ 二重轴不变（非简并）；BOP：存在两个由二重轴联系的构型（简并）。即<b>非平面三面扩展是晶格对称性给的（普适）；简并/非简并由键合（势）决定（材料专属）</b>。（59–63）</p>
+<p><b>3. 用 {110} <span class="obj" data-obj="γ 面" title="γ-surface 广义<span class="obj" data-obj="层错能" title="层错能 SFE">层错能</span>">γ 面</span>给判据</b>：哪种芯出现取决于原子间相互作用，而 {110} γ 面可预测芯扩展类型——γ 面把"势函数性质"翻译成"芯类型"。（63–64）</p>
+<p><b>4. 受力后两类芯趋同</b>：施加应力后晶体失去原对称性（特别是 ⟨101⟩ 二重轴）→ 两类芯的区分消失、对应力的响应非常相似——所以简并/非简并的分野在<b>零应力</b>下成立，宏观 CRSS 差异主要不是它造成的。（65–68）</p>
+<p><b>5. 推广</b>：这些概念（对称性定普适特征、键合定具体构型、γ 面作判据）可用于 BCC 以外结构的芯分析。（68–70）</p>
+</section>
+<section id="p08-s4"><h3>§四 结论与关键数值</h3>
+<ul>
+<li>非平面三面扩展=晶格对称性（普适）；简并/非简并=键合决定（FS 非简并、BOP 简并）。</li>
+<li>绝对 mJ/m² 判据数值出自本文：FS 3γ(b/3)=2133 &lt; 6γ(b/6)=2508 → 简并；BOP 3579 &gt; 3090 → 非简并（图谱 p07 口径；DV98 只给相对单位 0.77/0.46，引用时勿混）。</li>
+<li>受力后两类芯响应相似（对称性破缺、区分消失）。</li>
+<li>另（p07 conclusion）：d 电子方向性键合使芯更窄，但 FS/BOP 算的 CRSS 接近（0.021 vs 0.024 C₄₄）——方向性键合不直接等同 <span class="obj" data-obj="Peierls 势垒" title="Peierls 应力">Peierls 势垒</span>升高。</li>
+</ul>
+</section>
+<section id="p08-s5"><h3>§五 与知识库衔接</h3>
+<ul>
+<li>图谱节点：e-degenerate、e-core-symmetry、p-core-criterion、m-bop、p-fs、p-gamma-ratio。</li>
+<li>问答库：06-05（Peierls 决定链中 g(b/3) vs 2g(b/6) 的绝对口径归因）、09-01（<span class="obj" data-obj="分数位错" title="分数位错">分数位错</span>）、03-04（<span class="obj" data-obj="γ 面" title="γ-surface 广义<span class="obj" data-obj="层错能" title="层错能 SFE">层错能</span>">γ 面</span>无稳定极小→分数位错分解）。</li>
+<li>文献库：p07（Vitek 2004）已按原文核验。</li>
+</ul>
+</section>
+<section id="p09"><div class="paper-head"><span class="pid">09</span><h2>Cai 2004 — BCC 螺位错迁移率（论文核心）</h2></div>
+<blockquote>引用：W. Cai, V. V. Bulatov, J. Chang, J. Li, S. Yip, "Dislocation core effects on mobility"（Dislocations in Solids Vol. 12, Ch. 64, Elsevier, 2004）。（刊期与 Ch.64 一致，旧记 Cai 2005 有误；extract 文件名含 2005 系历史命名。）</blockquote>
+<blockquote>图谱 p-id：p08。层：第二层·<span class="obj" data-obj="位错芯" title="位错芯结构">位错芯</span>理论。extract：<code>_文献核验\extracts\Mobility_of_Screw_Dislocations_in_BCC_Metals_2005_Cai.txt</code>（行号引用即此文件）。</blockquote>
+</section>
+<section id="p09-s1"><h3>§一 论文在解决什么问题</h3>
+<p>这是一篇综述章：从理论概念、物理模型与模拟研究的角度讲<span class="obj" data-obj="位错芯" title="位错芯结构">位错芯</span>的原子结构、相互作用及其对位错迁移率的影响，重点放在<b>物理图像</b>（技术细节只简要提及）。覆盖三类材料（FCC→金刚石结构半导体→BCC），BCC 部分的核心问题是：紧凑的非平面<span class="obj" data-obj="螺位错" title="螺位错">螺位错</span>芯如何决定 <span class="obj" data-obj="Peierls 势垒" title="Peierls 应力">Peierls 势垒</span>、kink 机制、滑移习性与非 Schmid 行为。</p>
+</section>
+<section id="p09-s2"><h3>§二 引言中的基础概念/名词（逐条）</h3>
+<blockquote>F=事实；T=推理。</blockquote>
+<table>
+<tr><td>术语</td><td>定义与解释</td><td>类别</td><td>出处</td></tr>
+<tr><td><span class="obj" data-obj="位错芯" title="位错芯结构">位错芯</span>/迁移率</td><td>芯=位错线周围的非线性畸变区；迁移率=应力-速度关系——本章主题是两者的联系</td><td>F</td><td>72–75</td></tr>
+<tr><td>平面芯（FCC 参照系）</td><td>FCC 位错芯趋于平面、扩展较宽、分解成<span class="obj" data-obj="偏位错" title="不<span class="obj" data-obj="全位错" title="全位错">全位错</span>">偏位错</span>沿滑移面滑移、基本服从 Schmid 定律；PN 模型对其芯与迁移率行为拟合良好</td><td>F</td><td>95–100</td></tr>
+<tr><td>次级芯缺陷</td><td>芯内部更细尺度的缺陷结构（如 kink、极化子、重构等）——金刚石半导体方向性键合下尤其丰富</td><td>F</td><td>100–105</td></tr>
+<tr><td>三向非平面分解/极化</td><td>BCC <span class="obj" data-obj="螺位错" title="螺位错">螺位错</span>芯紧凑、部分金属中倾向三向非平面分解或"极化"（极化=芯构型对 ⟨101⟩ 二重轴破缺的选择）</td><td>F</td><td>106–108</td></tr>
+<tr><td>第一性原理芯计算</td><td>精确电子结构方法直接算芯结构/能量/迁移率——近十年最重要的新能力之一</td><td>F</td><td>124–125</td></tr>
+<tr><td>经验势三维动力学</td><td>用经验势做全三维位错动力学，揭示次级芯缺陷与多种运动机制</td><td>F</td><td>125–129</td></tr>
+<tr><td>位错动力学（DD）介观模拟</td><td>全三维介观尺度位错动力学——从底层位错物理预测整体塑性；其可靠性要求芯机制决定的<b>迁移率函数</b>准确</td><td>F</td><td>130–136</td></tr>
+<tr><td>HREM 观察次级结构</td><td>高分辨电镜新能力可直接观察位错次级结构、接近芯细节分辨极限</td><td>F</td><td>137–139</td></tr>
+</table>
+</section>
+<section id="p09-s3"><h3>§三 核心：怎么做的（BCC 部分的推理骨架）</h3>
+<p>（以下骨架与数值引自 p08 conclusion 与库内核验版结论；BCC 章主体在 extract 后半部。）</p>
+<p><b>1. <span class="obj" data-obj="Peierls 势垒" title="Peierls 应力">Peierls 势垒</span>定迁移率</b>：½⟨111⟩ <span class="obj" data-obj="螺位错" title="螺位错">螺位错</span>迁移率受非平面芯的 Peierls 势垒控制；Mo 螺位错 <span class="obj" data-obj="Peierls 应力" title="Peierls 应力">Peierls 应力</span>约 2–3 GPa。</p>
+<p><b>2. 与实验对账（发现高估）</b>：实验 0 K 屈服约 750 MPa——原子计算高估 2–4 倍。<b>归因</b>：真实晶体里位错网络协同（多根位错相互作用）使表观应力低于孤立位错 Peierls 应力——"孤立位错 Peierls 应力 vs 真实屈服"是两回事，不能直接划等号。</p>
+<p><b>3. 热激活运动=kink-pair 机制</b>：有限温度下螺位错经 kink-pair 热激活形核与迁移运动（Mo、FS 势：形核能 1.2 eV、kink 迁移 Peierls 应力约 20 MPa）。</p>
+<p><b>4. <span class="obj" data-obj="刃位错" title="刃位错">刃位错</span>的边界条件教训</b>：Mo 刃位错 Peierls 应力，早期固定边界算约 0.5 GPa（Duesbery–Xu），后收敛计算仅约 25 MPa——<b>差一个数量级</b>，边界条件处理不当可导致严重错误（这是库内"边界条件反面教材"的出处，问答 10-01 第 7 条）。</p>
+<p><b>5. kink 的滑移面之争</b>：{112} kink 零应力下不稳定、分解为较短 {110} kink（Duesbery 未发表 NEB 工作）；Seeger 内耗理论主张 {112} kink——两者可用"零应力 {110} kink 对形核能更低、高应力 {112} kink 对势垒降得更多"的交叉过渡调和。</p>
+<p><b>6. 与势函数无关的高 Peierls</b>：DFT 显示 Ta/Mo 未极化芯仍有约 1 GPa 高 Peierls 应力——即便芯未极化，晶格摩擦依然高。</p>
+<p><b>7. 非 Schmid 耦合的两种理论</b>：DV98 把非 Schmid 效应追溯至外加应力与芯中小刃位移分量的耦合；另一可能是激活能经激活应变与非滑移应力耦合（等静应力与非线性膨胀场）。</p>
+</section>
+<section id="p09-s4"><h3>§四 结论与关键数值</h3>
+<ul>
+<li>Mo 螺 Peierls 约 2–3 GPa（计算）vs 实验 0 K 屈服约 750 MPa（高估 2–4 倍，位错网络协同所致）。</li>
+<li>Mo（FS）：kink-pair 形核能 1.2 eV、kink 迁移 Peierls 约 20 MPa；Mo 刃收敛 Peierls 约 25 MPa。</li>
+<li>BCC 名义滑移系 {110}/{112}/{123}⟨111⟩ 共 48 个（§4.1）。</li>
+<li>简并/非简并"六重/三重标记误导"批判出处（§4.2.1 脚注 4：⟨111⟩ 带轴对称恒为三重、破缺的是绕 ⟨110⟩ 轴 180° 对称）。</li>
+</ul>
+</section>
+<section id="p09-s5"><h3>§五 与知识库衔接</h3>
+<ul>
+<li>图谱节点：p-peierls、p-kinkpair-energy、e-kink、e-kinkpair、e-slip-system、c-non-schmid、e-core-symmetry（脚注 4 批判出处）。</li>
+<li>问答库：02-02（离散步进）、02-05（kink/jog）、06-05（Peierls 决定链）、10-01（边界条件反面教材）。</li>
+<li>文献库：paper 条目为 Cai 2004（Dislocations in Solids Ch.64）。</li>
+</ul>
+</section>
+<section id="p10"><div class="paper-head"><span class="pid">10</span><h2>Marian 2004 — 位错运动从光滑到粗糙到孪生（论文核心）</h2></div>
+<blockquote>引用：J. Marian, W. Cai &amp; V. V. Bulatov, "Dynamic transitions from smooth to rough to twinning in dislocation motion", *Nature Materials* 3 (2004) 158–163。DOI: 10.1038/nmat1072。</blockquote>
+<blockquote>图谱 p-id：p06。层：第二层·<span class="obj" data-obj="位错芯" title="位错芯结构">位错芯</span>理论。extract：<code>_文献核验\extracts\Dynamic_Transitions_from_Smooth_to_Rough_to_Twinning_in_Dislocation_Motion_2004_Marian.txt</code>（行号引用即此文件）。</blockquote>
+</section>
+<section id="p10-s1"><h3>§一 论文在解决什么问题</h3>
+<p>实验无法在原子级直接观察位错运动。本文用 MD 首次动态观察 b.c.c. Fe <span class="obj" data-obj="螺位错" title="螺位错">螺位错</span>随应力升高的三种运动模式转变——光滑（kink-pair）→ 粗糙（自钉扎+碎片）→ 孪生（自钉扎位错发射<span class="obj" data-obj="孪晶片" title="孪晶片">孪晶片</span>）——并据此挑战"Peierls 阈值概念适用于三维螺位错运动"的通行观点，给冲击金属的塑性强度与微结构一个新解释。</p>
+</section>
+<section id="p10-s2"><h3>§二 引言中的基础概念/名词（逐条）</h3>
+<blockquote>F=事实；T=推理。</blockquote>
+<table>
+<tr><td>术语</td><td>定义与解释</td><td>类别</td><td>出处</td></tr>
+<tr><td>kink-pair 机制</td><td><span class="obj" data-obj="螺位错" title="螺位错">螺位错</span>跨 Peierls 谷的热激活方式：一段线跳到相邻格点位置形成一对原子尺度 kink，kink 沿线迁移、经周期边界复合，整条线前进一个格点——长期被假设、此前无完整动态观察</td><td>F</td><td>49–50、77–80、104–111</td></tr>
+<tr><td>Peierls 阈值 τP</td><td>0 K 下使位错运动的最小应力；本模型 Fe 螺位错 τP=900 MPa</td><td>F</td><td>96–99</td></tr>
+<tr><td>热激活运动</td><td>应力低于 τP 时位错仍可动，靠热涨落辅助（kink-pair 形核）</td><td>F</td><td>100–103</td></tr>
+<tr><td>cross-kink 自钉扎</td><td>粗糙模式机制：不同 {110} 面上 kink-pair 碰撞形成 cross-kink 强钉扎点——位错自造障碍</td><td>T（快照序列分析）</td><td>p06 conclusion</td></tr>
+<tr><td>碎片（debris）</td><td>运动位错身后留下的空位与自间隙原子团簇（低温单点、高温大团簇）——"位错由无序构成"图景的产物</td><td>F</td><td>117–120</td></tr>
+<tr><td>位错作孪晶形核位点</td><td>高应力下自钉扎减速的螺位错成为孪晶形核位点、发射<span class="obj" data-obj="孪晶片" title="孪晶片">孪晶片</span>——孪生从此处接手塑性</td><td>F</td><td>54–57</td></tr>
+</table>
+</section>
+<section id="p10-s3"><h3>§三 核心：怎么做的（MD 动态观察法，三模式+参数扫描）</h3>
+<p><b>1. 装置</b>：b.c.c. Fe <span class="obj" data-obj="螺位错" title="螺位错">螺位错</span> MD（Fe 势），温度 300 K，施加不同量级应力；τP=900 MPa 作参照。（96–99、Methods）</p>
+<p><b>2. 模式一（光滑，τ=500 MPa &lt; τP）</b>：位错段跳入相邻 Peierls 谷→形成 kink 对→kink 沿位错线快速迁移→经周期边界复合→整条位错平移一个格点。这是<b>首次对 kink-pair 机制的完整动态演示</b>。（100–111）</p>
+<p><b>3. 模式二（粗糙，更高应力/温度）</b>：位错线起皱、发展多个钉扎点、运动呈突跳（从一个钉扎点挣脱到另一个），身后留下空位/自间隙团簇碎片。机制=不同 {110} 面上 kink-pair 碰撞形成 cross-kink 强钉扎。（112–123）</p>
+<p><b>4. 模式三（孪生，更高应力）</b>：位错线粗糙度与碎片继续增加，直至位错<b>停止湍流运动、就地发射一片薄孪晶</b>——孪晶从位错停下的位置起步、沿位错运动方向快速扩展（约 800 m/s）、逐渐增厚，立即成为塑性主导模式。（83–90）</p>
+<p><b>5. 参数扫描与对照</b>：有预存位错时孪生应力 2.0 GPa；无预存位错（完美晶体）需 5.6 GPa——位错自钉扎把孪生门槛拉低近 3 倍；孪晶前缘=三个 ⅙⟨111⟩ <span class="obj" data-obj="偏位错" title="不<span class="obj" data-obj="全位错" title="全位错">全位错</span>">偏位错</span>在三个相邻 {112} 面交错（与前人机制一致）。（p06 conclusion）</p>
+<p><b>6. 挑战通行观点</b>：三维螺位错在高应变率下的运动不能用单一"Peierls 阈值"概念概括——光滑/粗糙/孪生三模式的动力学转变给出冲击金属塑性强度与微结构的新解释。（57–61）</p>
+</section>
+<section id="p10-s4"><h3>§四 结论与关键数值</h3>
+<ul>
+<li>三模式：低应力光滑（kink-pair，τ=500 MPa 时演示）→ 中应力粗糙（cross-kink 自钉扎、碎片）→ 高应力孪生（2.0 GPa 有位错 / 5.6 GPa 无位错）。</li>
+<li>孪晶速度约 800 m/s；模拟温度 300 K；τP=900 MPa。</li>
+<li>孪生关联高应力/高应变率（冲击）条件。</li>
+</ul>
+</section>
+<section id="p10-s5"><h3>§五 与知识库衔接</h3>
+<ul>
+<li>图谱节点：c-nucleation（五模型⑨位错自钉扎→孪生）、c-sleeswyk-sequence（前缘三<span class="obj" data-obj="偏位错" title="不<span class="obj" data-obj="全位错" title="全位错">全位错</span>">偏位错</span>与前人一致）、e-kinkpair、p-kinkpair-energy（激活焓对应力/温度敏感）、q-nucleation-model。</li>
+<li>问答库：04-08（孪晶占优条件）、02-02（离散步进与 kink-pair）。</li>
+<li>文献库：p06（Marian 2004）已按原文核验（旧版"动态交滑移/芯振荡/接近声速"系机翻杜撰已删）。</li>
+</ul>
+</section>
+<section id="p11"><div class="paper-head"><span class="pid">11</span><h2>Zhang 2011 — 冲击加载下 BCC 孪晶：对经验势的挑战（论文核心）</h2></div>
+<blockquote>引用：R. F. Zhang, J. Wang, I. J. Beyerlein, T. C. Germann, "Twinning in bcc metals under shock loading: a challenge to empirical potentials", *Philosophical Magazine Letters* 91(12) (2011) 731–740。DOI: 10.1080/09500839.2011.615348。</blockquote>
+<blockquote>图谱 p-id：p09。层：第三层·原位/模拟。extract：<code>_文献核验\extracts\Twinning_in_BCC_Metals_under_Shock_Loading_A_Challenge_to_Empirical_Potentials_2011_Zhang.txt</code>（行号引用即此文件）。</blockquote>
+</section>
+<section id="p11-s1"><h3>§一 论文在解决什么问题</h3>
+<p>冲击加载的微观机制无法用现有实验手段直接观察，只能靠原子模拟——但模拟用什么势？本文用 Nb 做检验：DFT 发现<b>高压本征地利于孪生</b>（稳定孪晶厚度减小），再用五种 Nb 经验势做 MD 冲击模拟对照——只有两种势再现实验观测的孪生行为。与高压 DFT 的 GSF 曲线对比找到原因：能再现孪生的势能重现高压 GSF 曲线，其余三种势在 GSF 曲线上<b>人为多出若干亚稳态</b>，导致人为的结构相变而非孪晶。</p>
+</section>
+<section id="p11-s2"><h3>§二 引言中的基础概念/名词（逐条）</h3>
+<blockquote>F=事实；T=推理。</blockquote>
+<table>
+<tr><td>术语</td><td>定义与解释</td><td>类别</td><td>出处</td></tr>
+<tr><td>冲击加载</td><td>高应变率+高压+高偏应力的极端力学条件</td><td>F</td><td>74–77</td></tr>
+<tr><td>广义层错（GSF）曲线</td><td>沿某面滑移矢量 f 的单位面积能量曲线（<span class="obj" data-obj="γ 面" title="γ-surface 广义<span class="obj" data-obj="层错能" title="层错能 SFE">层错能</span>">γ 面</span>的截面）；高压下它是势函数能否重现孪生的试金石</td><td>F</td><td>69–71</td></tr>
+<tr><td>亚稳态（GSF 曲线上）</td><td>曲线上的局部极小——质量差的势在高压下人为多出局部极小，导致人为结构相变</td><td>F</td><td>69–71</td></tr>
+<tr><td>稳定孪晶厚度</td><td>DFT 结论：高压使稳定孪晶厚度减小=孪生本征地更易</td><td>F（DFT 结果）</td><td>57–59</td></tr>
+<tr><td>零压基准</td><td>零压下五种势的 GSF 能量相近且正确，只有高压行为失效——基准在零压、失效在高压</td><td>T（对比结论）</td><td>p09 conclusion</td></tr>
+</table>
+</section>
+<section id="p11-s3"><h3>§三 核心：怎么做的（基准-对照-判源，三步）</h3>
+<p><b>1. DFT 立基准</b>：先算 Nb 高压下的孪晶能量学——发现高压本征地利于孪生（稳定孪晶厚度减小）。（57–59）</p>
+<p><b>2. 五势 MD 冲击对照</b>：五种 Nb 经验势（3 EAM+2 FS）做同一冲击方向的 MD 模拟——只有两种势显示实验观测的孪生行为。（59–67）</p>
+<p><b>3. 判源（找"为什么错"）</b>：把每种势算的高压 GSF 曲线与 DFT 对比——能再现孪生的两种势可重现 GSF 曲线；其余三种在 GSF 曲线上<b>人为多出亚稳态</b>（沿曲线若干局部极小），导致 bcc→fct 式人为结构相变取代孪晶。（68–71）</p>
+</section>
+<section id="p11-s4"><h3>§四 结论与关键数值</h3>
+<ul>
+<li>体系：Nb 单晶、唯一冲击方向 [110]（p09 结论）。</li>
+<li>零压 GSF：五种势相近且正确；高压：仅两种势通过检验。</li>
+<li>判据：势必须能刻画 {112} <span class="obj" data-obj="γ 面" title="γ-surface 广义<span class="obj" data-obj="层错能" title="层错能 SFE">层错能</span>">γ 面</span>在数十 GPa 高压下的变化，以 DFT 为基准。</li>
+<li>注意（p09 核验）：原文无 ⟨001⟩/⟨011⟩/⟨111⟩ 方向对比、无"γ_usf 低→更多孪晶"结论。</li>
+</ul>
+</section>
+<section id="p11-s5"><h3>§五 与知识库衔接</h3>
+<ul>
+<li>图谱节点：p-gpfe、p-gamma-112-asymmetry、p-fs、m-md、p-dft（高压 GSF 基准）。</li>
+<li>问答库：03-07（自测 Q14：Zhang 2011 为什么必须验高压 <span class="obj" data-obj="γ 面" title="γ-surface 广义<span class="obj" data-obj="层错能" title="层错能 SFE">层错能</span>">γ 面</span>）、03-05（势函数与 γ 面的层级关系）。</li>
+<li>文献库：p09（已按原文核验）。</li>
+</ul>
+</section>
+<section id="p12"><div class="paper-head"><span class="pid">12</span><h2>Ojha 2014 — BCC 金属与合金的孪生应力预测（论文核心）</h2></div>
+<blockquote>引用：A. Ojha, H. Sehitoglu, "Twinning stress prediction in bcc metals and alloys", *Philosophical Magazine Letters* 94(10) (2014) 647–657。DOI: 10.1080/09500839.2014.955547。</blockquote>
+<blockquote>图谱 p-id：p10。层：第三层·原位/模拟。extract：<code>_文献核验\extracts\Twinning_stress_prediction_in_bcc_metals_and_alloys_2014_Ojha.txt</code>（行号引用即此文件）。</blockquote>
+</section>
+<section id="p12-s1"><h3>§一 论文在解决什么问题</h3>
+<p>孪生应力的解析表达式要么带难取的唯象常数、要么高估实验值（CB 极轴公式给 Fe 1050 MPa，实验约 180 MPa，高 5 倍以上）。本文把 Peierls–Nabarro 模型<b>改造</b>用于孪生：用第一性原理算孪晶的能量景观（GPFE 曲线），解出<b>错配函数（disregistry）</b>以计入组成孪晶的多根<span class="obj" data-obj="分数位错" title="分数位错">分数位错</span>的相互作用——得到与实验高度一致的孪生应力预测（90–800 MPa 随金属变化）。</p>
+</section>
+<section id="p12-s2"><h3>§二 引言中的基础概念/名词（逐条）</h3>
+<blockquote>F=事实；T=推理。</blockquote>
+<table>
+<tr><td>术语</td><td>定义与解释</td><td>类别</td><td>出处</td></tr>
+<tr><td>GPFE 曲线</td><td>逐层创建孪晶层时单位面积能量的变化曲线——孪晶形核过程中位错须依次跨越的能量势垒</td><td>F</td><td>45–48</td></tr>
+<tr><td>CB 极轴孪生应力公式</td><td>τ=γ_us/b_p（γ_us=不稳定<span class="obj" data-obj="层错能" title="层错能 SFE">层错能</span>、b_p=<span class="obj" data-obj="孪生位错" title="孪生位错">孪生位错</span>）——Fe 估 1050 MPa，比实验 180 MPa 高 5 倍以上</td><td>F</td><td>51–57</td></tr>
+<tr><td>Sleeswyk 公式</td><td>τ=γ_sf/(3b_p)——基于 ½⟨111⟩ 螺分解为三个 ⅙⟨111⟩；Fe 估 250 MPa</td><td>F</td><td>57–71</td></tr>
+<tr><td><span class="obj" data-obj="刃位错" title="刃位错">刃位错</span>分解公式</td><td>τ=kt·μ/[2π(1−ν)]（kt 为实验常数）——Fe 估 430 MPa</td><td>F</td><td>72–78</td></tr>
+<tr><td>理论孪生应力（GPFE 最大斜率）</td><td>τ=π·γ_TBM/b_p（γ_TBM=<span class="obj" data-obj="孪晶界" title="孪晶界">孪晶界</span>迁移能）——Fe 估 1200 MPa</td><td>F</td><td>79–83</td></tr>
+<tr><td>错配函数（disregistry function）</td><td>孪晶界面处相对位移随位置的分布——PN 方法的核心量，本文用它计入多根<span class="obj" data-obj="分数位错" title="分数位错">分数位错</span>相互作用</td><td>F</td><td>29–31</td></tr>
+</table>
+</section>
+<section id="p12-s3"><h3>§三 核心：怎么做的（模型改造法，四步）</h3>
+<p><b>1. 指出旧公式的毛病</b>：逐一列出四类旧孪生应力表达式及其 Fe 预测值（1050/250/430/1200 MPa）——要么高估、要么依赖难取的唯象常数。（51–83）</p>
+<p><b>2. 改造 PN 模型</b>：把 PN 框架（错配函数+回复应力=<span class="obj" data-obj="层错能" title="层错能 SFE">层错能</span>导数）从"单根位错"推广到"组成孪晶的多根<span class="obj" data-obj="分数位错" title="分数位错">分数位错</span>"——关键是解出<b>错配函数</b>以计入多分数位错相互作用。（27–31）</p>
+<p><b>3. 用第一性原理供能</b>：DFT 提取孪晶的能量景观（GPFE）作输入——势垒、峰谷数值全部来自第一性原理，不引入难取常数。（29–31）</p>
+<p><b>4. 输出与关键发现</b>：孪生应力主要取决于<b><span class="obj" data-obj="孪晶界" title="孪晶界">孪晶界</span>迁移能、剪切模量、面间距与组成孪晶的分数位错的几何位置</b>——层错能是次要变量。检验：Fe-3at.%Si 中层错能下降但孪生应力上升（剪切模量升高所致）→"降层错能→促孪晶"的简单逻辑不成立。（33–36）</p>
+</section>
+<section id="p12-s4"><h3>§四 结论与关键数值</h3>
+<ul>
+<li>金属间孪生应力变化显著：90–800 MPa，与实验高度一致。</li>
+<li>体系：Fe、V、Nb、Ta、Mo、W + Fe–3at.%V、Fe–35at.%Ni、Fe–3at.%Si。</li>
+<li>原文式 (1)–(7) 为数值模型、原文明言 no analytical solution（库内已删编造的解析式 τ_twin=γ_SFE/b_p+τ_friction）。</li>
+</ul>
+</section>
+<section id="p12-s5"><h3>§五 与知识库衔接</h3>
+<ul>
+<li>图谱节点：p-nuc-growth-stress、p-tb-migration-barrier、p-gpfe、p-sfe、c-nucleation（形核与生长能垒对比的出处之一）。</li>
+<li>问答库：03-02（GPFE）、04-02（最小稳定厚度 3–6 层数值来源 Ojha）、06-05。</li>
+<li>文献库：p10（已按原文核验）。</li>
+</ul>
+</section>
+<section id="p13"><div class="paper-head"><span class="pid">13</span><h2>Wang 2015 — W 纳米线孪生主导变形的原位观察（论文核心）</h2></div>
+<blockquote>引用：Jiangwei Wang, Zhi Zeng, Christopher R. Weinberger, Ze Zhang, Ting Zhu &amp; Scott X. Mao, "In situ atomic-scale observation of twinning-dominated deformation in nanoscale body-centred cubic tungsten", *Nature Materials* 14 (2015) 594–600。DOI: 10.1038/NMAT4228。</blockquote>
+<blockquote>图谱 p-id：p11。层：第三层·原位/模拟。译文：<code>_译文\Wang2015_NatMater_中文翻译_重译.md</code>（行号引用即此文件）。</blockquote>
+</section>
+<section id="p13-s1"><h3>§一 论文在解决什么问题</h3>
+<p>BCC 纳米晶体中的变形机制此前只有位错塑性的报道（小体积 W/Mo/Ta/Nb/V/Fe 纳米线柱力学测试都归因位错）。本文首次用原位 HRTEM 在纳米 W 双晶里原子尺度成像 BCC 的变形孪生全过程：证明室温低应变率下<b>孪生主导</b>、卸载时可逆<span class="obj" data-obj="去孪生" title="退孪晶">去孪生</span>（伪弹性）、孪生-滑移竞争由加载取向中介——并把机制落到位错层面（晶界/表面形核+<span class="obj" data-obj="孪生位错" title="孪生位错">孪生位错</span>逐层增厚）。</p>
+</section>
+<section id="p13-s2"><h3>§二 引言中的基础概念/名词（逐条）</h3>
+<blockquote>F=事实；T=推理。</blockquote>
+<table>
+<tr><td>术语</td><td>定义与解释</td><td>类别</td><td>出处</td></tr>
+<tr><td>位错饥饿（dislocation starvation）</td><td>纳米晶体中位错源失稳/匮乏——高应力容易实现的原因之一</td><td>F</td><td>18</td></tr>
+<tr><td>"越小越强"</td><td>金属纳米结构塑性变形所需应力高于块体</td><td>F</td><td>14</td></tr>
+<tr><td>伪弹性（pseudoelastic）</td><td>卸载时可逆恢复——本文指孪晶经可逆<span class="obj" data-obj="去孪生" title="退孪晶">去孪生</span>卸载复原</td><td>F</td><td>14、30</td></tr>
+<tr><td>去孪生（detwinning）</td><td>孪晶逐层减薄：与孪生同方式但方向相反地经<span class="obj" data-obj="孪生位错" title="孪生位错">孪生位错</span>形核与传播</td><td>F</td><td>30</td></tr>
+<tr><td>表面形核控制</td><td>缺陷（位错/孪晶）从表面的形核成为竞争的变形模式；孪晶表面形核比位错形核更容易时孪生主导</td><td>T（MD+实验归纳）</td><td>22、28</td></tr>
+<tr><td>加载取向中介竞争</td><td>孪生/滑移的 Schmid 因子差决定谁占优：⟨110⟩/⟨100⟩/⟨111⟩ 加载孪生 Schmid 因子高出有限余量→孪生；⟨112⟩ 加载两者接近→位错形核被青睐（<span class="obj" data-obj="孪晶胚" title="孪晶胚">孪晶胚</span>侧向扩展困难）</td><td>T（Schmid 因子分析+MD）</td><td>38</td></tr>
+<tr><td>原位焊接制样</td><td>电脉冲焊接两 W 纳米尖端成桥——克服"合成无预存缺陷的亚 100 nm BCC 样品"的困难（对比 FIB 制样：&gt;100 nm+表面损伤）</td><td>F</td><td>24</td></tr>
+</table>
+</section>
+<section id="p13-s3"><h3>§三 核心：怎么做的（实验+MD 互证，五步）</h3>
+<p><b>1. 实验装置</b>：原位焊接 W 纳米线+HRTEM 原位压缩（室温、约 10⁻³ s⁻¹）。（24、26）</p>
+<p><b>2. 观察孪生全过程</b>：[1̄10] 压缩，晶格应变到约 4.9% 时<span class="obj" data-obj="孪晶胚" title="孪晶胚">孪晶胚</span>自<b>晶界-自由表面交点</b>形核→横穿样品→FFT 定孪生系 <b>[1̄11](1̄12)</b>→(1̄12) 面分切应力约 9 GPa→完整孪晶带后应变释放到约 1.3%→继续加载带增厚。（26）</p>
+<p><b>3. MD 复现与机制落位</b>：MD 中孪晶胚先自表面形成→侧向扩展穿透→经 ⅙[1̄11] <span class="obj" data-obj="孪生位错" title="孪生位错">孪生位错</span>在相邻 (1̄12) 面<b>相继形核</b>、逐层垂直生长增厚；MD 分切应力约 8 GPa（与实验同量级）。（28）</p>
+<p><b>4. 伪弹性/<span class="obj" data-obj="去孪生" title="退孪晶">去孪生</span>机制</b>：卸载时孪晶带减薄（约 4 nm→0），经 ⅙[1̄1̄1] 去孪生位错逐层反向进行——驱动力账：加载时压缩分切应力&gt;背应力（孪晶带-晶界交点变形不相容产生）→增厚；卸载时分切应力&lt;背应力→去孪生。多次循环中孪晶总在同一位置形核。（30）</p>
+<p><b>5. 取向竞争 + 反例</b>：[112] 压缩下位错滑移占优——位错从多源形核（(101) 面切应力约 7.2 GPa、偶极子/半<span class="obj" data-obj="位错环" title="位错环">位错环</span>）、剪切带位错密度约 2×10¹⁶ m⁻²；MD 解释：孪晶胚边缘总是形核出位错环而非胚自身扩展。表 1 用 Schmid 因子对比四个取向的孪生/滑移竞争。（32–38）</p>
+</section>
+<section id="p13-s4"><h3>§四 结论与关键数值</h3>
+<ul>
+<li>孪生系 [1̄11](1̄12)；形核分切应力约 9 GPa（实验）/约 8 GPa（MD）；位错滑移约 7.2 GPa（[112] 压缩）。</li>
+<li><span class="obj" data-obj="孪晶胚" title="孪晶胚">孪晶胚</span>自晶界（或晶界-自由表面交点）形核；增厚=<span class="obj" data-obj="孪生位错" title="孪生位错">孪生位错</span>逐层相继形核（layer-by-layer）。</li>
+<li>伪弹性：卸载可逆<span class="obj" data-obj="去孪生" title="退孪晶">去孪生</span>（⅙[1̄1̄1] 去孪生位错逐层反向）；孪晶厚度约 4 nm。</li>
+<li>口径（p11 核验）：原文无 Sleeswyk/Lagerlöf/zonal/三层孪晶胚表述、无"0.41 nm=3 层"数值。</li>
+</ul>
+</section>
+<section id="p13-s5"><h3>§五 与知识库衔接</h3>
+<ul>
+<li>图谱节点：c-nucleation（⑥晶界/表面形核，证据最强）、c-growth（逐层增厚阵营）、e-twinning-disl、e-twin-front、q-growth-mode（逐层 vs 3n 之争的逐层方）。</li>
+<li>问答库：04-04（W 实测 3 层 0.41 nm——注意该数值已按核验从 Wang 2015 移除，归口另注）、07-01、10-01。</li>
+<li>译文：<code>_译文\Wang2015_NatMater_中文翻译_重译.md</code>。</li>
+</ul>
+</section>
+<section id="p14"><div class="paper-head"><span class="pid">14</span><h2>Sainath 2015 — BCC Fe 纳米线取向依赖变形行为（论文核心）</h2></div>
+<blockquote>引用：G. Sainath, B. K. Choudhary（2015），"Orientation dependent deformation behaviour of BCC iron nanowires"（Computational Materials Science，DOI: 10.1016/j.commatsci.2015.09.055）。</blockquote>
+<blockquote>图谱 p-id：p12。层：第三层·原位/模拟。extract：<code>_文献核验\extracts\Orientation_dependent_deformation_behaviour_of_BCC_iron_nanowires_2015_Sainath.txt</code>（行号引用即此文件）。</blockquote>
+</section>
+<section id="p14-s1"><h3>§一 论文在解决什么问题</h3>
+<p>块体 BCC Fe 的取向依赖变形（Harding：室温滑移、高应变率/低温才孪生、且孪生与否随取向变）在纳米尺度会怎样？本文用 MD 系统扫描 Fe 纳米线的五个取向（⟨100⟩/⟨110⟩/⟨111⟩/⟨112⟩/⟨102⟩）×拉伸/压缩，看哪种机制（滑移 vs 孪生）在哪种取向占优，并把结果用 <b>⅙⟨111⟩ <span class="obj" data-obj="偏位错" title="不<span class="obj" data-obj="全位错" title="全位错">全位错</span>">偏位错</span>的<span class="obj" data-obj="孪生-<span class="obj" data-obj="反孪生" title="<span class="obj" data-obj="反孪晶" title="反孪晶">反孪晶</span>">反孪生</span>不对称" title="孪生-反孪生不对称">孪生-反孪生不对称</span></b>统一解释，最后给一个 Fe 纳米线孪晶形核-生长的简单模型。</p>
+</section>
+<section id="p14-s2"><h3>§二 引言中的基础概念/名词（逐条）</h3>
+<blockquote>F=事实；T=推理。</blockquote>
+<table>
+<tr><td>术语</td><td>定义与解释</td><td>类别</td><td>出处</td></tr>
+<tr><td>块体取向依赖（Harding 基准）</td><td>块体 Fe 单晶室温滑移；高应变率/低温促孪生；孪生程度随取向变——室温高应变率下近 ⟨001⟩ 拉伸孪生、近 ⟨110⟩/⟨111⟩ 拉伸不孪生</td><td>F</td><td>33–46</td></tr>
+<tr><td>纳米尺度差异来源</td><td>高表面积体积比+低缺陷密度 → 力学性质与块体定性不同</td><td>F</td><td>46–50</td></tr>
+<tr><td>MD 作纳米力学主工具</td><td>实验在纳米尺度困难，MD 随算力与可靠势的进步成为主要工具、提供原子级机制细节</td><td>F</td><td>50–57</td></tr>
+<tr><td>FCC 纳米线参照系</td><td>FCC 纳米线塑性由<span class="obj" data-obj="全位错" title="全位错">全位错</span>/<span class="obj" data-obj="偏位错" title="不全位错">偏位错</span>滑移、孪生、相变共同决定，主导机制依赖取向/尺寸/应力状态；FCC 服从 Schmid 定律、取向行为可用 Schmid 因子分析</td><td>F</td><td>58–81</td></tr>
+<tr><td>拉-压不对称</td><td>同一取向拉伸与压缩激活不同机制（如 Au/Cu ⟨100⟩：拉=全位错滑移、压=偏位错滑移）</td><td>F</td><td>66–71</td></tr>
+<tr><td><span class="obj" data-obj="孪生-<span class="obj" data-obj="反孪生" title="<span class="obj" data-obj="反孪晶" title="反孪晶">反孪晶</span>">反孪生</span>不对称" title="孪生-反孪生不对称">孪生-反孪生不对称</span>（χ 判据）</td><td>⅙⟨111⟩ 偏位错沿 {112} 正反方向滑移的阻力不同——本文用于解释 BCC Fe 纳米线的取向依赖</td><td>F</td><td>28–29</td></tr>
+</table>
+</section>
+<section id="p14-s3"><h3>§三 核心：怎么做的（系统扫描法，四步）</h3>
+<p><b>1. 参数空间设定</b>：五取向 ×{拉伸、压缩} 的 Fe 纳米线 MD 变形模拟，逐条记录机制（孪生/<span class="obj" data-obj="全位错" title="全位错">全位错</span>滑移）与力学响应。（p12 conclusion）</p>
+<p><b>2. 结果地图</b>：⟨100⟩：{112}⟨111⟩ 孪晶承载塑性，屈服强度最低（12.3 GPa）、近恒定低流变应力、无应变硬化；⟨110⟩：全位错滑移主导；⟨111⟩：仅位错滑移、屈服后应力骤降、屈服强度最高（27.2 GPa）；拉-压不对称：⟨100⟩ 压缩滑移、⟨110⟩ 压缩孪生（与拉伸相反）。（25–27、p12 conclusion）</p>
+<p><b>3. 统一解释</b>：取向依赖的根源=<b>⅙⟨111⟩ <span class="obj" data-obj="偏位错" title="不全位错">偏位错</span>的<span class="obj" data-obj="孪生-<span class="obj" data-obj="反孪生" title="<span class="obj" data-obj="反孪晶" title="反孪晶">反孪晶</span>">反孪生</span>不对称" title="孪生-反孪生不对称">孪生-反孪生不对称</span> χ 判据</b>——把每个取向下分切应力落在孪生还是反孪生方向换算成"哪个机制先启动"。（28–29）</p>
+<p><b>4. 模型收口</b>：给出 BCC Fe 纳米线孪晶形核与生长的简单模型（表面/角部应力集中形核——surface effects）。（29–30、p12 conclusion）</p>
+</section>
+<section id="p14-s4"><h3>§四 结论与关键数值</h3>
+<ul>
+<li>五取向全谱：⟨100⟩ 孪生（12.3 GPa 最低）、⟨110⟩ 滑移、⟨111⟩ 仅滑移（27.2 GPa 最高）、⟨112⟩/⟨102⟩ 见原文；⟨100⟩/⟨110⟩ 拉压机制相反。</li>
+<li>根源：⅙⟨111⟩ <span class="obj" data-obj="偏位错" title="不<span class="obj" data-obj="全位错" title="全位错">全位错</span>">偏位错</span><span class="obj" data-obj="孪生-<span class="obj" data-obj="反孪生" title="<span class="obj" data-obj="反孪晶" title="反孪晶">反孪晶</span>">反孪生</span>不对称" title="孪生-反孪生不对称">孪生-反孪生不对称</span>；孪晶自角部应力集中形核。</li>
+</ul>
+</section>
+<section id="p14-s5"><h3>§五 与知识库衔接</h3>
+<ul>
+<li>图谱节点：c-asymmetry（纳米尺度应用）、c-nucleation（表面/角部形核）、p-gamma-112-asymmetry、c-competition。</li>
+<li>问答库：04-06（滑移与孪生判据）、06-01（不对称的宏观表现）。</li>
+<li>文献库：p12（已按原文核验）。</li>
+</ul>
+</section>
+<section id="p15"><div class="paper-head"><span class="pid">15</span><h2>Shi &amp; Singh 2016 — BCC 金属纳米线的竞争孪生机制（论文核心）</h2></div>
+<blockquote>引用：Shi &amp; Singh, "Competing twinning mechanisms in body-centered cubic metallic nanowires", *Scripta Materialia* 113 (2016) 214–217（2015 在线）。</blockquote>
+<blockquote>图谱 p-id：p13。层：第三层·原位/模拟。extract：<code>_文献核验\extracts\Competing_twinning_mechanisms_in_body-centered_cubic_metallic_nanowires_2015_Unknown.txt</code>（行号引用即此文件）。</blockquote>
+</section>
+<section id="p15-s1"><h3>§一 论文在解决什么问题</h3>
+<p>BCC 孪生通常归因于 ⅙⟨111⟩ <span class="obj" data-obj="孪生位错" title="孪生位错">孪生位错</span>滑移（形成镜面对称的<b>反射型</b><span class="obj" data-obj="孪晶界" title="孪晶界">孪晶界</span> TB）。但概念上还存在违反镜面对称的<b>等腰型</b> TB（Vítek 1970 等），它在 BCC 纳米线中怎么形成、能量学如何、哪种 TB 在哪种金属占优——都没研究过。本文用 MD 报道等腰 TB 的替代孪生机制（⅙⟨111⟩→2×1/12⟨111⟩ 分解），再用五种 BCC 金属的 GSFE 比较两种机制的竞争倾向。</p>
+</section>
+<section id="p15-s2"><h3>§二 引言中的基础概念/名词（逐条）</h3>
+<blockquote>F=事实；T=推理。</blockquote>
+<table>
+<tr><td>术语</td><td>定义与解释</td><td>类别</td><td>出处</td></tr>
+<tr><td>反射型 TB（reflection/mirror-symmetrical）</td><td>常规<span class="obj" data-obj="孪晶界" title="孪晶界">孪晶界</span>：界面两侧镜面对称——⅙⟨111⟩ <span class="obj" data-obj="孪生位错" title="孪生位错">孪生位错</span>滑移的产物</td><td>F</td><td>42–48</td></tr>
+<tr><td>等腰型 TB（isosceles）</td><td>跨界面三列原子呈等腰三角形、违反镜面对称的 TB（Vítek 1970；Bristowe–Crocker 1975：=反射界+1/12⟨111⟩ 刚体平移）</td><td>F</td><td>48–50</td></tr>
+<tr><td>1/12⟨111⟩ <span class="obj" data-obj="偏位错" title="不<span class="obj" data-obj="全位错" title="全位错">全位错</span>">偏位错</span>分解机制</td><td>孪生经 ⅙⟨111⟩ 分解为两根 1/12⟨111⟩ 偏位错、在相邻 {211} 面上滑移 → 等腰 TB</td><td>F（新机制报道）</td><td>20–23</td></tr>
+<tr><td>"越小越强"与表面形核</td><td>无预存位错的纳米线近理想强度、从自由表面形核位错；位错源耗尽→高应力→孪生</td><td>F</td><td>28–36</td></tr>
+<tr><td>稳定孪生<span class="obj" data-obj="层错能" title="层错能 SFE">层错能</span>比 γiso/γref</td><td>等腰 vs 反射 TB 的 GSFE 比值：&lt;1 等腰稳、&gt;1 反射稳——机制竞争的能量判据</td><td>T（GSFE 比较）</td><td>23–25</td></tr>
+</table>
+</section>
+<section id="p15-s3"><h3>§三 核心：怎么做的（机制报道+能量判据，三步）</h3>
+<p><b>1. 报道替代机制</b>：MD 单轴加载 BCC 纳米线（0.1 K、应变率 10⁸/s、Nosé–Hoover 控温）——观察到孪生经 ⅙⟨111⟩ 分解为两根 1/12⟨111⟩ <span class="obj" data-obj="偏位错" title="不<span class="obj" data-obj="全位错" title="全位错">全位错</span>">偏位错</span>、在相邻 {211} 面滑移，形成<b>等腰 TB</b>（与常规反射 TB 对比）。（20–23、67–69）</p>
+<p><b>2. 五金属 GSFE 对比</b>：对 Nb/Fe/Ta/Mo/W 单晶纳米线比较两种机制的孪生行为与 GSFE 曲线，算 γiso/γref。（62–66）</p>
+<p><b>3. 判据输出</b>：γiso/γref 排序——Ta 0.836、Nb 0.939、Fe 0.945、Mo 1.020、W 1.069 → <b>Ta/Nb/Fe 倾向等腰 TB（Ta&gt;Nb&gt;Fe）、Mo/W 倾向反射 TB</b>。（p13 conclusion）</p>
+</section>
+<section id="p15-s4"><h3>§四 结论与关键数值</h3>
+<ul>
+<li>替代孪生机制：⅙⟨111⟩→2×1/12⟨111⟩（相邻 {211} 面）→ 等腰 TB。</li>
+<li>γiso/γref：Ta 0.836、Nb 0.939、Fe 0.945、Mo 1.020、W 1.069。</li>
+<li>启示：纳米材料的<span class="obj" data-obj="孪晶界" title="孪晶界">孪晶界</span>构型可经机制设计（工程意义）。</li>
+</ul>
+</section>
+<section id="p15-s5"><h3>§五 与知识库衔接</h3>
+<ul>
+<li>图谱节点：e-tb-isosceles（机制出处）、e-tb-reflection、e-twelve-partial、p-gamma-ratio（五金属数值出处）、q-tb-type（TB 构型之争）。</li>
+<li>问答库：10-07（等腰/近等腰 TB）、05-10（共格面上的构型分类）。</li>
+<li>文献库：p13（刊期 Scripta Mater 113 (2016) 214-217，2015 在线——已核验）。</li>
+</ul>
+</section>
+<section id="p16"><div class="paper-head"><span class="pid">16</span><h2>Zepeda-Ruiz 2017 — 用 MD 探索金属塑性极限（论文核心）</h2></div>
+<blockquote>引用：Luis A. Zepeda-Ruiz, Alexander Stukowski, Tomas Oppelstrup &amp; Vasily V. Bulatov, "Probing the limits of metal plasticity with molecular dynamics simulations", *Nature* 550 (2017) 492–495。DOI: 10.1038/nature23472。</blockquote>
+<blockquote>图谱 p-id：p14。层：第三层·原位/模拟。extract：<code>_文献核验\extracts\Probing_the_limits_of_metal_plasticity_with_molecular_dynamics_simulations_2017_Zepeda-Rui.txt</code>（行号引用即此文件）。</blockquote>
+</section>
+<section id="p16-s1"><h3>§一 论文在解决什么问题</h3>
+<p>金属的应变率-温度-应力状态空间里，"位错塑性"能撑到哪一步？本文用<b>原位计算显微术</b>把海量 MD 轨迹变成人类可分析的形态，探索 BCC Ta 单晶在宽应变率（×1、×5、×25）与三种初始缺陷状态（完美晶体/24 空位团/24 <span class="obj" data-obj="位错环" title="位错环">位错环</span>）下的响应——发现存在一个极限：达到该极限后位错不再能卸载载荷，<b>变形孪生接管</b>成为主导动力学模式。</p>
+</section>
+<section id="p16-s2"><h3>§二 引言中的基础概念/名词（逐条）</h3>
+<blockquote>F=事实；T=推理。</blockquote>
+<table>
+<tr><td>术语</td><td>定义与解释</td><td>类别</td><td>出处</td></tr>
+<tr><td>变形孪生（动力学接管）</td><td>晶格的突然再取向（sudden re-orientation of the crystal lattice）——位错不能卸载载荷时的接管机制</td><td>F</td><td>30–32</td></tr>
+<tr><td>稳态塑性流动</td><td>极限之下金属进入与应变路径无关的稳态：流变应力与位错密度保持恒定（Ta 像黏性流体一样流动、同时保持晶格与强度）</td><td>F</td><td>32–38</td></tr>
+<tr><td>初始缺陷状态三对照</td><td>完美晶体（无缺陷）、24 随机空位团、同位置 24 <span class="obj" data-obj="位错环" title="位错环">位错环</span>——分离"有无位错"对塑性的作用</td><td>F</td><td>39–60</td></tr>
+<tr><td>原位计算显微术（in situ computational microscopy）</td><td>把 MD 巨量瞬态轨迹数据重构成人类可分析的形态的方法</td><td>F</td><td>25–28</td></tr>
+<tr><td>应变率 ×N 记号</td><td>相对基准应变率 1.1×10⁷ s⁻¹ 的倍数（×1/×5/×25，最高 2.77×10⁸ s⁻¹）</td><td>F</td><td>42–44</td></tr>
+</table>
+</section>
+<section id="p16-s3"><h3>§三 核心：怎么做的（状态空间扫描法，四步）</h3>
+<p><b>1. 三状态×三应变率扫描</b>：完美/含空位/含<span class="obj" data-obj="位错环" title="位错环">位错环</span>三种初始构型，各在 ×1/×5/×25 应变率下压缩，读应力-应变曲线与构型演化。（40–60）</p>
+<p><b>2. 完美晶体</b>：突然屈服于 36–37 GPa；无论压缩速率如何，都经<b>变形孪生</b>屈服（晶格再取向）。（45–50）</p>
+<p><b>3. 空位团晶体</b>：更低应力 16–19 GPa 突然屈服、所有应变率下孪生。（51–53）</p>
+<p><b>4. 位错环晶体</b>：光滑应力-应变曲线、峰值应力低得多且<b>明显依赖应变率</b>；不孪生，只经初始位错的运动与增殖流动、形成稠密位错网络。（53–60）</p>
+<p><b>5. 极限与机制</b>：单轴应力达约 8 GPa（八个孪生系上分切应力约 1.9 GPa）时位错塑性被孪晶取代；大应变硬化=孪晶+Taylor 硬化（α=0.45）、三叉结点强于普通二元结点；应变率-温度平面存在位错/孪晶分界线。（p14 conclusion）</p>
+</section>
+<section id="p16-s4"><h3>§四 结论与关键数值</h3>
+<ul>
+<li>完美 36–37 GPa 孪晶屈服；含空位团 16–19 GPa；含初始位错不孪晶、只滑移。</li>
+<li>孪晶触发：单轴约 8 GPa（八系分切约 1.9 GPa）；300 K 时高于 ×25（约 2.8×10⁸ s⁻¹）。</li>
+<li>晶格始终保持晶体结构（无非晶化）——p14 核验口径。</li>
+</ul>
+</section>
+<section id="p16-s5"><h3>§五 与知识库衔接</h3>
+<ul>
+<li>图谱节点：c-competition（应力阈值口径）、c-strain-rate、p-nuc-growth-stress、c-nucleation、e-disl-emission。</li>
+<li>问答库：04-08（孪晶占优条件）、10-01（加大胞的对策例：2.68 亿原子）。</li>
+<li>文献库：p14（已按原文核验）。</li>
+</ul>
+</section>
+<section id="p17"><div class="paper-head"><span class="pid">17</span><h2>Li 2024 — BCC 纳米晶形核/生长控制变形孪生（论文核心）</h2></div>
+<blockquote>引用：Li Zhong, Yin Zhang, Xiang Wang, Ting Zhu &amp; Scott X. Mao, "Atomic-scale observation of nucleation- and growth-controlled deformation twinning in body-centered cubic nanocrystals", *Nature Communications* 15 (2024) 560。DOI: 10.1038/s41467-024-44837-8。</blockquote>
+<blockquote>图谱 p-id：p15。层：第三层·原位/模拟。译文：<code>_译文\LiZhong_2024_中文翻译_重译.md</code>（行号引用即此文件）。</blockquote>
+</section>
+<section id="p17-s1"><h3>§一 论文在解决什么问题</h3>
+<p>通行观点：BCC 孪生是<b>形核控制</b>的（形核垒高、一旦形核快速生长）。本文用原位原子尺度 TEM 拉伸 Ta 纳米晶（配合 MD）发现：<b>不全是</b>——直径 &gt;15 nm 的 Ta 纳米晶中孪生以<b>迟滞生长</b>进行（<span class="obj" data-obj="孪生<span class="obj" data-obj="偏位错" title="不<span class="obj" data-obj="全位错" title="全位错">全位错</span>">偏位错</span>" title="<span class="obj" data-obj="孪生位错" title="孪生位错">孪生位错</span>">孪生偏位错</span>沿有限尺寸<span class="obj" data-obj="孪晶界" title="孪晶界">孪晶界</span>缓慢推进、需载荷持续增加），&lt;15 nm 才是形核控制（孪晶段快速穿透截面）。由此揭示 BCC 金属孪生机制的<b>尺寸依赖转变</b>，并为孪生诱导塑性的设计提供依据。</p>
+</section>
+<section id="p17-s2"><h3>§二 引言中的基础概念/名词（逐条）</h3>
+<blockquote>F=事实；T=推理。</blockquote>
+<table>
+<tr><td>术语</td><td>定义与解释</td><td>类别</td><td>出处</td></tr>
+<tr><td>形核控制 vs 生长控制</td><td>形核控制：形核垒≫生长垒、形核后快速生长；生长控制：形核垒较低、增厚与侧向扩展慢（本工作的对立面）</td><td>F</td><td>20、42</td></tr>
+<tr><td>迟滞孪晶生长（reluctant twin growth）</td><td><span class="obj" data-obj="孪生<span class="obj" data-obj="偏位错" title="不<span class="obj" data-obj="全位错" title="全位错">全位错</span>">偏位错</span>" title="<span class="obj" data-obj="孪生位错" title="孪生位错">孪生位错</span>">孪生偏位错</span>沿有限尺寸孪晶结构界面的缓慢推进（需载荷持续增加）</td><td>F</td><td>14</td></tr>
+<tr><td>高密度平行孪晶岛</td><td>滑移带内排列的高密度平行孪晶岛（BCC 初期孪晶常见形态，Mahajan 观察）——暗示孪生变形有限另有原因</td><td>F</td><td>20</td></tr>
+<tr><td>莫尔条纹</td><td>母体与孪晶晶格沿观察方向重叠产生的干涉图样——有限尺寸孪晶+倾斜<span class="obj" data-obj="孪晶界" title="孪晶界">孪晶界</span>的标志</td><td>F</td><td>30</td></tr>
+<tr><td>倾斜孪晶界</td><td>偏离 (112) 孪晶面的孪晶界（ITB）——有限尺寸孪晶结构的边界特征</td><td>F</td><td>30、46</td></tr>
+<tr><td>台阶成簇（bunching）</td><td>CTB 上孪生偏位错优先成簇：每簇约 0.4 nm=3 个相继原子台阶=3 个 (112) 孪生偏位错</td><td>F</td><td>28</td></tr>
+<tr><td>½⟨111⟩{110} 螺滑移 ≡ 3×⅙⟨111⟩{112} 孪生偏位错</td><td>晶体学等价——孪生由<span class="obj" data-obj="螺位错" title="螺位错">螺位错</span>中介的证据基础</td><td>T（晶体学等价）</td><td>28</td></tr>
+<tr><td>像力</td><td>孪生偏位错接近对面自由表面时受像力促进侧向扩展（形成贯穿孪晶段的最后一步）</td><td>F</td><td>52</td></tr>
+</table>
+</section>
+<section id="p17-s3"><h3>§三 核心：怎么做的（两模式对照+MD 机制落位，四步）</h3>
+<p><b>1. 生长控制型观察（23 nm Ta）</b>：[001] 拉伸、[1̄10] 观察。屈服约 3.2% 应变（<span class="obj" data-obj="孪晶胚" title="孪晶胚">孪晶胚</span>自左侧表面形核，形核应力约 4.6 GPa）；胚长 8 nm、尖端局部厚 0.8 nm；尖端 CTB 上台阶成簇（每簇 3 <span class="obj" data-obj="偏位错" title="不<span class="obj" data-obj="全位错" title="全位错">全位错</span>">偏位错</span>）；此后<b>没有应变突跳</b>——孪晶经增厚+侧向扩展缓慢生长（莫尔条纹区呈椭圆、下方倾斜<span class="obj" data-obj="孪晶界" title="孪晶界">孪晶界</span>弯曲）；上下母体取向偏差高达 12°；最终在增加载荷下<b>穿透截面</b>（突变伸长约 4%）。（26–32）</p>
+<p><b>2. 形核控制型观察（&lt;15 nm Ta）</b>：10 nm 纳米晶屈服于更高应力约 6.8 GPa、伴随约 9% 主应变突跳→随后约 40% 均匀伸长（与理论值 41.4% 吻合）；12 nm 纳米晶直接看到两个 (1̄12) CTB 运动、孪晶段贯穿直径；生长应力远低于形核应力=形核控制判据。（36–38）</p>
+<p><b>3. MD 机制落位（图 4）</b>：前导 ½⟨111⟩{110} <span class="obj" data-obj="螺位错" title="螺位错">螺位错</span>→3×⅙⟨111⟩{112} <span class="obj" data-obj="孪生偏位错" title="<span class="obj" data-obj="孪生位错" title="孪生位错">孪生位错</span>">孪生偏位错</span>=孪晶胚；后续螺位错交滑移到 CTB→各变 3 偏位错→增厚；<b>前缘=相继面上对齐排列的孪生偏位错=<span class="obj" data-obj="非<span class="obj" data-obj="共格孪晶界" title="共格孪晶界">共格孪晶界</span>" title="非共格孪晶界">非共格孪晶界</span>（ITB）</b>；ITB 传播=侧向扩展、需载荷持续增加=迟滞生长的机制。增厚依赖螺位错持续形核+交滑移供给。（48–50）</p>
+<p><b>4. 尺寸转变的物理解释</b>：亚 15 nm 时"越小越强"抬高位错形核应力→可达高载荷→孪生偏位错快速滑过纳米晶→接近对面时<b>像力</b>助其侧向扩展→贯穿孪晶段（无母体约束、CTB 易迁移）；大纳米晶中偏位错供给困难（依赖螺位错形核/交滑移）→迟滞。FCC 无此转变、HCP Ti &lt;1 μm 位错滑移取代孪生（stimulated slip）——晶格结构依赖。（52–56）</p>
+</section>
+<section id="p17-s4"><h3>§四 结论与关键数值</h3>
+<ul>
+<li>转变直径约 15 nm；形核应力 4.6 GPa（23 nm）/6.8 GPa（10 nm）；理论伸长 41.4%（孪生剪切 √2/2=70.7%）、实测约 40%/37%。</li>
+<li>生长控制型：有限尺寸孪晶+倾斜<span class="obj" data-obj="孪晶界" title="孪晶界">孪晶界</span>（莫尔条纹）+母体约束（12° 取向偏差）+迟滞生长+最终穿透；形核控制型：贯穿直径+两平行 CTB 易迁移。</li>
+<li>倾斜孪晶界从亚 100 nm 到粗晶普遍存在；卸载<span class="obj" data-obj="去孪生" title="退孪晶">去孪生</span>倾向（关联 Wang X 2020）。</li>
+</ul>
+</section>
+<section id="p17-s5"><h3>§五 与知识库衔接</h3>
+<ul>
+<li>图谱节点：c-nucleation（⑥晶界/表面形核）、c-growth、c-double-cross-slip（螺中介增厚口径）、e-twin-front（前缘=ITB 出处）、e-twin-lamella、q-nucleation-model、p-nuc-growth-stress（4.6/6.8 GPa）。</li>
+<li>问答库：04-09（<span class="obj" data-obj="孪晶尖端" title="孪晶尖端">孪晶尖端</span>=<span class="obj" data-obj="位错芯" title="位错芯结构">位错芯</span>吗）、05-10（<span class="obj" data-obj="孪晶界" title="孪晶界">孪晶界</span>共格性与尺寸依赖两模式）。</li>
+<li>译文：<code>_译文\LiZhong_2024_中文翻译_重译.md</code>（含批注·全文小结）。</li>
+</ul>
+</section>
+<section id="p18"><div class="paper-head"><span class="pid">18</span><h2>Wang 2020 — 纳米钨中的反孪生（论文核心）</h2></div>
+<blockquote>引用：Jiangwei Wang, Zhi Zeng, Minru Wen, Qiannan Wang, Dengke Chen, Yin Zhang, Peng Wang, Hongtao Wang, Ze Zhang, Scott X. Mao, Ting Zhu, "Anti-twinning in nanoscale tungsten", *Science Advances* 6 (2020) eaay2792。DOI: 10.1126/sciadv.aay2792。</blockquote>
+<blockquote>图谱 p-id：p16。层：第四层·前沿机制。译文：<code>_译文\Wang2020_反孪生_中文翻译_重译.md</code>（行号引用即此文件；extract 文件名含 2020_Zhu 系末位作者误标，已在 _文献核验 登记）。</blockquote>
+</section>
+<section id="p18-s1"><h3>§一 论文在解决什么问题</h3>
+<p>{112} 面沿 ⟨111⟩ 正反两向剪切的阻力不对称——<span class="obj" data-obj="反孪生" title="<span class="obj" data-obj="反孪晶" title="反孪晶">反孪晶</span>">反孪生</span>阻力远高于普通孪生，被普遍认为"不可能发生"。但纳米 BCC 晶体中位错饥饿+超高应力会改变竞争格局。本文用原位 TEM 在 &lt;20 nm 的 W 纳米线中<b>首次观察到反孪生的形核与生长</b>，用 MD+DFT 揭示其机制与能垒，确立反孪生为 BCC 纳米晶体的一种可行塑性模式。</p>
+</section>
+<section id="p18-s2"><h3>§二 引言中的基础概念/名词（逐条）</h3>
+<blockquote>F=事实；T=推理。</blockquote>
+<table>
+<tr><td>术语</td><td>定义与解释</td><td>类别</td><td>出处</td></tr>
+<tr><td><span class="obj" data-obj="孪生-<span class="obj" data-obj="反孪生" title="<span class="obj" data-obj="反孪晶" title="反孪晶">反孪晶</span>">反孪生</span>不对称" title="孪生-反孪生不对称">孪生-反孪生不对称</span></td><td>{112} 面沿 ⟨111⟩ 正向（普通孪生）阻力显著低于反向（反孪生）——两向剪切路径的原子排布不同所致</td><td>F</td><td>20</td></tr>
+<tr><td>反孪生（anti-twinning）</td><td>每个相继 {112} 面产生 <b>1/3⟨111⟩</b> 剪切的变形模式（普通孪生为反向 ⅙⟨111⟩）——由 BCC 晶格几何决定</td><td>F</td><td>16、30</td></tr>
+<tr><td>位错饥饿</td><td>BCC 纳米晶体容易从自由表面快速损失位错→需高应力激活表面/界面形核→室温低应变率下孪生变得活跃</td><td>F</td><td>22</td></tr>
+<tr><td>去反孪生（de-anti-twinning）</td><td>反孪晶收缩（与<span class="obj" data-obj="去孪生" title="退孪晶">去孪生</span>同构）——由其他位置位错/孪晶形成关联的应力释放引起</td><td>F</td><td>34</td></tr>
+<tr><td>反<span class="obj" data-obj="孪晶界" title="孪晶界">孪晶界</span> <span class="obj" data-obj="disconnection" title="disconnection">disconnection</span></td><td>反孪晶界上<span class="obj" data-obj="位错芯" title="位错芯结构">位错芯</span>与台阶重合的界面缺陷（与普通孪晶界的 disconnection 类似）——MD 揭示的原子级载体</td><td>F</td><td>42</td></tr>
+<tr><td>镜像论证（E 层原子）</td><td>[1̄10] 拉伸下分切应力使 E 层相对 D 层沿 [11̄1̄] 运动：E 原子须移 1/3[11̄1̄] 才能成为 C 原子关于孪生面的镜像，且 D 层正挡在路径下方→反孪生阻力大；普通孪生（[1̄10] 压缩）⅙[1̄11] 无此阻挡</td><td>T（晶格几何推）</td><td>30</td></tr>
+</table>
+</section>
+<section id="p18-s3"><h3>§三 核心：怎么做的（实验+MD+DFT 三线互证，四步）</h3>
+<p><b>1. 晶体学定标（图 1A/B 几何论证）</b>：[110] 观察方向下 (1̄12̄) 孪生面侧立（自检：(1̄12̄)·[110]=−1+1+0=0 ✓；两个剪切方向都在面内：(1̄12̄)·[1̄11]=1+1−2=0 ✓、(1̄12̄)·[11̄1̄]=−1−1+2=0 ✓）；[1̄10] 压缩→普通孪生 ⅙[1̄11](1̄12̄)；[1̄10] 拉伸→<span class="obj" data-obj="反孪生" title="<span class="obj" data-obj="反孪晶" title="反孪晶">反孪晶</span>">反孪生</span> ⅓[11̄1̄](1̄12̄)（[11̄1̄]=−[1̄11]，同一孪晶面、方向相反——无"反孪生面"概念）。（30）</p>
+<p><b>2. 原位观察</b>：直径约 18 nm W 纳米线 [1̄10] 压缩→普通孪生；直径约 16 nm [1̄10] 拉伸→反<span class="obj" data-obj="孪晶胚" title="孪晶胚">孪晶胚</span>自侧表面形核（约 10⁻³ s⁻¹）→前缘扩展+反<span class="obj" data-obj="孪生<span class="obj" data-obj="偏位错" title="不<span class="obj" data-obj="全位错" title="全位错">全位错</span>">偏位错</span>" title="<span class="obj" data-obj="孪生位错" title="孪生位错">孪生位错</span>">孪生偏位错</span>在 (1̄1̄2) 界相继形核增厚；晶界附近反孪晶（前缘 &lt;1 nm）在约 26.2 GPa 下从晶界发射→缓慢生长→去反孪生收缩；四条 &lt;20 nm 线中三条观察到反孪生；[111] 拉伸 W 与 [112] 拉伸 Nb 也观察到。（32–34）</p>
+<p><b>3. MD 机制</b>：FS 型 W 势（Ackland–Thetford）与 EAM 势（Marinica）两种势均复现：位错先形核但大多逃逸表面、剩余互相钉扎→塑性不足以匹配应变→大弹性应变累积→高应力触发反孪生；反孪晶生长由 1/3[11̄1̄](1̄1̄2) 位错的表面形核+滑移中介，其芯与反<span class="obj" data-obj="孪晶界" title="孪晶界">孪晶界</span>台阶重合=<span class="obj" data-obj="disconnection" title="disconnection">disconnection</span>；芯内大剪切使相邻两层明显分离。（42）</p>
+<p><b>4. DFT 能垒</b>：多层反孪生能量景观（逐层移 2b_p）出现一系列局域极小、增厚能垒约 <b>0.163 J/m²</b>，普通孪生增厚能垒低得多（逐层移 b_p）→反孪晶形核与生长更难——块体中不利、纳米超高应力下被激活。（44）</p>
+</section>
+<section id="p18-s4"><h3>§四 结论与关键数值</h3>
+<ul>
+<li><span class="obj" data-obj="反孪生" title="<span class="obj" data-obj="反孪晶" title="反孪晶">反孪晶</span>">反孪生</span>体系：&lt;20 nm W 纳米线，[1̄10] 拉伸；晶界发射约 26.2 GPa；Nb [112] 拉伸同样观察到。</li>
+<li>剪切量：反孪生每相继 {112} 面 1/3⟨111⟩（s=√2≈1.4142）、普通孪生 ⅙⟨111⟩。</li>
+<li>DFT 反孪晶增厚能垒约 0.163 J/m²（vs 普通孪生低得多）。</li>
+<li>载体：1/3[11̄1̄](1̄1̄2) 反<span class="obj" data-obj="孪晶界" title="孪晶界">孪晶界</span>位错=<span class="obj" data-obj="disconnection" title="disconnection">disconnection</span>（芯+台阶重合）。</li>
+</ul>
+</section>
+<section id="p18-s5"><h3>§五 与知识库衔接</h3>
+<ul>
+<li>图谱节点：c-anti-twinning（方向与载体）、c-anti-twin-nucleation（方向子类）、e-third-partial、p-twin-shear（s=1.4142 口径）、e-<span class="obj" data-obj="disconnection" title="disconnection">disconnection</span>。</li>
+<li>问答库：04-03（<span class="obj" data-obj="反孪生" title="<span class="obj" data-obj="反孪晶" title="反孪晶">反孪晶</span>">反孪生</span>几何与 1/4 比值）、10-05（Wang 2020 镜像论证版本，第 5 步）、05-10。</li>
+<li>译文：<code>_译文\Wang2020_反孪生_中文翻译_重译.md</code>（校勘注：面记号 (1̄1̄2)→(1̄12̄) 一处最小修正，方向记号与原文一致）。</li>
+</ul>
+</section>
+<section id="p19"><div class="paper-head"><span class="pid">19</span><h2>Xiao 2023 — RC 方法揭示 BCC 孪晶形核与生长机制（论文核心）</h2></div>
+<blockquote>引用：Jianwei Xiao, Lingyu Zhu, Rui Wang, Chuang Deng, Zhaoxuan Wu, Yuntian Zhu, "Unveiling deformation twin nucleation and growth mechanisms in BCC transition metals and alloys", *Materials Today* 65 (2023) 90–99。DOI: 10.1016/j.mattod.2023.03.028。</blockquote>
+<blockquote>图谱 p-id：p17。层：第四层·前沿机制。译文：<code>_译文\Xiao2023_中文翻译_重译.md</code>（行号引用即此文件）。</blockquote>
+</section>
+<section id="p19-s1"><h3>§一 论文在解决什么问题</h3>
+<p>BCC 孪晶形核机制研究了 70 余年仍无共识：极轴/Sleeswyk 等旧模型要求复杂假想位错反应、激活应力高一个数量级，且都无法解释 Fe/VB/VIB 族间差异、温度/应变率/成分依赖与<span class="obj" data-obj="孪生-<span class="obj" data-obj="反孪生" title="<span class="obj" data-obj="反孪晶" title="反孪晶">反孪晶</span>">反孪生</span>不对称" title="孪生-反孪生不对称">孪生-反孪生不对称</span>。本文引入<b>减约束（RC）滑移路径</b>（DFT），在全部 BCC 过渡金属中揭示形核/生长路径与能垒，发现孪生惊人地由 <b>HCP–BCC 归一化能量差 γ</b> 控制，并把它与断裂力学结合，预测逆转韧脆转变所需的临界溶质浓度（WRe 验证）。</p>
+</section>
+<section id="p19-s2"><h3>§二 引言中的基础概念/名词（逐条）</h3>
+<blockquote>F=事实；T=推理。</blockquote>
+<table>
+<tr><td>术语</td><td>定义与解释</td><td>类别</td><td>出处</td></tr>
+<tr><td>RC 减约束滑移</td><td>滑移面以上原子逐步位移（Δs=0.04b=0.02⟨111⟩）后做结构优化，<b>只固定滑移面紧邻上下两层的滑移方向坐标</b>、其余自由度（含其他层的 x）全弛豫——模拟晶界三叉结点/裂纹尖端"切应力在几层内局部放大"的形核场景</td><td>F（方法定义）</td><td>27</td></tr>
+<tr><td>三种 γ 线口径</td><td>γ_fix-x-y-z 全固定（刚性）、γ_fix-x 只放 y/z、γ_rc 多层弛豫——只有 RC 在 s_c≈0.4b 出现亚稳层错</td><td>F</td><td>37</td></tr>
+<tr><td>2 层<span class="obj" data-obj="孪晶胚" title="孪晶胚">孪晶胚</span>自发形成</td><td>RC 弛豫下 Fe/VB/Cr/WRe/MoRe 在 s_c≈0.4b 处自发形成 2 层孪晶（超出能量 γ_2tw）；纯 Mo/W 不形成</td><td>F</td><td>27、37</td></tr>
+<tr><td>近等腰 TB</td><td>2 层胚的 TB 无镜面对称、近等腰结构+沿孪生方向有限平移 δ+畸变；基态 γ_iso-tw=0.418 J/m²（比反射 TB 低 0.03 J/m²）</td><td>F</td><td>41</td></tr>
+<tr><td>归一化能量差 γ（=ΔE^A/ΔE^C）</td><td>HCP 与 BCC 结构能量差的归一化指标（摘要用 γ、正文式 (1) 用 g——与"<span class="obj" data-obj="γ 面" title="γ-surface 广义<span class="obj" data-obj="层错能" title="层错能 SFE">层错能</span>">γ 面</span>/γ 线"的 γ 是不同对象）</td><td>F（注意防混淆）</td><td>13、17</td></tr>
+<tr><td>生长能垒不对称</td><td>从 2 层胚出发：孪生方向 γ_utw-t−γ_2tw=0.031 J/m²、<span class="obj" data-obj="反孪生" title="<span class="obj" data-obj="反孪晶" title="反孪晶">反孪晶</span>">反孪生</span>方向 0.514 J/m²（约 17 倍）；孪生总垒比<span class="obj" data-obj="全位错" title="全位错">全位错</span> γ_ud 低 16%、反孪生高 37%</td><td>F</td><td>45</td></tr>
+<tr><td>偏 <span class="obj" data-obj="disconnection" title="disconnection">disconnection</span> 生长（δ+b=⟨111⟩/6）</td><td>近等腰 TB 的迁移载体：一对 b=δ 与 b=b_t−δ 的偏 disconnection 夹 TB 层错</td><td>F</td><td>p17 conclusion、问答 10-08</td></tr>
+</table>
+</section>
+<section id="p19-s3"><h3>§三 核心：怎么做的（方法创新→家族扫描→统一标度→应用，四步）</h3>
+<p><b>1. 方法创新（为什么传统方法看不到<span class="obj" data-obj="孪晶胚" title="孪晶胚">孪晶胚</span>）</b>：经典 GSFE 刚性剪切不允许多层弛豫→看不到孪晶胚；RC 只锁滑移面两侧各一层的 x→多层相互作用被允许→能量景观里出现孪晶胚的"坑"。（27）</p>
+<p><b>2. 家族扫描</b>：全部 BCC 过渡金属（+WRe/MoRe 合金）算 γ_rc 线：Fe/VB/Cr 在 s_c≈0.4b 出 2 层胚；纯 Mo/W 无亚稳层错（需"两连续滑移面各滑 0.33b"的 3 层路径）。（27、37、49 后）</p>
+<p><b>3. 统一标度（核心发现）</b>：孪生难易由 ΔE（HCP−BCC 能量差）控制——ΔE 小（Fe/VB）→类 HCP 亚稳层错（孪晶胚）易形成；ΔE 大（Mo/W≈0.45 eV/atom）→无亚稳谷。合金层面经 VCA（价电子浓度加权平均）调 ΔE。<b>推理链</b>：孪生剪切后局部环境变类 HCP→该环境稳不稳由 ΔE 量→ΔE 是形核难易的代理。（问答 10-02/10-12）</p>
+<p><b>4. 应用（Rice 判据）</b>：把 γ 基能垒代入 Rice 判据（式 (9)）换算 K_It/K_Ie、与 K_Ic 比较，预测裂纹尖端韧/脆行为→WRe 临界 Re 浓度 22/28/48 at.%（对应 {112}/{110}/{100} 裂纹面）。（13、p17 conclusion）</p>
+</section>
+<section id="p19-s4"><h3>§四 结论与关键数值</h3>
+<ul>
+<li>Fe：2 层胚在 s_c≈0.4b 自发形成；近等腰 TB 基态 0.418 J/m²（比反射低 0.03）。</li>
+<li>生长能垒：孪生方向 0.031 J/m² vs <span class="obj" data-obj="反孪生" title="<span class="obj" data-obj="反孪晶" title="反孪晶">反孪晶</span>">反孪生</span> 0.514 J/m²（17 倍）；孪生总垒比 γ_ud 低 16%、反孪生高 37%。</li>
+<li>ΔE：Mo/W≈0.45 eV/atom（最大、无亚稳层错）；WRe 临界 Re 22/28/48 at.%（依裂纹面）。</li>
+<li>⟨001⟩ 压缩→反孪生方向→位错塑性；⟨110⟩ 压缩→孪生方向→孪生（与 Fe/Nb/Ta/Cr 单晶实验一致）。</li>
+</ul>
+</section>
+<section id="p19-s5"><h3>§五 与知识库衔接</h3>
+<ul>
+<li>图谱节点：m-rc、p-delta-e、c-nucleation（⑧RC/ΔE 标度）、e-tb-isosceles（近等腰 δ）、c-anti-twin-two-layer（口径对照）、q-nucleation-model。</li>
+<li>问答库：10 号文件全部 13 问（精读范本）；04-02（最小稳定厚度 RC 2 层口径）。</li>
+<li>译文：<code>_译文\Xiao2023_中文翻译_重译.md</code>。</li>
+</ul>
+</section>
+<section id="p20"><div class="paper-head"><span class="pid">20</span><h2>Wei 2024 — BCC 金属孪生的 disconnection 单元（论文核心）</h2></div>
+<blockquote>引用：Gaobing Wei, Hongxian Xie, Guanghong Lu, Shigenobu Ogata, "Disconnection units of twinning in body-centered-cubic metals", *Acta Materialia* 280 (2024) 120325。DOI: 10.1016/j.actamat.2024.120325。</blockquote>
+<blockquote>图谱 p-id：p18。层：第四层·前沿机制。extract：<code>_文献核验\extracts\Disconnection_units_of_twinning_in_body-centered-cubic_metals_2024_Wei.txt</code>（行号引用即此文件）。</blockquote>
+</section>
+<section id="p20-s1"><h3>§一 论文在解决什么问题</h3>
+<p>BCC 孪晶增厚靠<span class="obj" data-obj="孪晶界" title="孪晶界">孪晶界</span>迁移、迁移靠孪晶界上的 <span class="obj" data-obj="disconnection" title="disconnection">disconnection</span>（TD，位错+台阶复合缺陷）——但 TD 的原子结构与迁移力学仍不完整。本文用<b>界面缺陷理论（Hirth–Pond 晶体学）+ 双色图分析 + MD</b>系统研究 BCC Ta 的 {112}[111] 全部可能 TD：预言其 <span class="obj" data-obj="Burgers 矢量" title="Burgers 矢量">Burgers 矢量</span>、揭示单层/双层 TD 是基本构建单元及其迁移规则、解释多层 TD 的组合/分解花样，并证明 b=0 的 TD 只能在耦合载荷下整体驱动。</p>
+</section>
+<section id="p20-s2"><h3>§二 引言中的基础概念/名词（逐条）</h3>
+<blockquote>F=事实；T=推理。</blockquote>
+<table>
+<tr><td>术语</td><td>定义与解释</td><td>类别</td><td>出处</td></tr>
+<tr><td><span class="obj" data-obj="孪晶界" title="孪晶界">孪晶界</span>迁移（TB migration）</td><td>孪晶增厚经 TD 在现有孪晶面上的迁移实现——BCC 机制不如 HCP/FCC 清楚（多滑移系+<span class="obj" data-obj="孪生-<span class="obj" data-obj="反孪生" title="<span class="obj" data-obj="反孪晶" title="反孪晶">反孪晶</span>">反孪生</span>不对称" title="孪生-反孪生不对称">孪生-反孪生不对称</span>所致）</td><td>F</td><td>32–61</td></tr>
+<tr><td>{112}[111] 孪生为主模式</td><td>完美配位数关联的优选孪晶界能——BCC 的主要孪生模式</td><td>F</td><td>49–51</td></tr>
+<tr><td>TD（twinning <span class="obj" data-obj="disconnection" title="disconnection">disconnection</span>）</td><td>晶界中的特定线缺陷，由 <span class="obj" data-obj="Burgers 矢量" title="Burgers 矢量">Burgers 矢量</span> b 与台阶高度 h 定义——两者决定其稳定性与动力学</td><td>F</td><td>61–63</td></tr>
+<tr><td>界面缺陷理论（Hirth–Pond）</td><td>disconnection 的经典晶体学框架（双色图分析）</td><td>F</td><td>63–66、79–80</td></tr>
+<tr><td>零宏观应变孪生</td><td>FCC 中报告的 zero-macroscopic-strain 孪生先例——b=0 TD 研究的模板</td><td>F</td><td>86–90</td></tr>
+</table>
+</section>
+<section id="p20-s3"><h3>§三 核心：怎么做的（理论预言→MD 验证，四步）</h3>
+<p><b>1. 双色图预言</b>：用 dichromatic pattern 分析预言 {112}[111] 全部可能 TD 的 b（属于 DSC 晶格）与台阶 h。（23–24）</p>
+<p><b>2. 基本单元确立</b>：单层（b=1/6⟨111⟩、台阶 h₀）与双层（b=1/6⟨111⟩ 反向、2h₀）是<b>多层 TD 的基本构建单元</b>；同一切应力下两者迁移方向<b>完全相反</b>；"面对面"相遇时<b>不能相互湮灭</b>。（24–27）</p>
+<p><b>3. 迁移规则→组合花样</b>：单层/双层 TD 的迁移规则完整解释观察到的多层 TD 复杂组合与分解花样（按迁移行为分 3N-2/3N-1/3N 三类）。（27–28、p18 conclusion）</p>
+<p><b>4. 三层 b=0 的驱动条件</b>：三层 TD=单层（+1/6⟨111⟩、1h₀）与双层（−1/6⟨111⟩、2h₀）的复合——b 相加精确相消为 0、台阶相加 3h₀（Pond–Hirth 拓扑表：三层台阶平移内容为完整晶格矢量、净位错内容为零）；原子图景=第三层原子回原位、第一二层 shuffling；b=0 无宏观应变（zero-macroscopic-strain），纯剪切无 Peach–Koehler 力，<b>只能在耦合载荷下整体驱动</b>。（29–30、p18 conclusion）</p>
+</section>
+<section id="p20-s4"><h3>§四 结论与关键数值</h3>
+<ul>
+<li>单层 TD：b=1/6⟨111⟩、h₀、启动临界应力约 0.9 GPa；双层：反向 b、2h₀、约 1.9 GPa；三层：b=0、3h₀、仅耦合载荷驱动。（p18 conclusion）</li>
+<li>应力方向决定界面增厚或缩小。（p18 conclusion）</li>
+</ul>
+</section>
+<section id="p20-s5"><h3>§五 与知识库衔接</h3>
+<ul>
+<li>图谱节点：e-<span class="obj" data-obj="disconnection" title="disconnection">disconnection</span>、e-dsc、e-twinning-disl（界面身份）、c-growth。</li>
+<li>问答库：05-01/05-03/05-05/05-06/05-09（disconnection 全系列）。</li>
+<li>文献库：p18（已按原文核验；旧版"纯台阶 vs 位错-台阶耦合两分类、形核能/迁移势垒/降势垒/连续尺度建模"均杜撰已删）。</li>
+</ul>
+</section>
+<section id="p21"><div class="paper-head"><span class="pid">21</span><h2>Xie 2024 — BCC 金属反孪生的 shuffling 路径（论文核心）</h2></div>
+<blockquote>引用：Hongxian Xie 等, "Shuffling pathway of anti-twinning in body-centered-cubic metals", *Scripta Materialia* (2024) 116083。DOI: 10.1016/j.scriptamat.2024.116083。</blockquote>
+<blockquote>图谱 p-id：p19。层：第四层·前沿机制。extract：<code>_文献核验\extracts\Shuffling_pathway_of_anti-twinning_in_body-centered-cubic_metals_2024_Xie.txt</code>（行号引用即此文件）。</blockquote>
+</section>
+<section id="p21-s1"><h3>§一 论文在解决什么问题</h3>
+<p><span class="obj" data-obj="反孪生" title="<span class="obj" data-obj="反孪晶" title="反孪晶">反孪晶</span>">反孪生</span>在稳定 BCC 金属中长期未观察到（有人甚至认为反孪晶 <span class="obj" data-obj="disconnection" title="disconnection">disconnection</span> 是 sessile 的）；直到 Wang 2020 才提出逐层 1/3⟨111⟩ 剪切路径。本文在 Ta 纳米压痕 MD 中发现<b>全新的两层交错（two-layer-by-two-layer）反孪生路径</b>——{112} 面沿 [111] 与 [1̄1̄1̄] 方向的交错 shuffling-滑移——并用 DFT 多维层间滑移能量景观证明：其形核与生长能垒都<b>低于</b>逐层反孪生路径。</p>
+</section>
+<section id="p21-s2"><h3>§二 引言中的基础概念/名词（逐条）</h3>
+<blockquote>F=事实；T=推理。</blockquote>
+<table>
+<tr><td>术语</td><td>定义与解释</td><td>类别</td><td>出处</td></tr>
+<tr><td>常规孪生机制</td><td>{112} 面沿孪生方向相继滑移 ⅙[111] <span class="obj" data-obj="disconnection" title="disconnection">disconnection</span>（普通孪生的标准模式）</td><td>F</td><td>43–47</td></tr>
+<tr><td><span class="obj" data-obj="孪生-<span class="obj" data-obj="反孪生" title="<span class="obj" data-obj="反孪晶" title="反孪晶">反孪晶</span>">反孪生</span>不对称" title="孪生-反孪生不对称">孪生-反孪生不对称</span></td><td>分切应力沿反孪生方向时常规路径无法形成孪晶；Kumosa 1991：Fe 中孪生方向 [111] 弹性能更低</td><td>F</td><td>48–54</td></tr>
+<tr><td>逐层反孪生（Wang 2020）</td><td>每相继 {112} 面 1/3[111] 剪切——首个反孪生实验+MD 提议的路径</td><td>F</td><td>57–64</td></tr>
+<tr><td>两层交错反孪生（本文）</td><td>每双层含一层 ⅙⟨111⟩（b_p）滑移+一层 ⅓⟨111⟩（2b_p）滑移的交错 shuffling-sliding——净位移每双层 b_p、沿反孪生方向产生有限剪切</td><td>F（新机制）</td><td>23–29、p19 conclusion</td></tr>
+<tr><td>多维层间滑移能量景观</td><td>DFT 对多层原子运动路径的能量计算——比较不同路径能垒的工具</td><td>F</td><td>27–29</td></tr>
+</table>
+</section>
+<section id="p21-s3"><h3>§三 核心：怎么做的（新机制观察→路径拆解→能垒比较，三步）</h3>
+<p><b>1. MD 观察新机制</b>：Ta 纳米压痕（球形压头）MD 中观察到<span class="obj" data-obj="反孪生" title="<span class="obj" data-obj="反孪晶" title="反孪晶">反孪晶</span>">反孪生</span>；仔细检查原子运动发现孪晶经<b>两层交错</b>方式生长：{112} 面沿 [111] 与 [1̄1̄1̄] 方向交错 shuffling-滑移，沿反孪生方向产生有限剪切位移；对照实验：Ta 纳米柱 [001] 压缩只观察到 {112}[111] 普通孪生。（65–73、p19 conclusion）</p>
+<p><b>2. 路径拆解（把"怎么动"量化）</b>：每双层=一层 b_p=⅙⟨111⟩ 滑移 + 一层 2b_p=⅓⟨111⟩ 滑移；净位移每双层 +b_p；<b>有限剪切为逐层模式的 1/4</b>（常规反孪生的一半）。（p19 conclusion）</p>
+<p><b>3. DFT 能垒比较</b>：新 shuffling 反孪生过程的多维层间滑移能量景观显示——形核与生长能垒都低于逐层反孪生：Ta 反<span class="obj" data-obj="孪晶界" title="孪晶界">孪晶界</span>迁移能垒<b>两层交错 282 mJ/m² vs 逐层 417 mJ/m²</b>。（27–29、p19 conclusion）</p>
+</section>
+<section id="p21-s4"><h3>§四 结论与关键数值</h3>
+<ul>
+<li>两层交错<span class="obj" data-obj="反孪生" title="<span class="obj" data-obj="反孪晶" title="反孪晶">反孪晶</span>">反孪生</span>：每双层 b_p+2b_p、净 +b_p、有限剪切=逐层 1/4；能垒 282 vs 417 mJ/m²（Ta）。</li>
+<li>shuffling 能垒低于逐层滑移（临界应力未量化——p19 口径）。</li>
+<li>体系：Ta 纳米压痕 MD + DFT；对照 [001] 压缩仅普通孪生。</li>
+</ul>
+</section>
+<section id="p21-s5"><h3>§五 与知识库衔接</h3>
+<ul>
+<li>图谱节点：c-anti-twinning、c-anti-twin-nucleation（第二机制）、c-anti-twin-two-layer、c-shuffling（shuffle+滑移交替）、p-tb-migration-barrier、p-twin-shear（1/4 口径）。</li>
+<li>问答库：04-03（两层交错剪切量 1/4 的推导）、10-05 口径边界（Wang 2020 vs Xie 2024 层次区分）。</li>
+<li>文献库：p19（已按原文核验）。</li>
+</ul>
+</section>
+<section id="p22"><div class="paper-head"><span class="pid">22</span><h2>Hou 2025 — 氢调制位错反应与缺陷累积（论文核心）</h2></div>
+<blockquote>引用：Jie Hou, Ducheng Peng, Xiang-Shan Kong, Huiqiu Deng, Wangyu Hu, Cheng Chen, Jun Song, "Hydrogen modulated dislocation reaction and defect accumulation in bcc metals", *Acta Materialia* 301 (2025) 121524。DOI: 10.1016/j.actamat.2025.121524。</blockquote>
+<blockquote>图谱 p-id：p20。层：第四层·前沿机制。extract：<code>_文献核验\extracts\Hydrogen_modulated_dislocation_reaction_and_defect_accumulation_in_bcc_metals_2025_Hou.txt</code>（行号引用即此文件；另存 Hou2025_Hydrogen.txt）。</blockquote>
+</section>
+<section id="p22-s1"><h3>§一 论文在解决什么问题</h3>
+<p>溶质对<b>单根位错</b>的影响研究很多，但溶质对<b>位错-位错反应</b>的影响几乎空白。本文以 Fe 为模型 BCC 体系做原子模拟：氢（H）从根本上改变两根 ⟨111⟩/2 <span class="obj" data-obj="螺位错" title="螺位错">螺位错</span>的反应动力学——促进无 H 时不利的 <b>⟨001⟩ <span class="obj" data-obj="刃位错" title="刃位错">刃位错</span>结</b>形成；结一旦形成成为强钉扎点，阻碍螺位错运动、促进 ⟨001⟩ 空位环形成长大，最终局部累积为裂纹/起泡形核点。桥接原子尺度机制与氢致失效的宏观观察。</p>
+</section>
+<section id="p22-s2"><h3>§二 引言中的基础概念/名词（逐条）</h3>
+<blockquote>F=事实；T=推理。</blockquote>
+<table>
+<tr><td>术语</td><td>定义与解释</td><td>类别</td><td>出处</td></tr>
+<tr><td>位错反应</td><td>位错相遇合并成结（结点）——塑性、加工硬化与缺陷累积的基础</td><td>F</td><td>24–25</td></tr>
+<tr><td>Cottrell 气团</td><td>H 等间隙溶质在位错周围偏聚并拖拽——最早期、最有影响的 H-位错模型</td><td>F</td><td>55–57</td></tr>
+<tr><td>溶质拖拽/位错发射抑制</td><td>近原子模拟揭示：H 抑制位错运动（一致于拖拽理论）、H 抑制裂纹尖端位错发射促进解理</td><td>F</td><td>60–64</td></tr>
+<tr><td>H 促局部塑性/de-factant 理论</td><td>另一些机制主张 H 促进位错形核与滑移（增强局部塑性、de-factant、改性 kink-pair）——两派并存</td><td>F</td><td>79–81</td></tr>
+<tr><td>位错特征依赖偏聚</td><td>H 优先偏聚于 ⟨001⟩ <span class="obj" data-obj="刃位错" title="刃位错">刃位错</span>而非 ½⟨111⟩ <span class="obj" data-obj="螺位错" title="螺位错">螺位错</span>——本文机制的起点</td><td>T（结合能计算）</td><td>29–31</td></tr>
+</table>
+</section>
+<section id="p22-s3"><h3>§三 核心：怎么做的（能量账法，四步——问答 08-02 展开）</h3>
+<p><b>1. 建立能量账</b>：ΔE（无 H 形成结的代价）=E₃−(E₁cosθ₁+E₂cosθ₂)（式 (3)，θ 为位错与结的夹角投影）；H 结合自由能 F^H_b=nμ_H−(E^dis+H_tot−E^dis_tot)（式 (2)：H 从远场稀溶液储层搬进位错系统释放的自由能）。（08-02）</p>
+<p><b>2. 数值对账</b>：全体系最大 ΔE=+1.27 eV/Å（不利）；⟨001⟩ <span class="obj" data-obj="刃位错" title="刃位错">刃位错</span> 102.4 appm 时 F^H_b=2.89 eV/Å。<b>符号处理</b>：F^H_b 是"释放量"、进能量账带负号 → 净变化 +1.27−2.89=<b>−1.62 eV/Å&lt;0</b>——形成结+H 偏聚的净过程能量下降，不利反应变热力学有利。（08-02）</p>
+<p><b>3. 机制链（H 促结→钉扎→环→损伤）</b>：H 特征依赖偏聚（⟨001⟩ 刃结合能最高 0.588 eV）降低 ⟨001⟩ 刃位错线能量→稳定结→结=强钉扎点、阻碍 ½⟨111⟩ <span class="obj" data-obj="螺位错" title="螺位错">螺位错</span>滑移→促进 ⟨001⟩ 空位型<span class="obj" data-obj="位错环" title="位错环">位错环</span>形成长大→H 修饰环局部累积→微裂纹与表面起泡前驱体。（23–36）</p>
+<p><b>4. 对照实验</b>：H 浓度 0 与 102.4 appm 对照——无 H 时 19.47° 完全不结、70.52° 结 0.18、81.95° 结 0.16；加 H 后全部增强（0.09/0.37/0.40），机制对位错特征普适。（问答 07-05）</p>
+</section>
+<section id="p22-s4"><h3>§四 结论与关键数值</h3>
+<ul>
+<li>ΔE 最大 +1.27 eV/Å；F^H_b=2.89 eV/Å（102.4 appm）；净 −1.62 eV/Å。</li>
+<li>H 在 ⟨001⟩ <span class="obj" data-obj="刃位错" title="刃位错">刃位错</span>结合能 0.588 eV；⟨001⟩ 环 sessile 且 BCC 无 <span class="obj" data-obj="Frank 环" title="Frank 环">Frank 环</span>中间态（08-05）→ 环稳定钉扎。</li>
+<li>方法：MD+GCMC（LAMMPS、300 K、NVT/μVT、1 fs）；Fe–H 势（Ramasubramaniam 2009、Song 2013 修正）；晶格常数 2.86 Å。</li>
+<li>该机制对 BCC 金属普适。</li>
+</ul>
+</section>
+<section id="p22-s5"><h3>§五 与知识库衔接</h3>
+<ul>
+<li>图谱节点：c-hydrogen-effect、e-junction、e-frank-loop、e-disl-emission、p-hydrogen-binding（若存在）。</li>
+<li>问答库：08 号文件全部（08-01 otherwise unfavorable、08-02 能量账全套、08-05 ⟨001⟩ sessile 与空位环）；07-02/07-05（方法与特征角）。</li>
+<li>文献库：p20（已按原文核验）。</li>
+</ul>
+</section>
+<section id="p23"><div class="paper-head"><span class="pid">23</span><h2>Li 2023 — BCC 金属与合金变形孪生综述（论文核心）</h2></div>
+<blockquote>引用：X. Li 等（通讯 J. Wang），"Deformation twinning in body-centered cubic metals and alloys", *Progress in Materials Science* 139 (2023) 101160。DOI: 10.1016/j.pmatsci.2023.101160。</blockquote>
+<blockquote>图谱 p-id：p21。层：五·系统综述。extract：<code>_文献核验\extracts\Deformation_twinning_in_body-centered_cubic_metals_and_alloys_2023_Li.txt</code>（行号引用即此文件）。</blockquote>
+</section>
+<section id="p23-s1"><h3>§一 论文在解决什么问题</h3>
+<p>BCC 孪生行为因"本征不稳定层错+非平面<span class="obj" data-obj="位错芯" title="位错芯结构">位错芯</span>"而错综复杂，与 FCC/HCP 有成熟综述不同，BCC 缺一篇系统总结。本文系统总结近几十年 BCC 金属与合金变形孪生的进展，聚焦 {112}⟨111̄⟩ 孪晶的界面原子结构、形核与生长机制、<span class="obj" data-obj="孪生-<span class="obj" data-obj="反孪生" title="<span class="obj" data-obj="反孪晶" title="反孪晶">反孪晶</span>">反孪生</span>不对称" title="孪生-反孪生不对称">孪生-反孪生不对称</span>、影响因素、孪晶诱导断裂与独特性能，并汇总 {332}⟨113⟩ 等高指数孪晶——为设计高性能 BCC 材料提供基础。</p>
+</section>
+<section id="p23-s2"><h3>§二 引言中的基础概念/名词（逐条）</h3>
+<blockquote>F=事实；T=推理。</blockquote>
+<table>
+<tr><td>术语</td><td>定义与解释</td><td>类别</td><td>出处</td></tr>
+<tr><td>孪晶三分类（按形成机制）</td><td>生长孪晶（远离平衡的晶体生长过程）、退火孪晶（相变/再结晶/热处理）、变形孪晶（力学加载触发）</td><td>F</td><td>42–59</td></tr>
+<tr><td>变形孪晶定义</td><td>晶格的一部分经均匀晶格剪切、产物与母体同结构但镜像取向</td><td>F</td><td>60–61</td></tr>
+<tr><td>低对称 vs 高对称晶体</td><td>HCP/正交（α″）等低对称晶体难激活 5 个独立滑移系→孪生特别重要；FCC/BCC 高对称晶体孪生多见于低温/极端应变率</td><td>F</td><td>63–68</td></tr>
+<tr><td>BCC 孪生"intricate"的根源</td><td>本征不稳定层错+非平面<span class="obj" data-obj="位错芯" title="位错芯结构">位错芯</span>——综述要解开的结</td><td>F</td><td>73</td></tr>
+<tr><td>pencil glide（Taylor 1926）</td><td>α-Fe 单晶滑移总沿某晶向、但不总在严格晶面上——非 Schmid 行为的最早观察</td><td>F</td><td>85–95</td></tr>
+<tr><td>Christian 1983 的 BCC 特征清单</td><td>Schmid 定律失效、滑移不对称、反常滑移、固溶软化、韧脆转变</td><td>F</td><td>98–99</td></tr>
+</table>
+</section>
+<section id="p23-s3"><h3>§三 核心：怎么做的（综述的组织框架——即"知识地图"的分区）</h3>
+<p><b>1. TB 原子结构三构型</b>：反射型（镜面对称）、等腰型（=反射+1/12⟨111⟩ 平移、无镜像）、界面 ω 型（β-Ti 合金界面夹 ω 薄层）；材料依赖——Ta/Nb/Fe 倾向等腰、W/Mo 倾向反射、β-Ti 出现界面 ω。（p21 conclusion）</p>
+<p><b>2. 形核机制清单（§twin nucleation）</b>：综述明言各模型互不排斥、都以<span class="obj" data-obj="全位错" title="全位错">全位错</span>分解为基础——(I) <span class="obj" data-obj="极轴机制" title="极轴机制">极轴机制</span>（Cottrell–Bilby）；(II) <span class="obj" data-obj="位错芯" title="位错芯结构">位错芯</span>分解（Sleeswyk）；(III) <span class="obj" data-obj="刃位错" title="刃位错">刃位错</span>分解（Ogawa）；(IV) 滑移位错交互作用（Priestner–Leslie）；(V) 双交滑移（Pirouz→Lagerlöf zonal）。（图谱 c-nucleation 口径①–⑤）</p>
+<p><b>3. 生长与 GPFE</b>：GPFE 曲线 γ(λ)（λ=1 局部极大、λ=2–4 无亚稳极小、Mo λ=6 起稳定振荡）；γTBM=增厚一层能垒——BCC 形核≫生长、FCC 形核≈生长的能量根源；最小稳定厚度 3–6 层依材料/压力。（p-gpfe/p-critical-embryo-size）</p>
+<p><b>4. 不对称与影响因素</b>：<span class="obj" data-obj="孪生-<span class="obj" data-obj="反孪生" title="<span class="obj" data-obj="反孪晶" title="反孪晶">反孪晶</span>">反孪生</span>不对称" title="孪生-反孪生不对称">孪生-反孪生不对称</span>（DV98 框架）；合金元素经"改变位错构型应力集中与间隙原子占位约束"促进/抑制孪晶（非"降<span class="obj" data-obj="层错能" title="层错能 SFE">层错能</span>"）；温度/应变率经 Peierls 机理体现；大晶粒利孪晶（晶粒尺寸效应）vs 位错源失稳致孪晶优先（晶体尺寸效应）——两个"尺寸"分开。（p21 conclusion）</p>
+<p><b>5. 孪晶诱导断裂与高指数孪晶</b>：孪晶-裂纹竞争；{332}⟨113⟩ 等 β-Ti 高指数孪晶（β-Ti {332} 特征取向差约 50.5°）。</p>
+</section>
+<section id="p23-s4"><h3>§四 结论与关键数值</h3>
+<ul>
+<li>综述给出的口径性数值（库内引用时带出处）：<span class="obj" data-obj="孪生-<span class="obj" data-obj="反孪生" title="<span class="obj" data-obj="反孪晶" title="反孪晶">反孪晶</span>">反孪生</span>不对称" title="孪生-反孪生不对称">孪生-反孪生不对称</span>（Guiu 1969 等）；GPFE 判据（Vítek 1968、Ogata 2004）；β-Ti {332}⟨113⟩ 取向差约 50.5°；孪晶形核能垒远高于生长能垒。</li>
+</ul>
+</section>
+<section id="p23-s5"><h3>§五 与知识库衔接</h3>
+<ul>
+<li>图谱节点：p21（综述）挂接 c-nucleation、p-gpfe、p-critical-embryo-size、c-rhenium-effect、c-size-effect、p-twin-misorientation、e-tb-reflection/e-tb-isosceles 等 20+ 节点。</li>
+<li>问答库：04-01/04-02/04-05（形核五模型与 GPFE 判据出处）、06-01（DV98 引用面）、10 号文件多处。</li>
+<li>文献库：p21（Li 2023 综述）已按原文核验。</li>
+</ul>
+</section>
+
+</div>
+</main>
+<aside id="side"><button class="close" onclick="document.getElementById('side').style.display='none'">✕</button><h3 id="side-name"></h3><div class="cat" id="side-cat"></div><div class="def" id="side-def"></div></aside>
+<script>
+window.__DEFS__ = {"位错芯":{"name":"位错芯结构","def":"【内容】位错芯是以位错线为中心轴、向四周扩展到最大畸变量一半的空间（实体类；组成关系：是位错的一部分）；芯内部原子位移偏离弹性解、为非线弹性区，芯周围储存弹性能量（长程弹性场）。【本征】非线性畸变区。【确定方法】微分位移图（DDM，位移以完美晶格为参照；Vitek–Perrin–Bowen 1970）。【口径】定量（Peierls–Nabarro 模型）：① 错排=滑移面两侧原子相对位移 f(x)，按 f(x)=b/2+(b/π)arctan(x/ζ) 分布，b 为 Burgers 矢量、ζ 为芯半宽；② 芯边界取错排从 b/4 到 3b/4 处，半宽 ζ 处 f=b/2±b/4；刃位错 ζ=d/[2(1−ν)]、螺位错 ζ=d/2，d 为滑移面间距、ν 为泊松比；全宽 2ζ=d/(1−ν)（部分教科书以全宽作\"芯半径\"）。③ 芯能量=芯外弹性应变能（位错分解情形含偏位错间相互作用能）+芯内错配能（对 γ 面积分）。它决定 Peierls 应力、滑移习性与孪晶倾向。","cat":"entity"},"位错核":{"name":"位错芯结构","def":"【内容】位错芯是以位错线为中心轴、向四周扩展到最大畸变量一半的空间（实体类；组成关系：是位错的一部分）；芯内部原子位移偏离弹性解、为非线弹性区，芯周围储存弹性能量（长程弹性场）。【本征】非线性畸变区。【确定方法】微分位移图（DDM，位移以完美晶格为参照；Vitek–Perrin–Bowen 1970）。【口径】定量（Peierls–Nabarro 模型）：① 错排=滑移面两侧原子相对位移 f(x)，按 f(x)=b/2+(b/π)arctan(x/ζ) 分布，b 为 Burgers 矢量、ζ 为芯半宽；② 芯边界取错排从 b/4 到 3b/4 处，半宽 ζ 处 f=b/2±b/4；刃位错 ζ=d/[2(1−ν)]、螺位错 ζ=d/2，d 为滑移面间距、ν 为泊松比；全宽 2ζ=d/(1−ν)（部分教科书以全宽作\"芯半径\"）。③ 芯能量=芯外弹性应变能（位错分解情形含偏位错间相互作用能）+芯内错配能（对 γ 面积分）。它决定 Peierls 应力、滑移习性与孪晶倾向。","cat":"entity"},"disconnection":{"name":"disconnection","def":"【内容】界面上带台阶的位错（实体类；is-a 界面线缺陷，宿主=孪晶界/晶界）。用最基础的类比：位错是晶体内部\"绕一圈回路不闭合\"的线缺陷；disconnection 是同一种东西，宿主换成界面——它是界面内部的一条线缺陷，携带两个捆绑的量：台阶 h（界面在缺陷线两侧错开的高度，以界面面间距计）与位错内容 b（绕缺陷线一圈的 Burgers 回路在双晶中的闭合失败量）。【本征】b 与 h 各自沿界面线守恒、不可分离；b 必须属于 DSC 晶格（远离线处界面须保持重合结构、闭合失败量只有取\"把 CSL 映到自身\"的 DSC 平移才不扰动远处界面）。【确定方法】Burgers 回路（参照：双晶/CSL 框架）+ 台阶高度测量（TEM/相场）。【口径】它沿界面保守滑移，界面随之沿法向迁移 h，一层晶体转化为另一层；b=0 是位错内容消失的退化情形（纯台阶）。BCC {112} 共格孪晶界实例（Wei 2024，数值待核验）：单层 b=1/6⟨111⟩、h=1 层（孪生位错在界面上就是这个身份，启动临界应力约 0.9 GPa）；双层 b=1/6⟨111⟩ 反向、h=2 层（约 1.9 GPa）；三层 b=0、h=3 层（原文构型：三层=单层 +b^β₁/₁ 与双层 −b^β₂/₂ 的复合——b 相加 +1/6⟨111⟩−1/6⟨111⟩=0 精确相消、台阶相加 1h₀+2h₀=3h₀；迁移后第三层原子回到原位、第一二层做 shuffling；b=0 故不产生宏观应变，原文称 zero-macroscopic-strain twin disconnection，且只能在耦合载荷下整体驱动）。非共格界面与四层结构上的分数 b（0.13b/0.2b/2/3b）不在 Wei 2024 的单元清单内，属新观测待核验（1/3[111] α 型在原文 Table 1 中，2026-08-26 二轮核验修正）。","cat":"entity"},"孪生位错":{"name":"孪生位错","def":"【内容】Burgers 矢量 b_t=a/6⟨111⟩ 的不全位错（实体类；is-a 位错）。【本征】b=a/6⟨111⟩。【确定方法】DXA/Burgers 回路识别。【口径】在孪晶界上滑移使孪晶逐层增厚；反孪生方向则为 1/3⟨111⟩ 剪切与 shuffling 路径（Xie 2024）。","cat":"entity"},"孪生偏位错":{"name":"孪生位错","def":"【内容】Burgers 矢量 b_t=a/6⟨111⟩ 的不全位错——{112} 孪晶增厚的载体（关系见边：在孪晶界上滑移使孪晶逐层增厚；在界面上即单层 disconnection）。【本征】b_t=a/6⟨111⟩；is-a 不全位错。【确定方法】Burgers 回路（参照：完美晶格）；b_t 是 {112} 面完成一层孪晶切变的最小不全位错（s=1/√2 折算）。【口径】Wang 2015 原位观察其逐层形核；反孪生方向载体为 1/3⟨111⟩（Wang 2020，见 e-third-partial）。","cat":"entity"},"分数位错":{"name":"分数位错","def":"【内容】Burgers 矢量不必为有理矢量、夹不稳定广义层错带的位错（is-a 不全位错；DV73 术语）。【本征】带内层错矢量沿带宽连续变化、等价于 Burgers 矢量密度连续分布。【确定方法】γ 面无稳定极小时的芯分解分析。【口径】BCC 特有（无稳定层错）；具体芯构型 b/3、b/6 为有理特例（DV98）。","cat":"entity"},"zonal 位错":{"name":"zonal dislocation","def":"【内容】三个共线 1/6⟨111⟩ 不全位错分布于三个相邻 {112} 面的复合缺陷（Lagerlöf 1993 术语）。【本征】组成=3×1/6⟨111⟩ 共线偏位错（三个相邻 {112} 面）。【确定方法】½⟨111⟩ 螺位错三重分解（Sleeswyk 1963）；弓出方式同 Frank-Read 源（关系见边）。【口径】层错能 γ=μa/(8π√2)：Fe≈680、Mo≈1150、W≈1340、Nb≈345 mJ/m²；分离宽度 w≈0.54b（几何约束反推口径，Lagerlöf 1993）。","cat":"entity"},"反孪生":{"name":"反孪晶","def":"【内容】{112} 面沿孪生反方向的切变模式（机制类）。【本征】孪生方向 η₁=[1̄1̄1]、反孪生方向 −η₁=[111̄]（把 [1̄1̄1] 整体取反：(−1,−1,1)→(1,1,−1)，横线只标在第三个分量；验证在 (112) 面内：(112)·[111̄]=1+1−2=0）；必须经多原子协同迁动完成（反孪生剪切把原子推向正对位形 0.816a，光靠切过不去）；临界应力高于正向孪生。【确定方法】γ 面计算（{112} γ 不对称，见 p-gamma-112-asymmetry）+ 原位观察（Wang 2020）。【口径】载体：反孪生每连续 {112} 面产生 1/3⟨111⟩ 剪切（Wang 2020：E 层原子须移 1/3[111̄] 才能成镜像；原文观察体系为规范系 (112)[1̄1̄1] 的对称等价变体 K₁=(1̄12̄)——[1̄10] 压缩下普通孪生 ⅙[1̄11](1̄12̄)、拉伸下反孪生 ⅓[11̄1̄](1̄12̄)，同一孪晶面、方向相反（[11̄1̄]=−[1̄11]）；extract 原文核验：Fig.1 图注 \"(1̄12̄) planes along [110]\"）；两层交错 shuffling-滑移路径能垒 282 mJ/m²（Xie 2024，迁动能垒低于逐层滑移）。","cat":"mechanism"},"反孪晶":{"name":"反孪晶","def":"【内容】{112} 面沿孪生反方向的切变模式（机制类）：孪生方向 η₁=[1̄1̄1]、反孪生方向 −η₁=[111̄]（整体取反、横线只在第三个分量，(112)·[111̄]=1+1−2=0 在面内），必须经多原子协同迁动，临界应力高于正向孪生。【本征】反孪生方向。【确定方法】MD/DFT 反孪生路径计算。【口径】MD 与 DFT 显示反孪晶增厚能垒约 0.163 J/m²（Wang 2020）、两层交错迁动滑移路径能垒 282 mJ/m²（Xie 2024）。","cat":"mechanism"},"孪生-反孪生不对称":{"name":"孪生-反孪生不对称","def":"【内容】{112} 面沿孪生与反孪生方向剪切阻力的差异（效应类）。【本征】根源={112} γ 面不对称。【确定方法】γ 面计算（DV98 Fig.2/3）+ 取向相关 CRSS 实验。【口径】推导链（DV98 原文核验）见 p-gamma-112-asymmetry：① Neumann 原理允许 ±⟨111⟩ 不等价——{112} 面内 ⊥⟨111⟩ 的 ⟨110⟩ 方向 [1̄10]（(112)·[1̄10]=−1+1+0=0 ✓），其垂面 (1̄10) 是镜面，只反演面内横向分量、γ 图只关于 [111] 轴镜像对称，不约束正反方向；② γ 面计算证实孪生方向上升较缓；③ 量级由 ⟨111⟩ 剪切模量（VIB≈3×VB）与内聚能共同决定（肩部）。芯中刃分量是外禀非滑移效应的媒介，不是本征不对称的成因。实验：Guiu (1969) 77 K Mo 反孪生 CRSS 高约 50%（DV98 引）。","cat":"effect"},"极轴机制":{"name":"极轴机制","def":"【内容】Cottrell–Bilby 历史形核模型（机制类；2026-08-26 标注：已不作为 BCC 孪晶形核与增厚的一般机制，仅存历史价值）：与孪晶面斜交的全位错在结点处分解为两个不全位错——其一 Burgers 矢量垂直于孪晶面、大小恰为一个孪晶面间距（sessile 极轴位错），其二为孪晶面内可滑移的不全位错；后者一端被结点钉扎、绕极轴作螺旋扫动、每圈沿法线前进一个面间距。【本征】载体=极轴位错+旋转不全位错。【确定方法】TEM 观察 super-pole 构型（Ogawa & Maddin 1964）。【口径】FCC 中极轴为 Frank 不全位错 a/3⟨111⟩；BCC 中极轴由横穿螺位错充当（Sleeswyk 1963）；Sleeswyk 1974（Phil. Mag. 29, 407）讨论 CB 型极轴生长约 50 原子层即停止（Lagerlöf 1993 转引）；Mahajan 1972 实验显示母滑移位错 ½⟨111⟩ 与孪生偏位错 ⅙⟨111⟩ 平行、与 CB 分解反应前提矛盾，原文结论 contradict the physical basis of the pole mechanism。","cat":"mechanism"},"极轴位错":{"name":"极轴位错","def":"【内容】极轴机制中的不动（sessile）位错（实体类；is-a 位错，机制角色）。sessile 的含义：Burgers 矢量垂直于孪晶面（法向分量恰为一个孪晶面间距 d），在孪晶面内分量为零，不能在该面滑移；作为非晶格平移矢量也不能在其他面保守滑移，且被结点钉扎。【本征】sessile（被结点钉扎）。【确定方法】Burgers 回路 + 结点构型分析。【口径】FCC 中即 Frank 不全位错 a/3⟨111⟩（模长等于 d111）。BCC 中极轴由横穿螺位错充当（Sleeswyk 1963），横穿螺位错指位错线与 {112} 孪晶面斜交、从孪晶生长区一侧穿到另一侧的螺位错（1/2⟨111⟩ 螺位错线沿 ⟨111⟩，不在 {112} 面内，天然横穿）：生长中的孪生偏位错无法切过它，只能绕其旋转，每转一圈沿 {112} 法线前进一个面间距；Frank–Nicholas 互补孪生偏位错 1/3⟨111⟩ 与 1/6⟨111⟩ 同向、位于 {112} 面内，只能以三层孪晶形式移动（非 sessile）；CB 极轴的 sessile 分量是 1/3⟨112⟩（垂直于 {112} 面），两者是不同矢量、不同角色（2026-08-26 经 Sleeswyk 1963 原文核验修正）。作用：钉扎旋转偏位错一端，并使其每转一圈沿法线前进一个面间距。Sleeswyk 1974（Phil. Mag. 29, 407）讨论 CB 型极轴生长约 50 原子层即停止（Lagerlöf 1993 转引）、zonal 模型无需极轴机制；Ogawa & Maddin (1964) 观察到的 super-pole（4 组共 12 根孪生位错）构型为极轴机制的直接实验证据（2026-08-26 经英文原文核验恢复，p.717-720）。","cat":"entity"},"孪晶胚":{"name":"孪晶胚","def":"【内容】形核早期具有孪晶晶体学身份的临界核心构型。【本征】晶体学身份由孪生要素确立。【确定方法】原位 HRTEM（Wang 2015 原文仅称 twin embryo）或原子模拟识别。【口径】BCC 中由三个共线 1/6⟨111⟩ 不全位错分布于三个相邻 {112} 面构成（zonal 为 Lagerlöf 后期术语；Sleeswyk 原文称 three-layer twin；Wang 2015 无 zonal 结构描述）。","cat":"entity"},"临界胚尺寸":{"name":"临界胚尺寸","def":"【内容】孪晶形核需克服的临界构型：胚的界面能与体积能量收益平衡处的尺寸（数值属性）。【本征】—。【确定方法】两口径：① 晶体学/机制口径——三个共线 1/6⟨111⟩ 不全位错在三个相邻 {112} 面扫出的三层孪晶胚（zonal，Lagerlöf 1993）；② 能量稳定性口径——GPFE 判据（Li 2023 综述）。【口径】GPFE：BCC 无稳定本征层错（Vítek 1968），γ(λ) 在 λ=1 局部极大、λ=2–4 无亚稳极小，最小稳定厚度 3–6 层依材料/压力：Vítek 1970 n≥3、Ojha Fe-50Cr 3 层、Ogata Mo 6 层、Zhang DFT 高压 3/零压 6 层；W 实验最小 6 层（≈0.77 nm）；modified Orowan n*≈8α/3τb 代入 W（τ≈9 GPa、α=1482 mJ/m²、b=0.0909 nm）得 n*≈5→6 层。形核能垒远高于生长能垒（p-nuc-growth-stress）。","cat":"property"},"Neumann 原理":{"name":"Neumann 原理","def":"【内容】晶体结构具有的任何对称性，其物理性质也必须具有（law 类）。【本征】物理性质受结构对称性约束。【确定方法】对称性-性质对应检验。【口径】DV98 原文转引：Any kind of symmetry which is possessed by the crystal structure of the material is also possessed by any physical property of the material。在 BCC 的应用：点群不要求 ±⟨111⟩ 剪切等价——{110} 面例外（含 [111] 的 (1̄10) 面，法线 [1̄10] 本身是 ⟨110⟩ 二重轴，绕法线 180° 旋转把面内 [111] 映成反向 [1̄1̄1̄]、强制 γ(+f)=γ(−f)）；{112} 面内 ⊥⟨111⟩ 的 ⟨110⟩ 方向 [1̄10]（(112)·[1̄10]=−1+1+0=0 ✓），其垂面 (1̄10) 是 BCC 镜面——固定 (112) 面与 [111] 方向、只反演面内横向分量，γ 图只关于 [111] 轴镜像对称，不约束 ±⟨111⟩ 不等价。是孪生-反孪生不对称被允许的对称性依据。","cat":"law"},"简并芯":{"name":"简并/非简并芯","def":"【内容】螺位错芯按对称性分的两类（实体类）。【本征】⟨111⟩ 带轴三重旋转对称两类皆具；分化在 ⟨110⟩ 二重轴：简并芯（VIB 族 Cr/Mo/W）存在两个由 ⟨110⟩ 二重轴联系的对称等价变体，由三个 b/3 分数位错构成，芯中刃分量显著，对非滑移应力响应强；非简并芯（VB 族 V/Nb/Ta）对 ⟨110⟩ 二重轴不变、构型唯一，由六个 b/6 分数位错构成，刃分量很小，响应弱。【确定方法】微分位移图 + 对称性分析。【口径】判据为 {110} γ 面能量比较 g(b/3) vs 2g(b/6)（DV98 原文只给相对单位：Mo b/3=0.77、b/6=0.46；绝对 mJ/m² 值出自 Vitek 2004：FS 2133<2508、BOP 3579>3090）。","cat":"entity"},"非简并芯":{"name":"简并/非简并芯","def":"【内容】螺位错芯按对称性分的两类（实体类）。【本征】⟨111⟩ 带轴三重旋转对称两类皆具；分化在 ⟨110⟩ 二重轴：简并芯（VIB 族 Cr/Mo/W）存在两个由 ⟨110⟩ 二重轴联系的对称等价变体，由三个 b/3 分数位错构成，芯中刃分量显著，对非滑移应力响应强；非简并芯（VB 族 V/Nb/Ta）对 ⟨110⟩ 二重轴不变、构型唯一，由六个 b/6 分数位错构成，刃分量很小，响应弱。【确定方法】微分位移图 + 对称性分析。【口径】判据为 {110} γ 面能量比较 g(b/3) vs 2g(b/6)（DV98 原文只给相对单位：Mo b/3=0.77、b/6=0.46；绝对 mJ/m² 值出自 Vitek 2004：FS 2133<2508、BOP 3579>3090）。","cat":"entity"},"Peierls 应力":{"name":"Peierls 应力","def":"【内容】位错在完整晶格中运动的周期性晶格摩擦应力（数值属性）。【本征】晶格周期势。【确定方法】MD/静力学逐取向计算。【口径】BCC 典型 10⁻³~10⁻² G、FCC 约 10⁻⁵ G；注意 0 K 静力学口径与有限温度结果的差异（Cai 2004：原子计算高估屈服 2–4 倍；旧版「Cai 2005」笔误，2026-09 修正）。注：Peierls 应力（应力口径）与 Peierls 势垒（能量口径）是晶格周期势的一体两面，文献中常混用，本节点以应力口径为准。","cat":"property"},"Peierls 势垒":{"name":"Peierls 应力","def":"【内容】位错在完整晶格中运动需克服的周期性晶格摩擦应力（数值属性；应力口径，与能量口径的 Peierls 势垒为一体两面）。【本征】晶格周期性阻力。【确定方法】DV98 计算口径：在 (1̄01) 面施加 [111] 纯滑移应力，按各向异性弹性解叠加位移场后静力学弛豫，递增应力至芯跳入相邻 Peierls 谷——该临界应力即 Peierls 应力。【口径】BCC 4.2 K 约 5×10⁻³μ、FCC 约 10⁻⁵μ（DV98 p.1481）；抑制芯刃分量可使 Peierls 应力降约 4 倍（DV98 转引 Duesbery 1989）。校勘：extract/译文记 (101) 系横线丢失，按原文同段坐标系正交性补回 (1̄01)（[111] 在面内：(1̄01)·[111]=−1+0+1=0 ✓）。","cat":"property"},"γ 面":{"name":"γ-surface 广义层错能","def":"【内容】沿晶面切开、两半相对位移任意矢量 f 后重新接合的单位面积剩余能量曲面 γ(f)（数值属性）。【本征】周期性：γ(f)=γ(f+格矢)。【确定方法】DFT/分子静力学：刚性剪切+弛豫（口径因文而异：DV98 分子静力学、Ojha 2014 DFT、Xiao 2023 三约束口径）。【口径】BCC {110} 中心对称、{112} 不对称（见 p-gamma-112-asymmetry）。","cat":"property"},"CSL":{"name":"重合位置点阵 CSL","def":"【内容】两晶格按特定取向差重叠时，两套格点公共位置构成的子点阵（实体类）。【本征】Σ 等于 CSL 元胞体积与晶胞体积之比（重合点密度的倒数）。【确定方法】双晶取向差计算（旋转矩阵/四元数）。【口径】BCC/FCC 的孪晶界对应 Σ3；CSL 与 DSC 晶格互为倒格子（Grimmer 1974 互易定理），DSC 矢量即保持 CSL 不变的位移矢量。","cat":"entity"},"扭折对":{"name":"扭折对","def":"【内容】位错线跨越 Peierls 势垒的热激活单元（实体类；宿主=晶内位错线）：直位错线局部双弯折形成一对反号 kink，两 kink 沿位错线相背扩展，位错线整体前进一个 Peierls 周期。【本征】kink 无自身 Burgers 矢量，成对出现、可成对湮灭，是位错线的几何扰动而非独立缺陷。【确定方法】MD/NEB kink-pair 形核计算。【口径】区别于界面上的 disconnection：宿主、拓扑内容、守恒律三者都不同；形核能 1.2 eV、迁移 Peierls 应力约 20 MPa（Mo, FS，Cai 2004）。","cat":"entity"},"Frank-Read 源":{"name":"Frank-Read 源","def":"【内容】两端被钉扎的位错段在切应力下弓出、绕钉扎点旋转并反复放出位错环的位错增殖机制（机制类）。【本征】开动应力约为 τ=Gb/L（L 为钉扎点间距）。【确定方法】TEM 动态观察位错环序列。【口径】zonal 位错以同样方式弓出铺展三层孪晶。","cat":"entity"},"发射位错":{"name":"位错发射","def":"【内容】界面（孪晶界/晶界/裂尖/孪晶尖端）作为位错源，按 Burgers 矢量守恒把界面残余含量以完整或不完全位错的形式发射进基体（行为类；主体=界面）。【本征】—。【确定方法】原位 TEM 观察发射过程。【口径】是孪晶与位错相互转化的微观通道——孪晶缩薄、退孪生、孪晶尖端放出位错都走这条路，发射后界面回到低能构型。注意：位错发射不是一切孪生机制的固有伴随现象——均匀形核没有外来位错参与启动（其孪晶边界由 1/6⟨111⟩ 不全位错界定属转变产物，非形核前提），极轴机制与三层分解机制的 Burgers 收支在机制内部平衡，同样不需要发射；发射只在与滑移位错相互作用、或孪晶尖端应力集中形核位错的条件下发生。文献锚点：Sleeswyk 1962 的 emissary dislocation（孪晶尖端发射，α-Fe 发射滑移线）与 Wang 2015 原位观察的孪晶尖端逐层发射 1/6⟨111⟩ 不全位错。","cat":"entity"},"去孪生":{"name":"退孪晶","def":"【内容】应力反向或释放时孪晶界逆向迁移、孪晶收缩或消失的过程（过程类）。【本征】与孪生同载体、方向相反（孪生位错反向滑移）。【确定方法】原位 HRTEM 卸载观察（Wang 2015 可逆去孪生）。【口径】伪弹性/超弹性的机制基础（c-superelasticity）。","cat":"process"},"层错能":{"name":"层错能 SFE","def":"【内容】单位面积堆垛层错的能量代价（数值属性；γ 面的稳定极小值）。【本征】γ 面极小值。【确定方法】DFT γ 面计算/实验反推。【口径】性质：偏位错平衡间距 d∝1/γ_SF（教科书公式）。BCC {112} 层错能口径（引用必带、勿混）：Lagerlöf 1993 几何反推 γ=μa/(8π√2) 给出 Fe≈680、Mo≈1150、W≈1340、Nb≈345 mJ/m²；库内近似口径 Mo≈300–400 mJ/m²（与前者口径不同）；Ojha 2014 DFT 五参数（γ_us/γ_sf/γ_ut/2γ_tsf/γ_TBM）见 p-gamma-usf 与 p-gpfe。","cat":"property"},"共格孪晶界":{"name":"共格孪晶界","def":"【内容】界面平行于 {112} 孪晶面、两侧格点在界面处完全重合匹配的孪晶界（实体类；is-a 孪晶界）。【本征】共格。【确定方法】HRTEM/HAADF-STEM 界面原子构型观察。【口径】共格≠镜像对称——镜像只是反射型构型（e-tb-reflection）的特征，等腰型（e-tb-isosceles）共格但无镜像；能量约一般大角晶界 1/10 量级（通用口径，见 p-ctb-energy）。","cat":"entity"},"非共格孪晶界":{"name":"非共格孪晶界","def":"【内容】界面偏离 {112} 孪晶面、由台阶与 disconnection 构成的非共格孪晶界（实体类；is-a 孪晶界）。【本征】由台阶/disconnection 构成。【确定方法】HRTEM 观察界面台阶结构。【口径】能量高于共格界为通用表述（Wei 2024 原文无 ITB 能量比较内容，已去挂）。","cat":"entity"},"孪晶界":{"name":"孪晶界","def":"【内容】分隔孪晶与基体的界面（实体类；is-a 面缺陷）。【本征】界面取向 {112}。【确定方法】MD/NEB 界面构型弛豫 + 迁移能垒计算。【口径】MD/NEB 研究其原子构型（反射/等腰/界面ω）与迁移能垒（disconnection 为迁移载体）。","cat":"entity"},"螺位错":{"name":"螺位错","def":"【内容】Burgers 矢量平行于位错线的位错（实体类；is-a 位错）。【本征】b∥ξ；BCC 中典型 b=a/2⟨111⟩。【确定方法】b 与线方向夹角判定（b 经 Burgers 回路对比完美晶格测定）。【口径】芯非平面扩展（前提：宿主 BCC，Vitek 2004）；BCC 塑性由它承载，其运动三模式（Marian 2004）是 MD 芯动力学的主线。","cat":"entity"},"刃位错":{"name":"刃位错","def":"【内容】Burgers 矢量垂直于位错线的位错（实体类；is-a 位错），组成=半原子面。【本征】b⊥ξ（θ=90°）。【确定方法】b 与线方向夹角判定。【口径】教科书。","cat":"entity"},"Burgers 矢量":{"name":"Burgers 矢量","def":"【内容】位错的表征矢量：晶格平移失调量。【本征】模长 |b| 与方向；同一根位错线上各点 b 恒定；结点处矢量和为零（守恒）。【确定方法】在含缺陷晶体中绕位错线作闭合回路、与完美晶格同回路比对（参照：完美晶格），闭合失败量即 b（FS/RH 约定）。【口径】全位错 b=完整晶格平移矢量、不全位错为其分数；BCC 最短平移矢量 a/2⟨111⟩（典型全位错 b）、孪生位错 a/6⟨111⟩、分数位错可为任意有理/无理矢量（带内层错矢量沿带宽连续变化）。","cat":"entity"},"偏位错":{"name":"不全位错","def":"【内容】Burgers 矢量小于完整晶格平移矢量的位错（is-a 位错）。【本征】b∉晶格平移矢量集；扫过后遗留层错。【确定方法】Burgers 回路（参照：带层错的参考晶体）。【口径】BCC 中常为分数位错（夹不稳定层错带，见 e-fractional）。","cat":"entity"},"不全位错":{"name":"不全位错","def":"【内容】Burgers 矢量小于完整晶格平移矢量的位错（is-a 位错）。【本征】b∉晶格平移矢量集；扫过后遗留层错。【确定方法】Burgers 回路（参照：带层错的参考晶体）。【口径】BCC 中常为分数位错（夹不稳定层错带，见 e-fractional）。","cat":"entity"},"全位错":{"name":"全位错","def":"【内容】Burgers 矢量为完整晶格平移矢量的位错（is-a 位错）。【本征】b∈晶格平移矢量集。【确定方法】Burgers 回路比对完美晶格。【口径】BCC 典型 b=a/2⟨111⟩；FCC 典型 b=a/2⟨110⟩（教科书）。","cat":"entity"},"位错环":{"name":"位错环","def":"【内容】闭合的位错线（实体类；is-a 位错线形态）。【本征】环上各点线方向不同，与固定 b 的相对取向逐点变化，故同一环同时含刃段（线⊥b 处）与螺段（线∥b 处）。【确定方法】TEM 环状衬度观察。【口径】可经 Frank-Read 源机制反复弓出扩展。教科书示意图中\"圆形的位错\"即位错环，螺位错与刃位错是环上的不同段而非不同形状。","cat":"entity"},"位错结":{"name":"位错结","def":"【内容】位错反应形成的连接构型（实体类；组成=两参与位错）。【本征】—。【确定方法】DXA 结点识别 + 原子模拟。【口径】Hou 2025：H 在 ⟨001⟩ 刃位错结合能 0.588 eV、显著促进 ⟨001⟩ 结形成，氢稳定的结钉扎 1/2⟨111⟩ 螺位错。","cat":"entity"},"孪晶尖端":{"name":"孪晶尖端","def":"【内容】孪晶片与基体的前沿界面（实体类）：孪晶片长度方向的终止边界，由相继 {112} 面上的孪生位错列对齐构成——即非共格孪晶界（ITB）。【本征】界面取向偏离 (112)（非共格）；尖端前方应力集中。【确定方法】原位 HRTEM 观察尖端位错活动（Li 2024 图 1：CTB 上孪生偏位错成簇、每簇约 0.4 nm=3 个台阶）；劳厄微衍射测尖端应变场（m-lauemicro）。【口径】Li 2024（Nat Commun 15:560）尺寸依赖两模式：生长控制型（Ta >15 nm）——有限尺寸孪晶、倾斜孪晶界（莫尔条纹）、迟滞生长、最终穿透纳米晶截面；形核控制型（<15 nm）——孪晶段快速贯穿直径、位于两平行 CTB 之间、像力助长。孪晶可贯穿晶体（出口=自由表面），亦可在晶内被母体包围终止（块体透镜状孪晶、发射型 ITB：Ogawa–Maddin 1964）；前缘孪生偏位错运动=侧向扩展、需载荷持续增加（Li 2024 MD 图 4d）；Wang 2015：尖端驱动 1/6[1̄11] 在相邻 (1̄12) 面逐层增厚。","cat":"entity"},"孪晶片":{"name":"孪晶片","def":"【内容】透镜状或板条状的孪晶片形貌（实体类）。【本征】片状。【确定方法】TEM 形貌观察。【口径】—。","cat":"entity"},"堆垛层错":{"name":"堆垛层错","def":"【内容】正常堆垛次序被打断形成的二维面缺陷（is-a 面缺陷）。【本征】二维、两侧堆垛序错配。【确定方法】衍射/HRTEM 观察堆垛序；能量即层错能（p-sfe，关系见边）。【口径】BCC {112} 面错排即孪晶前驱；BCC 无稳定内禀层错（λ=1 为局部极大，Vítek 1968）。","cat":"entity"},"Shockley 偏位错":{"name":"Shockley 偏位错","def":"【内容】FCC 的全位错分解产物（实体类；is-a 位错，宿主=FCC）：1/2⟨110⟩ 在 {111} 面分解为两根 b=1/6⟨211⟩ 的不全位错（1/2[110]→1/6[211]+1/6[121̄] 型）。【本征】b 位于 {111} 面内、可滑移（glissile）。【确定方法】弱束暗场 TEM/HRTEM 分解产物表征。【口径】滑过后把 A 位原子推到 B/C 位、产生一片堆垛层错，两根之间夹内禀层错（ISF）。BCC 无对应物：BCC 的 {110}/{112} 无稳定层错，全位错分解产物是夹不稳定层错带的分数位错。教科书通识（Hull & Bacon）。","cat":"entity"},"Frank 环":{"name":"Frank 环","def":"【内容】FCC 的空位盘在 {111} 面塌缩形成的位错环（实体类；is-a 位错环）：边界线 b=1/3⟨111⟩、垂直于 {111} 面（纯刃、sessile，不能在该面滑移），环内夹一片内禀层错（faulted loop）。【本征】b=1/3⟨111⟩、sessile。【确定方法】TEM 环衍射分析。【口径】去层错（unfaulting）=环内形核一根 Shockley 偏位错扫过环面，把层错扫掉，Frank 环变完美环（1/3⟨111⟩+1/6⟨211⟩→1/2⟨110⟩ 型反应）。BCC 无稳定层错，空位塌缩直接形成完美环（b=1/2⟨111⟩ 或 ⟨001⟩），没有 Frank 环中间态、也就没有去层错过程——Hou 2025 用这个事实论证 ⟨001⟩ 空位环在塑性变形中保持稳定（其引文 [65]）。教科书通识 + Hou 2025 引文背景。","cat":"entity"}};
+(function(){
+  var defs = window.__DEFS__;
+  document.addEventListener('click', function(e){
+    var t = e.target;
+    if (t.classList && t.classList.contains('obj')) {
+      var key = t.getAttribute('data-obj');
+      var d = defs[key];
+      if (d) {
+        document.getElementById('side-name').textContent = d.name;
+        document.getElementById('side-cat').textContent = '知识图谱对象 · ' + (d.cat || '—');
+        document.getElementById('side-def').textContent = d.def;
+        document.getElementById('side').style.display = 'block';
+      }
+    }
+  });
+  var input = document.getElementById('q');
+  var content = document.getElementById('content');
+  function clearMark(){ var hs = content.querySelectorAll('mark'); for (var i=0;i<hs.length;i++){ var p=hs[i].parentNode; p.replaceChild(document.createTextNode(hs[i].textContent), hs[i]); p.normalize(); } }
+  function doSearch(){
+    var v = input.value.trim();
+    var secs = content.querySelectorAll('section');
+    for (var i=0;i<secs.length;i++){ secs[i].style.display = v ? 'none' : ''; }
+    clearMark();
+    if (!v) return;
+    var first = null;
+    for (var i=0;i<secs.length;i++){
+      var sec = secs[i];
+      if (sec.textContent.indexOf(v) >= 0) {
+        sec.style.display = '';
+        if (!first) first = sec;
+        highlight(sec, v);
+      }
+    }
+    if (!first) {
+      var nh = document.getElementById('nohit') || document.createElement('div');
+      nh.id = 'nohit'; nh.className = 'nohit'; nh.textContent = '未找到包含「' + v + '」的条目';
+      content.appendChild(nh);
+    } else { var nh = document.getElementById('nohit'); if (nh) nh.remove(); }
+    if (input.getAttribute('data-go') === '1') { first.scrollIntoView(); input.setAttribute('data-go',''); }
+  }
+  function highlight(root, v){
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+    var nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    for (var i=0;i<nodes.length;i++){
+      var n = nodes[i];
+      if (n.parentNode && (n.parentNode.tagName === 'MARK' || n.parentNode.tagName === 'SCRIPT')) continue;
+      var t = n.nodeValue, idx = t.indexOf(v);
+      if (idx < 0) continue;
+      var frag = document.createDocumentFragment();
+      frag.appendChild(document.createTextNode(t.slice(0, idx)));
+      var mk = document.createElement('mark'); mk.textContent = t.slice(idx, idx + v.length);
+      frag.appendChild(mk);
+      frag.appendChild(document.createTextNode(t.slice(idx + v.length)));
+      n.parentNode.replaceChild(frag, n);
+    }
+  }
+  input.addEventListener('input', doSearch);
+  input.addEventListener('keydown', function(e){ if (e.key === 'Enter') { input.setAttribute('data-go','1'); doSearch(); } });
+})();
+</script>
+</body></html>
